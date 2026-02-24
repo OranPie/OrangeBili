@@ -1,0 +1,14 @@
+# Xcode
+DerivedData/
+build/
+*.xcresult
+
+# User local settings
+**/xcuserdata/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
