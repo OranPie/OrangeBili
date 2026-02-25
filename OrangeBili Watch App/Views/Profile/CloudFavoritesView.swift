@@ -10,9 +10,7 @@ struct CloudFavoritesView: View {
     var body: some View {
         List {
             if let errorMessage, folders.isEmpty {
-                Text(errorMessage)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(folders) { folder in
@@ -23,7 +21,7 @@ struct CloudFavoritesView: View {
                         Text(folder.title)
                             .font(.caption2)
                             .lineLimit(2)
-                        Text("\(folder.mediaCount) 条")
+                        Text(L10n.f("label.items", folder.mediaCount))
                             .font(.system(size: 9))
                             .foregroundStyle(.secondary)
                     }
@@ -38,7 +36,8 @@ struct CloudFavoritesView: View {
                 }
             }
         }
-        .navigationTitle("云端收藏夹")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("favorites.cloud.title"))
         .task {
             await loadFolders()
         }
@@ -69,9 +68,7 @@ private struct CloudFavoriteFolderDetailView: View {
     var body: some View {
         List {
             if let errorMessage, videos.isEmpty {
-                Text(errorMessage)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(videos) { video in
@@ -90,6 +87,7 @@ private struct CloudFavoriteFolderDetailView: View {
                 }
             }
         }
+        .listStyle(.plain)
         .navigationTitle(folder.title)
         .task {
             await loadVideos()

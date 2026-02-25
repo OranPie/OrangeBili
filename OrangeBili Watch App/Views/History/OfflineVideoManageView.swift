@@ -8,7 +8,7 @@ struct OfflineVideoManageView: View {
     var body: some View {
         List {
             if let item = currentItem {
-                Section("文件") {
+                Section(L10n.t("offline.file")) {
                     HStack(spacing: 8) {
                         AsyncCachedImage(url: item.localCoverURL ?? item.coverURL) {
                             RoundedRectangle(cornerRadius: 6)
@@ -29,24 +29,23 @@ struct OfflineVideoManageView: View {
                     }
                 }
 
-                Section("操作") {
-                    NavigationLink("播放离线视频") {
+                Section(L10n.t("offline.actions")) {
+                    NavigationLink(L10n.t("offline.play")) {
                         VideoPlayerView(video: offlineVideo(for: item), cid: 0, localFileURL: item.localFileURL)
                     }
-                    NavigationLink("查看详情") {
+                    NavigationLink(L10n.t("offline.detail")) {
                         VideoDetailView(seedVideo: offlineVideo(for: item))
                     }
-                    Button("删除离线文件", role: .destructive) {
+                    Button(L10n.t("offline.delete"), role: .destructive) {
                         downloadManager.remove(itemID: item.id)
                     }
                 }
             } else {
-                Text("文件不存在或已删除")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(L10n.t("offline.missing"), systemImage: "exclamationmark.triangle")
             }
         }
-        .navigationTitle("离线管理")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("offline.title"))
     }
 
     private var currentItem: DownloadStatusItem? {
@@ -59,14 +58,14 @@ struct OfflineVideoManageView: View {
             aid: 0,
             cid: nil,
             title: item.title,
-            author: "离线缓存",
+            author: L10n.t("offline.author"),
             mid: nil,
             coverURL: item.localCoverURL ?? item.coverURL,
             viewCount: 0,
             danmakuCount: 0,
             durationText: "00:00",
             description: "",
-            sourceTag: "本地"
+            sourceTag: L10n.t("offline.source")
         )
     }
 }

@@ -12,9 +12,7 @@ struct FollowingListView: View {
     var body: some View {
         List {
             if let errorMessage, users.isEmpty {
-                Text(errorMessage)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(users) { user in
@@ -31,7 +29,7 @@ struct FollowingListView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(user.name)
                                 .font(.caption2)
-                            Text("粉丝 \(Formatting.count(user.fans))")
+                            Text(L10n.f("label.fans", Formatting.count(user.fans)))
                                 .font(.system(size: 9))
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
@@ -60,7 +58,8 @@ struct FollowingListView: View {
                     }
             }
         }
-        .navigationTitle("我的关注")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("following.title"))
         .task {
             guard users.isEmpty else { return }
             await loadMore()

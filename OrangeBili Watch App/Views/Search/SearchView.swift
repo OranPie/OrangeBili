@@ -2,43 +2,46 @@ import SwiftUI
 
 struct SearchView: View {
     @ObservedObject var viewModel: SearchViewModel
+    @EnvironmentObject private var tabBarState: TabBarState
 
     var body: some View {
         List {
             Section {
-                TextField("搜索内容", text: $viewModel.keyword)
+                TextField(L10n.t("search.placeholder"), text: $viewModel.keyword)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled(true)
             }
 
-            Section("类型") {
-                Picker("类型", selection: $viewModel.scope) {
-                    ForEach(SearchViewModel.Scope.allCases) { scope in
-                        Text(scope.rawValue).tag(scope)
+            Section {
+                CompactDisclosure {
+                    Text(L10n.t("search.filters"))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } content: {
+                    Picker(L10n.t("search.scope"), selection: $viewModel.scope) {
+                        ForEach(SearchViewModel.Scope.allCases) { scope in
+                            Text(scopeTitle(scope)).tag(scope)
+                        }
                     }
-                }
-                .onChange(of: viewModel.scope) { _, _ in
-                    Task { await viewModel.search(reset: true) }
-                }
-            }
-
-            if viewModel.scope == .video {
-                Section("排序") {
-                    Picker("排序", selection: $viewModel.order) {
-                        Text("综合").tag("totalrank")
-                        Text("播放").tag("click")
-                        Text("最新").tag("pubdate")
-                    }
-                    .onChange(of: viewModel.order) { _, _ in
+                    .onChange(of: viewModel.scope) { _, _ in
                         Task { await viewModel.search(reset: true) }
+                    }
+
+                    if viewModel.scope == .video {
+                        Picker(L10n.t("search.order"), selection: $viewModel.order) {
+                            Text(L10n.t("search.order.comprehensive")).tag("totalrank")
+                            Text(L10n.t("search.order.plays")).tag("click")
+                            Text(L10n.t("search.order.latest")).tag("pubdate")
+                        }
+                        .onChange(of: viewModel.order) { _, _ in
+                            Task { await viewModel.search(reset: true) }
+                        }
                     }
                 }
             }
 
             if let error = viewModel.errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
             switch viewModel.scope {
@@ -65,7 +68,7 @@ struct SearchView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(user.name)
                                     .font(.caption2)
-                                Text("粉丝 \(Formatting.count(user.fans))")
+                                Text(L10n.f("label.fans", Formatting.count(user.fans)))
                                     .font(.system(size: 9))
                                     .foregroundStyle(.secondary)
                                 if !user.sign.isEmpty {
@@ -111,7 +114,10 @@ struct SearchView: View {
                     }
             }
         }
-        .navigationTitle("搜索")
+        .listStyle(.plain)
+        .coordinateSpace(name: "scroll")
+        .trackScrollOffset { tabBarState.update(offset: $0) }
+        .navigationTitle(L10n.t("search.title"))
         .onSubmit {
             Task { await viewModel.search(reset: true) }
         }
@@ -130,6 +136,14 @@ struct SearchView: View {
             return !viewModel.userResults.isEmpty
         case .article:
             return !viewModel.articleResults.isEmpty
+        }
+    }
+
+    private func scopeTitle(_ scope: SearchViewModel.Scope) -> String {
+        switch scope {
+        case .video: return L10n.t("search.scope.video")
+        case .user: return L10n.t("search.scope.user")
+        case .article: return L10n.t("search.scope.article")
         }
     }
 }

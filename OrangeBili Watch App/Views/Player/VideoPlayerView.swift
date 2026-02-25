@@ -5,8 +5,11 @@ import AVKit
 
 struct VideoPlayerView: View {
     @EnvironmentObject private var historyStore: HistoryStore
+    @EnvironmentObject private var render: RenderSettings
     @StateObject private var viewModel: PlayerViewModel
     @State private var controlsVisible = true
+    @State private var resumeSeconds: Int?
+    @State private var showResumePrompt = false
 
     init(video: BiliVideo, cid: Int, localFileURL: URL? = nil) {
         _viewModel = StateObject(wrappedValue: PlayerViewModel(video: video, cid: cid, localFileURL: localFileURL))
@@ -19,7 +22,7 @@ struct VideoPlayerView: View {
             if viewModel.isLoading {
                 VStack(spacing: 8) {
                     ProgressView().tint(.white)
-                    Text("加载中...")
+                    Text(L10n.t("player.loading"))
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.8))
                 }
@@ -31,7 +34,7 @@ struct VideoPlayerView: View {
                         .font(.caption2)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.white.opacity(0.9))
-                    Button("重试") {
+                    Button(L10n.t("action.retry")) {
                         Task { await viewModel.load() }
                     }
                 }
@@ -39,9 +42,15 @@ struct VideoPlayerView: View {
                 playerContent
             }
         }
-        .navigationTitle("播放")
+        .navigationTitle(L10n.t("player.title"))
+        .overlay(alignment: .center) {
+            if showResumePrompt, let resumeSeconds {
+                resumeOverlay(seconds: resumeSeconds)
+            }
+        }
         .task {
             await viewModel.load()
+            await checkResume()
         }
         .onDisappear {
             historyStore.savePlayback(video: viewModel.video, progressSeconds: viewModel.progressSeconds)
@@ -84,12 +93,12 @@ struct VideoPlayerView: View {
                 }
             }
         } else {
-            Text("播放器初始化失败")
+            Text(L10n.t("player.initFailed"))
                 .font(.caption)
                 .foregroundStyle(.white)
         }
         #else
-        Text("当前平台不支持内嵌播放器")
+        Text(L10n.t("player.unsupported"))
             .font(.caption)
             .foregroundStyle(.white)
         #endif
@@ -186,5 +195,40 @@ struct VideoPlayerView: View {
     private func timeText(_ seconds: Int) -> String {
         let safe = max(seconds, 0)
         return String(format: "%02d:%02d", safe / 60, safe % 60)
+    }
+
+    private func checkResume() async {
+        guard render.resumeFromLast else { return }
+        guard let saved = historyStore.progressSeconds(for: viewModel.video.bvid), saved > 5 else { return }
+        resumeSeconds = saved
+        showResumePrompt = true
+    }
+
+    @ViewBuilder
+    private func resumeOverlay(seconds: Int) -> some View {
+        VStack(spacing: 6) {
+            Text(L10n.t("player.resume.title"))
+                .font(.caption)
+                .foregroundStyle(.white)
+            Text(L10n.f("player.resume.subtitle", timeText(seconds)))
+                .font(.system(size: 9))
+                .foregroundStyle(.white.opacity(0.85))
+            HStack(spacing: 8) {
+                Button(L10n.t("player.resume.restart")) {
+                    viewModel.seek(to: 0)
+                    showResumePrompt = false
+                }
+                Button(L10n.t("player.resume.continue")) {
+                    viewModel.seek(to: Double(seconds))
+                    showResumePrompt = false
+                }
+            }
+            .buttonStyle(.bordered)
+            .tint(.white.opacity(0.9))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(.black.opacity(0.78), in: RoundedRectangle(cornerRadius: 10))
+        .padding(12)
     }
 }

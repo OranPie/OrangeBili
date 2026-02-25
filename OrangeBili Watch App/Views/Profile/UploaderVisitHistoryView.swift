@@ -6,9 +6,7 @@ struct UploaderVisitHistoryView: View {
     var body: some View {
         List {
             if store.records.isEmpty {
-                Text("暂无主页浏览历史")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(L10n.t("uploader.visit.empty"), systemImage: "clock")
             } else {
                 ForEach(store.records) { record in
                     NavigationLink {
@@ -24,7 +22,7 @@ struct UploaderVisitHistoryView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(record.name)
                                     .font(.caption2)
-                                Text("UID \(record.id)")
+                                Text(L10n.f("label.uid", record.id))
                                     .font(.system(size: 8.5, design: .monospaced))
                                     .foregroundStyle(.secondary)
                                 Text(Formatting.time(record.visitedAt))
@@ -37,18 +35,19 @@ struct UploaderVisitHistoryView: View {
                         Button(role: .destructive) {
                             store.delete(id: record.id)
                         } label: {
-                            Label("删除", systemImage: "trash")
+                            Label(L10n.t("action.delete"), systemImage: "trash")
                         }
                     }
                 }
             }
 
             if !store.records.isEmpty {
-                Button("清空主页历史", role: .destructive) {
+                Button(L10n.t("uploader.visit.clear"), role: .destructive) {
                     store.clear()
                 }
             }
         }
-        .navigationTitle("主页浏览历史")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("uploader.visit.title"))
     }
 }

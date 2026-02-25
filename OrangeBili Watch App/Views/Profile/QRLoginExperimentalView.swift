@@ -6,7 +6,7 @@ struct QRLoginExperimentalView: View {
     @State private var loginMode: LoginMode = .password
     @State private var qrcodeKey = ""
     @State private var qrcodeImageURL: URL?
-    @State private var statusText = "点击“生成二维码”开始登录"
+    @State private var statusText = L10n.t("login.qr.hint")
     @State private var isLoading = false
     @State private var pollTask: Task<Void, Never>?
 
@@ -25,24 +25,31 @@ struct QRLoginExperimentalView: View {
     private let qrService = BiliQRLoginService()
     private let credentialService = BiliCredentialLoginService()
 
-    private enum LoginMode: String, CaseIterable, Identifiable {
-        case password = "账号"
-        case sms = "短信"
+    private enum LoginMode: CaseIterable, Identifiable {
+        case password
+        case sms
 
-        var id: String { rawValue }
+        var id: String { label }
+
+        var label: String {
+            switch self {
+            case .password: return L10n.t("login.mode.password")
+            case .sms: return L10n.t("login.mode.sms")
+            }
+        }
     }
 
     var body: some View {
         List {
-            Section("状态") {
-                Text(apiBackend.isLoggedIn ? "当前已登录" : "当前未登录")
+            Section(L10n.t("login.status")) {
+                Text(apiBackend.isLoggedIn ? L10n.t("login.status.loggedIn") : L10n.t("login.status.loggedOut"))
                     .font(.caption2)
                 Text(statusText)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
 
-            Section("二维码") {
+            Section(L10n.t("login.qr.section")) {
                 if let qrcodeImageURL {
                     HStack {
                         Spacer()
@@ -72,75 +79,76 @@ struct QRLoginExperimentalView: View {
                         Spacer()
                     }
                 } else {
-                    Text("暂无二维码")
+                    Text(L10n.t("login.qr.empty"))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
 
                 if !qrcodeKey.isEmpty {
-                    Text("key: \(qrcodeKey.prefix(8))...")
+                    Text(L10n.f("login.qr.key", String(qrcodeKey.prefix(8))))
                         .font(.system(size: 9, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section("操作") {
-                Button(isLoading ? "处理中..." : "生成二维码") {
+            Section(L10n.t("login.actions")) {
+                Button(isLoading ? L10n.t("action.processing") : L10n.t("login.qr.generate")) {
                     Task { await generateQRCode() }
                 }
                 .disabled(isLoading)
 
-                Button("停止轮询") {
-                    stopPolling(status: "已停止轮询")
+                Button(L10n.t("login.qr.stop")) {
+                    stopPolling(status: L10n.t("login.qr.stopped"))
                 }
                 .disabled(pollTask == nil)
 
-                Button("退出登录", role: .destructive) {
+                Button(L10n.t("me.account.logout"), role: .destructive) {
                     Task {
                         await apiBackend.clearLoginSession()
-                        statusText = "已清除登录状态"
+                        statusText = L10n.t("login.status.cleared")
                     }
                 }
             }
 
-            Section("帐密/短信登录(实验)") {
-                Picker("模式", selection: $loginMode) {
+            Section(L10n.t("login.experimental.section")) {
+                Picker(L10n.t("login.mode"), selection: $loginMode) {
                     ForEach(LoginMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
+                        Text(mode.label).tag(mode)
                     }
                 }
                 .pickerStyle(.automatic)
 
                 if loginMode == .password {
-                    TextField("用户名", text: $username)
-                    TextField("密码(通常需RSA后值)", text: $password)
-                    TextField("token(极验)", text: $token)
-                    TextField("challenge", text: $challenge)
-                    TextField("validate", text: $validate)
-                    TextField("seccode", text: $seccode)
+                    TextField(L10n.t("login.username"), text: $username)
+                    TextField(L10n.t("login.password"), text: $password)
+                    TextField(L10n.t("login.token"), text: $token)
+                    TextField(L10n.t("login.challenge"), text: $challenge)
+                    TextField(L10n.t("login.validate"), text: $validate)
+                    TextField(L10n.t("login.seccode"), text: $seccode)
 
-                    Button(isLoading ? "处理中..." : "尝试账号登录") {
+                    Button(isLoading ? L10n.t("action.processing") : L10n.t("login.password.action")) {
                         Task { await loginWithPassword() }
                     }
                     .disabled(isLoading)
                 } else {
-                    TextField("国家码", text: $smsCid)
-                    TextField("手机号", text: $smsTel)
-                    TextField("短信验证码", text: $smsCode)
-                    TextField("captcha_key", text: $smsCaptchaKey)
+                    TextField(L10n.t("login.sms.cid"), text: $smsCid)
+                    TextField(L10n.t("login.sms.tel"), text: $smsTel)
+                    TextField(L10n.t("login.sms.code"), text: $smsCode)
+                    TextField(L10n.t("login.sms.captcha"), text: $smsCaptchaKey)
 
-                    Button(isLoading ? "处理中..." : "尝试短信登录") {
+                    Button(isLoading ? L10n.t("action.processing") : L10n.t("login.sms.action")) {
                         Task { await loginWithSMS() }
                     }
                     .disabled(isLoading)
                 }
 
-                Text("提示：Web 帐密/短信登录通常还要求完整风控参数，本页为实验透传。")
+                Text(L10n.t("login.experimental.hint"))
                     .font(.system(size: 9))
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle("Watch 扫码登录")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("login.qr.title"))
         .onDisappear {
             pollTask?.cancel()
         }
@@ -154,11 +162,11 @@ struct QRLoginExperimentalView: View {
             let result = try await qrService.generate()
             qrcodeKey = result.qrcodeKey
             qrcodeImageURL = makeQRCodeURL(from: result.url)
-            statusText = "请使用手机哔哩哔哩扫码"
+            statusText = L10n.t("login.qr.scan")
             DebugLogStore.shared.log(category: "login", message: "qrcode generated")
             startPolling()
         } catch {
-            statusText = "生成失败：\(error.localizedDescription)"
+            statusText = L10n.f("login.qr.generate.fail", error.localizedDescription)
             DebugLogStore.shared.log(category: "login", message: "qrcode generate fail: \(error.localizedDescription)")
         }
     }
@@ -173,11 +181,11 @@ struct QRLoginExperimentalView: View {
                     let result = try await qrService.poll(qrcodeKey: qrcodeKey)
                     switch result {
                     case .waiting:
-                        statusText = "等待扫码..."
+                        statusText = L10n.t("login.qr.waiting")
                     case .scanned:
-                        statusText = "已扫码，请在手机确认"
+                        statusText = L10n.t("login.qr.scanned")
                     case .expired:
-                        stopPolling(status: "二维码已过期，请重新生成")
+                        stopPolling(status: L10n.t("login.qr.expired"))
                         DebugLogStore.shared.log(category: "login", message: "qrcode expired")
                         return
                     case let .success(session):
@@ -188,12 +196,12 @@ struct QRLoginExperimentalView: View {
                             buvid3: session.buvid3,
                             buvid4: session.buvid4
                         )
-                        stopPolling(status: "登录成功")
+                        stopPolling(status: L10n.t("login.qr.success"))
                         DebugLogStore.shared.log(category: "login", message: "qrcode login success")
                         return
                     }
                 } catch {
-                    stopPolling(status: "轮询失败：\(error.localizedDescription)")
+                    stopPolling(status: L10n.f("login.qr.poll.fail", error.localizedDescription))
                     DebugLogStore.shared.log(category: "login", message: "qrcode poll fail: \(error.localizedDescription)")
                     return
                 }
@@ -230,10 +238,10 @@ struct QRLoginExperimentalView: View {
                 buvid3: session.buvid3,
                 buvid4: session.buvid4
             )
-            statusText = "账号登录成功"
+            statusText = L10n.t("login.password.success")
             DebugLogStore.shared.log(category: "login", message: "password login success")
         } catch {
-            statusText = "账号登录失败：\(error.localizedDescription)"
+            statusText = L10n.f("login.password.fail", error.localizedDescription)
             DebugLogStore.shared.log(category: "login", message: "password login fail: \(error.localizedDescription)")
         }
     }
@@ -258,10 +266,10 @@ struct QRLoginExperimentalView: View {
                 buvid3: session.buvid3,
                 buvid4: session.buvid4
             )
-            statusText = "短信登录成功"
+            statusText = L10n.t("login.sms.success")
             DebugLogStore.shared.log(category: "login", message: "sms login success")
         } catch {
-            statusText = "短信登录失败：\(error.localizedDescription)"
+            statusText = L10n.f("login.sms.fail", error.localizedDescription)
             DebugLogStore.shared.log(category: "login", message: "sms login fail: \(error.localizedDescription)")
         }
     }

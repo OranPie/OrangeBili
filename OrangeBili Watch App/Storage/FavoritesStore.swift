@@ -35,7 +35,7 @@ struct FavoriteRecord: Identifiable, Codable, Hashable {
             danmakuCount: 0,
             durationText: durationText,
             description: "",
-            sourceTag: "本地收藏"
+            sourceTag: L10n.t("favorites.local.source")
         )
     }
 }

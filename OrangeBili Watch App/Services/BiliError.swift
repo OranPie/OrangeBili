@@ -11,17 +11,17 @@ enum BiliError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "无效的请求地址"
+            return L10n.t("error.invalidUrl")
         case let .apiError(code, message):
-            return "接口错误(\(code)): \(message)"
+            return L10n.f("error.api", code, message)
         case .badResponse:
-            return "服务响应异常"
+            return L10n.t("error.badResponse")
         case let .httpStatus(statusCode):
-            return "服务返回 HTTP \(statusCode)"
+            return L10n.f("error.http", statusCode)
         case .noStream:
-            return "未找到可播放视频流"
+            return L10n.t("error.noStream")
         case .unauthorized:
-            return "当前请求需要登录"
+            return L10n.t("error.unauthorized")
         }
     }
 }

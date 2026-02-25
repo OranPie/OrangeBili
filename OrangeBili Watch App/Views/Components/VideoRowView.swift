@@ -57,7 +57,7 @@ struct VideoRowView: View {
                 if let publishedAt = video.publishedAt {
                     HStack(spacing: 3) {
                         Image(systemName: "calendar")
-                        Text("发布 \(Formatting.absoluteDate(publishedAt))")
+                        Text(L10n.f("label.published", Formatting.absoluteDate(publishedAt)))
                     }
                     .font(.system(size: 8 * render.textScale * cardScale))
                     .foregroundStyle(.secondary)

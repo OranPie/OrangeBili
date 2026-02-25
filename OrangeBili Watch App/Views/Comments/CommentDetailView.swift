@@ -18,7 +18,7 @@ struct CommentDetailView: View {
 
     var body: some View {
         List {
-            Section("原评论") {
+            Section(L10n.t("comment.detail.original")) {
                 NavigationLink {
                     UploaderView(mid: comment.mid ?? 0)
                 } label: {
@@ -35,13 +35,13 @@ struct CommentDetailView: View {
                 Text(comment.message)
                     .font(.system(size: 11 * render.commentTextScale))
                 HStack(spacing: 8) {
-                    Button(liked ? "取消赞" : "点赞") {
+                    Button(liked ? L10n.t("action.unlike") : L10n.t("action.like")) {
                         Task { await toggleLike() }
                     }
                     .disabled(!apiBackend.isLoggedIn)
 
                     if canDelete {
-                        Button("删除", role: .destructive) {
+                        Button(L10n.t("action.delete"), role: .destructive) {
                             Task { await deleteComment() }
                         }
                     }
@@ -53,9 +53,9 @@ struct CommentDetailView: View {
                 }
             }
 
-            Section("回复") {
+            Section(L10n.t("comment.detail.replies")) {
                 if replies.isEmpty && !loading {
-                    Text("暂无回复")
+                    Text(L10n.t("comment.detail.replies.empty"))
                         .font(.system(size: 10 * render.commentTextScale))
                         .foregroundStyle(.secondary)
                 }
@@ -76,7 +76,7 @@ struct CommentDetailView: View {
                         Text(reply.message)
                             .font(.system(size: 10 * render.commentTextScale))
                             .lineLimit(6)
-                        Button("回复") {
+                        Button(L10n.t("comment.detail.reply")) {
                             replyTargetRpid = reply.id
                         }
                         .font(.system(size: 8.5 * render.commentTextScale))
@@ -86,29 +86,29 @@ struct CommentDetailView: View {
                 if loading {
                     ProgressView()
                 } else if hasMore {
-                    Button("加载更多") {
+                    Button(L10n.t("action.loadMore")) {
                         Task { await loadMore() }
                     }
                 }
             }
 
-            Section("发送回复") {
+            Section(L10n.t("comment.detail.send")) {
                 if let replyTargetRpid {
-                    Text("回复 ID: \(replyTargetRpid)")
+                    Text(L10n.f("comment.detail.replyId", replyTargetRpid))
                         .font(.system(size: 8.5 * render.commentTextScale))
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("回复楼主")
+                    Text(L10n.t("comment.detail.replyRoot"))
                         .font(.system(size: 8.5 * render.commentTextScale))
                         .foregroundStyle(.secondary)
                 }
-                TextField("回复内容", text: $replyText)
-                Button("发送") {
+                TextField(L10n.t("comment.detail.placeholder"), text: $replyText)
+                Button(L10n.t("action.send")) {
                     Task { await sendReply() }
                 }
                 .disabled(!apiBackend.isLoggedIn || replyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 if replyTargetRpid != nil {
-                    Button("取消指定回复", role: .cancel) {
+                    Button(L10n.t("comment.detail.reply.cancel"), role: .cancel) {
                         replyTargetRpid = nil
                     }
                 }
@@ -122,7 +122,8 @@ struct CommentDetailView: View {
                 }
             }
         }
-        .navigationTitle("评论详情")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("comment.detail.title"))
         .task {
             await loadMore()
         }
@@ -152,9 +153,9 @@ struct CommentDetailView: View {
             let target = !liked
             try await apiBackend.likeComment(aid: comment.oid, rpid: comment.id, liked: target)
             liked = target
-            statusText = target ? "点赞成功" : "取消点赞"
+            statusText = target ? L10n.t("action.like.success") : L10n.t("action.like.cancel")
         } catch {
-            statusText = "点赞失败：\(error.localizedDescription)"
+            statusText = L10n.f("action.like.fail", error.localizedDescription)
         }
     }
 
@@ -166,22 +167,22 @@ struct CommentDetailView: View {
             try await apiBackend.replyComment(aid: comment.oid, rootRpid: comment.id, parentRpid: parent, message: text)
             replyText = ""
             replyTargetRpid = nil
-            statusText = "回复成功"
+            statusText = L10n.t("comment.detail.reply.success")
             replies = []
             page = 1
             hasMore = true
             await loadMore()
         } catch {
-            statusText = "回复失败：\(error.localizedDescription)"
+            statusText = L10n.f("comment.detail.reply.fail", error.localizedDescription)
         }
     }
 
     private func deleteComment() async {
         do {
             try await apiBackend.deleteComment(aid: comment.oid, rpid: comment.id)
-            statusText = "已删除"
+            statusText = L10n.t("comment.detail.delete.success")
         } catch {
-            statusText = "删除失败：\(error.localizedDescription)"
+            statusText = L10n.f("comment.detail.delete.fail", error.localizedDescription)
         }
     }
 }

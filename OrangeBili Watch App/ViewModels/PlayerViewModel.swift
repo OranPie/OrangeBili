@@ -9,7 +9,7 @@ final class PlayerViewModel: ObservableObject {
     @Published var totalDurationSeconds: Int = 0
     @Published var playbackRate: Float = 1.0
     @Published var isMuted: Bool = false
-    @Published var sourceLabel: String = "主线路"
+    @Published var sourceLabel: String = L10n.t("player.source.main")
 
     let video: BiliVideo
     let cid: Int
@@ -51,7 +51,9 @@ final class PlayerViewModel: ObservableObject {
             streamHeaders = headers
             streamURLs = try await collectPlayableURLs()
             currentStreamIndex = 0
-            sourceLabel = streamURLs.count > 1 ? "线路 1/\(streamURLs.count)" : "主线路"
+            sourceLabel = streamURLs.count > 1
+                ? L10n.f("player.source.indexed", 1, streamURLs.count)
+                : L10n.t("player.source.main")
             try prepareRemotePlayer(url: streamURLs[currentStreamIndex])
             isLoading = false
             player?.play()
@@ -112,7 +114,7 @@ final class PlayerViewModel: ObservableObject {
         guard streamURLs.count > 1 else { return }
         let currentTime = Double(progressSeconds)
         currentStreamIndex = (currentStreamIndex + 1) % streamURLs.count
-        sourceLabel = "线路 \(currentStreamIndex + 1)/\(streamURLs.count)"
+        sourceLabel = L10n.f("player.source.indexed", currentStreamIndex + 1, streamURLs.count)
         do {
             try prepareRemotePlayer(url: streamURLs[currentStreamIndex])
             seek(to: currentTime)
@@ -121,7 +123,7 @@ final class PlayerViewModel: ObservableObject {
                 player?.rate = playbackRate
             }
         } catch {
-            errorMessage = "切换线路失败：\(error.localizedDescription)"
+            errorMessage = L10n.f("player.source.switch.fail", error.localizedDescription)
         }
     }
 

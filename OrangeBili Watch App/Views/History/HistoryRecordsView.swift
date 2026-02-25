@@ -6,27 +6,33 @@ struct HistoryRecordsView: View {
     var body: some View {
         List {
             if historyStore.records.isEmpty {
-                Text("还没有播放记录")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(L10n.t("history.empty"), systemImage: "clock")
             } else {
                 ForEach(historyStore.records) { record in
                     NavigationLink {
                         VideoDetailView(seedVideo: record.asVideo)
                     } label: {
-                        VideoRowView(video: record.asVideo)
+                        VStack(alignment: .leading, spacing: 2) {
+                            VideoRowView(video: record.asVideo)
+                            if record.progressSeconds > 0 {
+                                Text(L10n.f("history.lastProgress", Formatting.timeText(record.progressSeconds)))
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                     .swipeActions {
                         Button(role: .destructive) {
                             historyStore.delete(id: record.id)
                         } label: {
-                            Label("删除", systemImage: "trash")
+                            Label(L10n.t("action.delete"), systemImage: "trash")
                         }
                     }
                 }
             }
         }
-        .navigationTitle("观看历史")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("history.title"))
     }
 }
 
@@ -36,7 +42,7 @@ private extension HistoryRecord {
             bvid: bvid,
             aid: 0,
             title: title,
-            author: "历史记录",
+            author: L10n.t("history.author"),
             mid: nil,
             coverURL: coverURL,
             viewCount: 0,
@@ -44,7 +50,7 @@ private extension HistoryRecord {
             durationText: "00:00",
             publishedAt: watchedAt,
             description: "",
-            sourceTag: "本地"
+            sourceTag: L10n.t("label.local")
         )
     }
 }

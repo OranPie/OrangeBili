@@ -3,50 +3,113 @@ import SwiftUI
 struct MeView: View {
     @EnvironmentObject private var render: RenderSettings
     @EnvironmentObject private var apiBackend: BiliAPIBackend
+    @EnvironmentObject private var tabBarState: TabBarState
 
     var body: some View {
         List {
-            Section("账号（实验性）") {
-                NavigationLink("Watch 扫码登录") {
+            Section {
+                NavigationLink {
+                    AccountView()
+                } label: {
+                    SummaryCard(
+                        L10n.t("me.account"),
+                        subtitle: apiBackend.isLoggedIn ? L10n.t("me.status.loggedIn") : L10n.t("me.status.loggedOut"),
+                        systemImage: "person.crop.circle"
+                    )
+                }
+
+                NavigationLink {
+                    RenderSettingsView()
+                } label: {
+                    SummaryCard(
+                        L10n.t("me.render"),
+                        subtitle: L10n.t("me.render.subtitle"),
+                        systemImage: "slider.horizontal.3"
+                    )
+                }
+
+                NavigationLink {
+                    AboutHubView()
+                } label: {
+                    SummaryCard(
+                        L10n.t("me.about"),
+                        subtitle: L10n.t("me.about.subtitle"),
+                        systemImage: "info.circle"
+                    )
+                }
+            }
+        }
+        .font(.system(size: 11))
+        .listStyle(.plain)
+        .coordinateSpace(name: "scroll")
+        .trackScrollOffset { tabBarState.update(offset: $0) }
+        .navigationTitle(L10n.t("me.title"))
+        .task {
+            await apiBackend.refreshAuthState()
+        }
+    }
+}
+
+private struct AccountView: View {
+    @EnvironmentObject private var apiBackend: BiliAPIBackend
+
+    var body: some View {
+        List {
+            Section {
+                NavigationLink(L10n.t("me.account.qrLogin")) {
                     QRLoginExperimentalView()
                 }
                 if let mid = apiBackend.loggedInMid {
-                    NavigationLink("我的主页") {
+                    NavigationLink(L10n.t("me.account.profile")) {
                         UploaderView(mid: mid)
                     }
-                    NavigationLink("我的关注") {
+                    NavigationLink(L10n.t("me.account.following")) {
                         FollowingListView()
                     }
-                    NavigationLink("云端收藏夹") {
+                    NavigationLink(L10n.t("me.account.cloudFavorites")) {
                         CloudFavoritesView()
                     }
-                    Button("退出登录", role: .destructive) {
+                    Button(L10n.t("me.account.logout"), role: .destructive) {
                         Task { await apiBackend.clearLoginSession() }
                     }
                 }
-                NavigationLink("主页浏览历史") {
+                NavigationLink(L10n.t("me.account.visitHistory")) {
                     UploaderVisitHistoryView()
                 }
-                Text(apiBackend.isLoggedIn ? "登录状态：已登录（可选增强）" : "登录状态：未登录（当前接口可匿名访问）")
+            }
+
+            Section {
+                Text(apiBackend.isLoggedIn ? L10n.t("me.status.loggedIn.detail") : L10n.t("me.status.loggedOut.detail"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-                Text("未登录优先走非登录接口；登录后优先增强接口。")
+                Text(L10n.t("me.status.hint"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
+        }
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("me.account"))
+    }
+}
 
-            Section("渲染设置") {
+private struct RenderSettingsView: View {
+    @EnvironmentObject private var render: RenderSettings
+
+    var body: some View {
+        List {
+            Section {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("字号缩放 \(String(format: "%.2f", render.textScale))")
+                    Text(L10n.f("render.textScale", String(format: "%.2f", render.textScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     Slider(value: $render.textScale, in: 0.65 ... 1.35, step: 0.05)
                 }
 
-                Toggle("紧凑信息布局", isOn: $render.compactStats)
+                Toggle(L10n.t("render.compact"), isOn: $render.compactStats)
+                Toggle(L10n.t("render.resume"), isOn: $render.resumeFromLast)
 
                 HStack(spacing: 8) {
-                    Text("简介行数")
+                    Text(L10n.t("render.descriptionLines"))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -75,36 +138,41 @@ struct MeView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("评论字号 \(String(format: "%.2f", render.commentTextScale))")
+                    Text(L10n.f("render.commentScale", String(format: "%.2f", render.commentTextScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     Slider(value: $render.commentTextScale, in: 0.65 ... 1.4, step: 0.05)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("卡片缩放 \(String(format: "%.2f", render.videoCardScale))")
+                    Text(L10n.f("render.cardScale", String(format: "%.2f", render.videoCardScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     Slider(value: $render.videoCardScale, in: 0.75 ... 1.05, step: 0.05)
                 }
             }
+        }
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("me.render"))
+    }
+}
 
-            Section("关于") {
-                NavigationLink("视频功能面板") {
+private struct AboutHubView: View {
+    var body: some View {
+        List {
+            Section {
+                NavigationLink(L10n.t("me.about.features")) {
                     VideoFeatureCompactView()
                 }
-                NavigationLink("关于 OrangeBili") {
+                NavigationLink(L10n.t("me.about.app")) {
                     AboutView()
                 }
-                Text("查看版本、功能说明与排障指南")
+                Text(L10n.t("me.about.hint"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
         }
-        .font(.system(size: 11))
-        .navigationTitle("我的")
-        .task {
-            await apiBackend.refreshAuthState()
-        }
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("me.about"))
     }
 }

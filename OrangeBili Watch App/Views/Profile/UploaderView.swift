@@ -23,13 +23,13 @@ struct UploaderView: View {
                             Text(uploader.name)
                                 .font(.caption)
                                 .bold()
-                            Text("获赞 \(Formatting.count(uploader.likeCount))")
+                            Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
-                            Text("关注 \(Formatting.count(uploader.followingCount)) · 粉丝 \(Formatting.count(uploader.followerCount))")
+                            Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
-                            Text("UID \(uploader.id)")
+                            Text(L10n.f("label.uid", uploader.id))
                                 .font(.system(size: 9, design: .monospaced))
                                 .foregroundStyle(.secondary)
                         }
@@ -43,17 +43,17 @@ struct UploaderView: View {
                     }
                 }
 
-                Section("内容") {
-                    NavigationLink("视频列表") {
+                Section(L10n.t("uploader.content")) {
+                    NavigationLink(L10n.t("uploader.videos")) {
                         UploaderVideosView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
                     }
-                    NavigationLink("专栏列表") {
+                    NavigationLink(L10n.t("uploader.articles")) {
                         UploaderArticlesView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
                     }
                 }
 
                 if !viewModel.recentVideos.isEmpty {
-                    Section("最新视频预览") {
+                    Section(L10n.t("uploader.latestVideos")) {
                         ForEach(viewModel.recentVideos) { video in
                             NavigationLink {
                                 VideoDetailView(seedVideo: video)
@@ -65,7 +65,7 @@ struct UploaderView: View {
                 }
 
                 if !viewModel.recentArticles.isEmpty {
-                    Section("最新专栏预览") {
+                    Section(L10n.t("uploader.latestArticles")) {
                         ForEach(viewModel.recentArticles) { article in
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(article.title)
@@ -78,7 +78,7 @@ struct UploaderView: View {
                                         .lineLimit(2)
                                 }
                                 if let published = article.publishedAt {
-                                    Text("发布 \(Formatting.absoluteDate(published))")
+                                    Text(L10n.f("label.published", Formatting.absoluteDate(published)))
                                         .font(.system(size: 8))
                                         .foregroundStyle(.secondary)
                                 }
@@ -93,12 +93,11 @@ struct UploaderView: View {
                     Spacer()
                 }
             } else {
-                Text(viewModel.errorMessage ?? "加载失败")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
             }
         }
-        .navigationTitle("UP 主")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("uploader.title"))
         .task {
             await viewModel.load()
             if let uploader = viewModel.uploader {
@@ -123,9 +122,7 @@ private struct UploaderVideosView: View {
     var body: some View {
         List {
             if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
-                Text(error)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(viewModel.videos) { video in
@@ -150,7 +147,8 @@ private struct UploaderVideosView: View {
                     }
             }
         }
-        .navigationTitle("\(uploaderName) 视频")
+        .listStyle(.plain)
+        .navigationTitle(L10n.f("uploader.videos.title", uploaderName))
         .task {
             await viewModel.loadInitialIfNeeded()
         }
@@ -172,9 +170,7 @@ private struct UploaderArticlesView: View {
     var body: some View {
         List {
             if let error = viewModel.errorMessage, viewModel.articles.isEmpty {
-                Text(error)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(viewModel.articles) { article in
@@ -189,7 +185,7 @@ private struct UploaderArticlesView: View {
                             .lineLimit(2)
                     }
                     HStack {
-                        Text("阅读 \(Formatting.count(article.viewCount))")
+                        Text(L10n.f("label.reads", Formatting.count(article.viewCount)))
                             .font(.system(size: 8))
                             .foregroundStyle(.secondary)
                         Spacer()
@@ -216,7 +212,8 @@ private struct UploaderArticlesView: View {
                     }
             }
         }
-        .navigationTitle("\(uploaderName) 专栏")
+        .listStyle(.plain)
+        .navigationTitle(L10n.f("uploader.articles.title", uploaderName))
         .task {
             await viewModel.loadInitialIfNeeded()
         }

@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    private enum Tab: String, CaseIterable {
-        case home = "首页"
-        case search = "搜索"
-        case history = "工具"
-        case me = "我的"
+    private enum Tab: CaseIterable {
+        case home
+        case search
+        case history
+        case me
 
         var icon: String {
             switch self {
@@ -15,11 +15,20 @@ struct ContentView: View {
             case .me: return "person.fill"
             }
         }
+
+        var title: String {
+            switch self {
+            case .home: return L10n.t("tab.home")
+            case .search: return L10n.t("tab.search")
+            case .history: return L10n.t("tab.tools")
+            case .me: return L10n.t("tab.me")
+            }
+        }
     }
 
     @State private var selectedTab: Tab = .home
-    @State private var barCollapsed = false
     @StateObject private var searchViewModel = SearchViewModel()
+    @StateObject private var tabBarState = TabBarState()
 
     var body: some View {
         NavigationStack {
@@ -35,6 +44,7 @@ struct ContentView: View {
                     MeView()
                 }
             }
+            .environmentObject(tabBarState)
             .safeAreaInset(edge: .bottom) {
                 bottomBar
             }
@@ -43,10 +53,10 @@ struct ContentView: View {
 
     private var bottomBar: some View {
         VStack(spacing: 4) {
-            if barCollapsed {
+            if tabBarState.isCollapsed {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        barCollapsed = false
+                        tabBarState.isCollapsed = false
                     }
                 } label: {
                     Image(systemName: "chevron.up")
@@ -60,12 +70,14 @@ struct ContentView: View {
                 HStack(spacing: 6) {
                     ForEach(Tab.allCases, id: \.self) { tab in
                         Button {
-                            selectedTab = tab
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedTab = tab
+                            }
                         } label: {
                             VStack(spacing: 2) {
                                 Image(systemName: tab.icon)
                                     .font(.system(size: 12, weight: .semibold))
-                                Text(tab.rawValue)
+                                Text(tab.title)
                                     .font(.system(size: 10, weight: .medium))
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.8)
@@ -77,6 +89,7 @@ struct ContentView: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(selectedTab == tab ? Color.white : Color.clear)
                             )
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                     }
@@ -84,10 +97,15 @@ struct ContentView: View {
                 .padding(.horizontal, 6)
                 .padding(.top, 5)
                 .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 10))
+                .onLongPressGesture {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        tabBarState.toggle()
+                    }
+                }
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        barCollapsed = true
+                        tabBarState.isCollapsed = true
                     }
                 } label: {
                     Image(systemName: "chevron.down")
@@ -100,5 +118,6 @@ struct ContentView: View {
         }
         .padding(.horizontal, 4)
         .padding(.bottom, 2)
+        .sensoryFeedback(.selection, trigger: selectedTab)
     }
 }

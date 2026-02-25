@@ -6,9 +6,7 @@ struct GlobalLogView: View {
     var body: some View {
         List {
             if debugLogStore.entries.isEmpty {
-                Text("暂无日志")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(L10n.t("logs.empty"), systemImage: "doc.text")
             } else {
                 ForEach(debugLogStore.entries) { entry in
                     VStack(alignment: .leading, spacing: 2) {
@@ -23,11 +21,12 @@ struct GlobalLogView: View {
             }
 
             Section {
-                Button("清空全部日志", role: .destructive) {
+                Button(L10n.t("logs.clear"), role: .destructive) {
                     debugLogStore.clear()
                 }
             }
         }
-        .navigationTitle("全局日志")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("logs.title"))
     }
 }

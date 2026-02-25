@@ -150,14 +150,14 @@ final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
                 bvid: $0.bvid,
                 aid: $0.id.asInt,
                 title: $0.title,
-                author: $0.upper?.name ?? "收藏夹",
+                author: $0.upper?.name ?? L10n.t("favorites.cloud.defaultAuthor"),
                 mid: $0.upper?.mid.asInt,
                 coverURL: normalizedImageURL($0.cover),
                 viewCount: $0.cntInfo?.play.asInt ?? 0,
                 danmakuCount: $0.cntInfo?.danmaku.asInt ?? 0,
                 durationText: Int($0.duration.asInt).durationString,
                 description: "",
-                sourceTag: "云端"
+                sourceTag: L10n.t("favorites.cloud.source")
             )
         }
     }
@@ -247,7 +247,7 @@ final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
                 id: dto.rpid.asInt,
                 oid: aid,
                 mid: dto.member?.mid.asInt,
-                username: dto.member?.uname ?? "用户",
+                username: dto.member?.uname ?? L10n.t("label.user"),
                 avatarURL: normalizedImageURL(dto.member?.avatar ?? ""),
                 message: dto.content?.message ?? "",
                 likeCount: dto.like.asInt,

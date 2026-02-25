@@ -133,7 +133,7 @@ struct BiliService: BiliServiceProtocol {
                 id: reply.rpid.value,
                 oid: aid,
                 mid: reply.member?.mid.value,
-                username: reply.member?.uname ?? "用户",
+                username: reply.member?.uname ?? L10n.t("label.user"),
                 avatarURL: URL.biliImageURL(from: reply.member?.avatar ?? ""),
                 message: reply.content?.message ?? "",
                 likeCount: reply.like.value,
@@ -267,7 +267,7 @@ private struct PopularVideoDTO: Decodable {
 
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
-            name = c.decodeString(forKey: .name, default: "未知UP")
+            name = c.decodeString(forKey: .name, default: L10n.t("label.uploader.unknown"))
             mid = c.decodeLossyInt(forKey: .mid)
         }
     }
@@ -308,7 +308,7 @@ private struct PopularVideoDTO: Decodable {
         duration = c.decodeLossyInt(forKey: .duration)
         pubdate = c.decodeLossyInt(forKey: .pubdate)
         desc = c.decodeString(forKey: .desc)
-        owner = (try? c.decode(OwnerDTO.self, forKey: .owner)) ?? OwnerDTO(name: "未知UP", mid: LossyInt(0))
+        owner = (try? c.decode(OwnerDTO.self, forKey: .owner)) ?? OwnerDTO(name: L10n.t("label.uploader.unknown"), mid: LossyInt(0))
         stat = (try? c.decode(StatDTO.self, forKey: .stat)) ?? StatDTO(view: LossyInt(0), danmaku: LossyInt(0))
     }
 
@@ -354,7 +354,7 @@ private struct UserSearchDTO: Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         mid = c.decodeLossyInt(forKey: .mid)
-        uname = c.decodeString(forKey: .uname, default: "UP主")
+        uname = c.decodeString(forKey: .uname, default: L10n.t("label.uploader"))
         usign = c.decodeString(forKey: .usign)
         upic = c.decodeString(forKey: .upic)
         fans = c.decodeLossyInt(forKey: .fans)
@@ -391,7 +391,7 @@ private struct ArticleSearchDTO: Decodable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = c.decodeLossyInt(forKey: .id)
         title = c.decodeString(forKey: .title)
-        author = c.decodeString(forKey: .author, default: "专栏")
+        author = c.decodeString(forKey: .author, default: L10n.t("label.article"))
         desc = c.decodeString(forKey: .desc)
         imageUrls = (try? c.decodeIfPresent([String].self, forKey: .imageUrls)) ?? []
     }
@@ -419,7 +419,7 @@ private struct SearchVideoDTO: Decodable {
         bvid = c.decodeString(forKey: .bvid)
         aid = c.decodeLossyInt(forKey: .aid)
         title = c.decodeString(forKey: .title)
-        author = c.decodeString(forKey: .author, default: "未知UP")
+        author = c.decodeString(forKey: .author, default: L10n.t("label.uploader.unknown"))
         mid = try? c.decodeIfPresent(LossyInt.self, forKey: .mid)
         pic = c.decodeString(forKey: .pic)
         play = c.decodeLossyInt(forKey: .play)
@@ -476,7 +476,7 @@ private struct VideoDetailResponse: Decodable {
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             mid = c.decodeLossyInt(forKey: .mid)
-            name = c.decodeString(forKey: .name, default: "UP主")
+            name = c.decodeString(forKey: .name, default: L10n.t("label.uploader"))
             face = c.decodeString(forKey: .face)
         }
     }
@@ -525,7 +525,7 @@ private struct VideoDetailResponse: Decodable {
         desc = c.decodeString(forKey: .desc)
         pic = c.decodeString(forKey: .pic)
         duration = c.decodeLossyInt(forKey: .duration)
-        owner = (try? c.decode(OwnerDTO.self, forKey: .owner)) ?? OwnerDTO(mid: LossyInt(0), name: "UP主", face: "")
+        owner = (try? c.decode(OwnerDTO.self, forKey: .owner)) ?? OwnerDTO(mid: LossyInt(0), name: L10n.t("label.uploader"), face: "")
         stat = (try? c.decode(StatDTO.self, forKey: .stat)) ?? StatDTO(view: LossyInt(0), danmaku: LossyInt(0), reply: LossyInt(0), favorite: LossyInt(0), coin: LossyInt(0), share: LossyInt(0))
     }
 }
@@ -624,7 +624,7 @@ private struct UploaderResponse: Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         mid = c.decodeLossyInt(forKey: .mid)
-        name = c.decodeString(forKey: .name, default: "UP主")
+        name = c.decodeString(forKey: .name, default: L10n.t("label.uploader"))
         sign = c.decodeString(forKey: .sign)
         face = c.decodeString(forKey: .face)
         fans = c.decodeLossyInt(forKey: .fans)

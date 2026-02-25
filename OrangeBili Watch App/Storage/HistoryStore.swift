@@ -3,6 +3,7 @@ import Foundation
 protocol HistoryStoreProtocol {
     func loadRecords() -> [HistoryRecord]
     func savePlayback(video: BiliVideo, progressSeconds: Int)
+    func progressSeconds(for bvid: String) -> Int?
     func clear()
     func delete(id: String)
 }
@@ -44,6 +45,10 @@ final class HistoryStore: ObservableObject, HistoryStoreProtocol {
                 self.records = mutable
             }
         }
+    }
+
+    func progressSeconds(for bvid: String) -> Int? {
+        records.first(where: { $0.bvid == bvid })?.progressSeconds
     }
 
     func clear() {

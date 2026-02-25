@@ -7,9 +7,9 @@ struct OfflineAPICacheView: View {
 
     var body: some View {
         List {
-            Section("统计") {
+            Section(L10n.t("cache.stats")) {
                 HStack {
-                    Text("缓存条目")
+                    Text(L10n.t("cache.items"))
                     Spacer()
                     Text("\(cacheFiles)")
                         .foregroundStyle(.secondary)
@@ -17,23 +17,21 @@ struct OfflineAPICacheView: View {
                 .font(.caption2)
 
                 HStack {
-                    Text("缓存大小")
+                    Text(L10n.t("cache.size"))
                     Spacer()
                     Text(formatBytes(cacheSizeBytes))
                         .foregroundStyle(.secondary)
                 }
                 .font(.caption2)
 
-                Button("刷新缓存") {
+                Button(L10n.t("cache.refresh")) {
                     Task { await refreshCacheStats() }
                 }
             }
 
-            Section("缓存列表") {
+            Section(L10n.t("cache.list")) {
                 if cacheEntries.isEmpty {
-                    Text("暂无离线缓存")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    EmptyStateView(L10n.t("cache.empty"), systemImage: "archivebox")
                 } else {
                     ForEach(cacheEntries) { entry in
                         VStack(alignment: .leading, spacing: 2) {
@@ -53,13 +51,13 @@ struct OfflineAPICacheView: View {
                                     await refreshCacheStats()
                                 }
                             } label: {
-                                Label("删除", systemImage: "trash")
+                                Label(L10n.t("action.delete"), systemImage: "trash")
                             }
                         }
                     }
                 }
 
-                Button("清空离线缓存", role: .destructive) {
+                Button(L10n.t("cache.clear"), role: .destructive) {
                     Task {
                         await OfflineCacheStore.shared.clearAll()
                         DebugLogStore.shared.log(category: "cache", message: "clear all offline api cache")
@@ -68,7 +66,8 @@ struct OfflineAPICacheView: View {
                 }
             }
         }
-        .navigationTitle("API 离线缓存")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("cache.title"))
         .task {
             await refreshCacheStats()
         }

@@ -11,9 +11,7 @@ struct CommentsView: View {
     var body: some View {
         List {
             if let error = viewModel.errorMessage, viewModel.comments.isEmpty {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(viewModel.comments) { comment in
@@ -59,7 +57,8 @@ struct CommentsView: View {
                     }
             }
         }
-        .navigationTitle("评论")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("comments.title"))
         .task {
             await viewModel.loadInitialIfNeeded()
         }

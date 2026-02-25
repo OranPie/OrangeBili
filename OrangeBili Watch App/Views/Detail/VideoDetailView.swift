@@ -44,36 +44,51 @@ struct VideoDetailView: View {
                             .lineLimit(2)
 
                         HStack(spacing: 4) {
-                            metaChip(label: "UP", value: detail.owner.name, monospaced: false)
-                            metaChip(label: "BV", value: detail.bvid, monospaced: true)
+                            metaChip(label: L10n.t("detail.meta.up"), value: detail.owner.name, monospaced: false)
+                            metaChip(label: L10n.t("detail.meta.bv"), value: detail.bvid, monospaced: true)
                         }
 
                         if !detail.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Text(detail.description)
-                                .font(.system(size: 9 * render.textScale))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(min(render.detailDescriptionLines, 4))
+                            CompactDisclosure {
+                                Text(L10n.t("detail.description"))
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            } content: {
+                                Text(detail.description)
+                                    .font(.system(size: 9 * render.textScale))
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(min(render.detailDescriptionLines, 4))
+                            }
                         }
                     }
                 }
 
-                Section("数据") {
-                    VStack(alignment: .leading, spacing: 4) {
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 6) {
-                            statChip(icon: "play.fill", text: Formatting.count(detail.stats.views))
-                            statChip(icon: "message", text: Formatting.count(detail.stats.danmaku))
-                            statChip(icon: "text.bubble", text: Formatting.count(detail.stats.replies))
+                            InlineStatChip(icon: "play.fill", text: Formatting.count(detail.stats.views))
+                            InlineStatChip(icon: "message", text: Formatting.count(detail.stats.danmaku))
+                            InlineStatChip(icon: "text.bubble", text: Formatting.count(detail.stats.replies))
                         }
-                        HStack(spacing: 6) {
-                            statChip(icon: "star.fill", text: Formatting.count(detail.stats.favorites))
-                            statChip(icon: "centsign.circle", text: Formatting.count(detail.stats.coins))
-                            statChip(icon: "square.and.arrow.up", text: Formatting.count(detail.stats.shares))
+
+                        CompactDisclosure {
+                            Text(L10n.t("detail.stats.more"))
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        } content: {
+                            HStack(spacing: 6) {
+                                InlineStatChip(icon: "star.fill", text: Formatting.count(detail.stats.favorites))
+                                InlineStatChip(icon: "centsign.circle", text: Formatting.count(detail.stats.coins))
+                                InlineStatChip(icon: "square.and.arrow.up", text: Formatting.count(detail.stats.shares))
+                            }
                         }
                     }
+                } header: {
+                    Text(L10n.t("detail.stats"))
                 }
 
                 if !tags.isEmpty {
-                    Section("标签") {
+                    Section(L10n.t("detail.tags")) {
                         let firstLine = Array(tags.prefix(4))
                         let secondLine = Array(tags.dropFirst(4).prefix(4))
                         compactTagLine(firstLine)
@@ -92,7 +107,7 @@ struct VideoDetailView: View {
                             favoritesStore.toggle(video: seedVideo.with(cid: detail.cid))
                         } label: {
                             compactActionTile(
-                                title: favoritesStore.isFavorite(bvid: seedVideo.bvid) ? "取消" : "收藏",
+                                title: favoritesStore.isFavorite(bvid: seedVideo.bvid) ? L10n.t("action.unfavorite") : L10n.t("action.favorite"),
                                 systemImage: favoritesStore.isFavorite(bvid: seedVideo.bvid) ? "heart.slash.fill" : "heart.fill"
                             )
                         }
@@ -102,7 +117,7 @@ struct VideoDetailView: View {
                             Task { await startOfflineDownload(detail: detail) }
                         } label: {
                             compactActionTile(
-                                title: downloadedItem != nil ? "已下载" : "下载",
+                                title: downloadedItem != nil ? L10n.t("detail.downloaded") : L10n.t("action.download"),
                                 systemImage: downloadedItem != nil ? "checkmark.circle.fill" : "arrow.down.circle"
                             )
                         }
@@ -113,14 +128,14 @@ struct VideoDetailView: View {
                             NavigationLink {
                                 VideoPlayerView(video: seedVideo.with(cid: detail.cid), cid: detail.cid, localFileURL: local.localFileURL)
                             } label: {
-                                compactActionTile(title: "离线播", systemImage: "play.circle.fill")
+                                compactActionTile(title: L10n.t("action.play.offline"), systemImage: "play.circle.fill")
                             }
                             .buttonStyle(.plain)
                         } else {
                             NavigationLink {
                                 VideoPlayerView(video: seedVideo.with(cid: detail.cid), cid: detail.cid)
                             } label: {
-                                compactActionTile(title: "播放", systemImage: "play.fill")
+                                compactActionTile(title: L10n.t("action.play"), systemImage: "play.fill")
                             }
                             .buttonStyle(.plain)
                         }
@@ -130,7 +145,7 @@ struct VideoDetailView: View {
                         Button {
                             destination = .comments(detail.aid)
                         } label: {
-                            compactActionTile(title: "评论", systemImage: "text.bubble")
+                            compactActionTile(title: L10n.t("detail.comments"), systemImage: "text.bubble")
                         }
                         .buttonStyle(.plain)
 
@@ -138,7 +153,7 @@ struct VideoDetailView: View {
                             Button {
                                 destination = .uploader(mid)
                             } label: {
-                                compactActionTile(title: "UP主", systemImage: "person.crop.circle")
+                                compactActionTile(title: L10n.t("detail.uploader"), systemImage: "person.crop.circle")
                             }
                             .buttonStyle(.plain)
                         } else {
@@ -152,14 +167,14 @@ struct VideoDetailView: View {
                             Button {
                                 Task { await toggleLike(aid: detail.aid) }
                             } label: {
-                                compactActionTile(title: liked ? "取消赞" : "点赞", systemImage: liked ? "hand.thumbsup.slash.fill" : "hand.thumbsup.fill")
+                                compactActionTile(title: liked ? L10n.t("action.unlike") : L10n.t("action.like"), systemImage: liked ? "hand.thumbsup.slash.fill" : "hand.thumbsup.fill")
                             }
                             .buttonStyle(.plain)
 
                             Button {
                                 Task { await sendCoin(aid: detail.aid) }
                             } label: {
-                                compactActionTile(title: "投币", systemImage: "centsign.circle.fill")
+                                compactActionTile(title: L10n.t("action.coin"), systemImage: "centsign.circle.fill")
                             }
                             .buttonStyle(.plain)
                         }
@@ -179,7 +194,7 @@ struct VideoDetailView: View {
                     } else if downloadedItem != nil {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
-                            Text("已下载到本地")
+                            Text(L10n.t("detail.downloaded.local"))
                                 .lineLimit(1)
                         }
                         .font(.system(size: 8.5 * render.textScale))
@@ -200,12 +215,11 @@ struct VideoDetailView: View {
                     Spacer()
                 }
             } else {
-                Text(viewModel.errorMessage ?? "加载失败")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
             }
         }
-        .navigationTitle("详情")
+        .listStyle(.plain)
+        .navigationTitle(L10n.t("detail.title"))
         .task {
             await viewModel.load(bvid: seedVideo.bvid)
             if let aid = viewModel.detail?.aid {
@@ -233,9 +247,9 @@ struct VideoDetailView: View {
     @ViewBuilder
     private func metaChip(label: String, value: String, monospaced: Bool) -> some View {
         HStack(spacing: 2) {
-            Text(label)
+                Text(label)
                 .font(.system(size: 7.5 * render.textScale, weight: .bold))
-            Text(value)
+                Text(value)
                 .font(.system(size: 7.5 * render.textScale, weight: .medium, design: monospaced ? .monospaced : .default))
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -243,19 +257,6 @@ struct VideoDetailView: View {
         .padding(.horizontal, 5)
         .padding(.vertical, 1.5)
         .background(Color.gray.opacity(0.14), in: Capsule())
-    }
-
-    @ViewBuilder
-    private func statChip(icon: String, text: String) -> some View {
-        HStack(spacing: 2) {
-            Image(systemName: icon)
-            Text(text)
-                .lineLimit(1)
-        }
-        .font(.system(size: 8.5 * render.textScale, weight: .medium))
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
-        .background(Color.gray.opacity(0.15), in: Capsule())
     }
 
     private func startOfflineDownload(detail: VideoDetail) async {
@@ -318,18 +319,18 @@ struct VideoDetailView: View {
             let target = !liked
             try await apiBackend.likeVideo(aid: aid, liked: target)
             liked = target
-            actionStatus = target ? "点赞成功" : "已取消点赞"
+            actionStatus = target ? L10n.t("action.like.success") : L10n.t("action.like.cancel")
         } catch {
-            actionStatus = "点赞失败：\(error.localizedDescription)"
+            actionStatus = L10n.f("action.like.fail", error.localizedDescription)
         }
     }
 
     private func sendCoin(aid: Int) async {
         do {
             try await apiBackend.coinVideo(aid: aid, count: 1, alsoLike: false)
-            actionStatus = "投币成功"
+            actionStatus = L10n.t("action.coin.success")
         } catch {
-            actionStatus = "投币失败：\(error.localizedDescription)"
+            actionStatus = L10n.f("action.coin.fail", error.localizedDescription)
         }
     }
 

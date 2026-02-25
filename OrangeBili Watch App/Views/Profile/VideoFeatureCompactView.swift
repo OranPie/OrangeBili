@@ -2,16 +2,18 @@ import SwiftUI
 
 struct VideoFeatureCompactView: View {
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    private let features: [(String, String)] = [
-        ("seek -10s", "gobackward.10"),
-        ("seek +10s", "goforward.10"),
-        ("倍速切换", "speedometer"),
-        ("静音切换", "speaker.wave.2.fill"),
-        ("重播", "arrow.counterclockwise"),
-        ("线路切换", "point.3.connected.trianglepath.dotted"),
-        ("隐藏控制层", "chevron.down.circle"),
-        ("离线播放", "tray.and.arrow.down.fill")
-    ]
+    private var features: [(String, String)] {
+        [
+            (L10n.t("video.feature.seekBack"), "gobackward.10"),
+            (L10n.t("video.feature.seekForward"), "goforward.10"),
+            (L10n.t("video.feature.speed"), "speedometer"),
+            (L10n.t("video.feature.mute"), "speaker.wave.2.fill"),
+            (L10n.t("video.feature.replay"), "arrow.counterclockwise"),
+            (L10n.t("video.feature.route"), "point.3.connected.trianglepath.dotted"),
+            (L10n.t("video.feature.hideControls"), "chevron.down.circle"),
+            (L10n.t("video.feature.offline"), "tray.and.arrow.down.fill")
+        ]
+    }
 
     var body: some View {
         ScrollView {
@@ -33,6 +35,6 @@ struct VideoFeatureCompactView: View {
             .padding(.horizontal, 4)
             .padding(.vertical, 6)
         }
-        .navigationTitle("视频功能")
+        .navigationTitle(L10n.t("video.feature.title"))
     }
 }

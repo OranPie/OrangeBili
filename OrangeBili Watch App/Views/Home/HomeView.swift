@@ -2,13 +2,12 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @EnvironmentObject private var tabBarState: TabBarState
 
     var body: some View {
         List {
             if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
             ForEach(viewModel.videos) { video in
@@ -17,7 +16,7 @@ struct HomeView: View {
                 } label: {
                     VideoRowView(video: video)
                 }
-                .listRowInsets(EdgeInsets(top: 4, leading: 2, bottom: 4, trailing: 2))
+                .listRowInsets(UIStyle.listRowInsets)
             }
 
             if viewModel.isLoading {
@@ -34,7 +33,10 @@ struct HomeView: View {
                     }
             }
         }
-        .navigationTitle("推荐")
+        .listStyle(.plain)
+        .coordinateSpace(name: "scroll")
+        .trackScrollOffset { tabBarState.update(offset: $0) }
+        .navigationTitle(L10n.t("home.title"))
         .task {
             await viewModel.loadInitialIfNeeded()
         }

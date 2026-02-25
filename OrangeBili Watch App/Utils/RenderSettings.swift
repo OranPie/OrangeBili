@@ -35,6 +35,10 @@ final class RenderSettings: ObservableObject {
         }
     }
 
+    @Published var resumeFromLast: Bool {
+        didSet { defaults.set(resumeFromLast, forKey: Keys.resumeFromLast) }
+    }
+
     private let defaults = UserDefaults.standard
 
     private enum Keys {
@@ -43,6 +47,7 @@ final class RenderSettings: ObservableObject {
         static let detailDescriptionLines = "render.detailDescriptionLines"
         static let commentTextScale = "render.commentTextScale"
         static let videoCardScale = "render.videoCardScale"
+        static let resumeFromLast = "render.resumeFromLast"
     }
 
     init() {
@@ -51,11 +56,13 @@ final class RenderSettings: ObservableObject {
         let savedLines = defaults.object(forKey: Keys.detailDescriptionLines) as? Int
         let savedCommentScale = defaults.object(forKey: Keys.commentTextScale) as? Double
         let savedVideoCardScale = defaults.object(forKey: Keys.videoCardScale) as? Double
+        let savedResume = defaults.object(forKey: Keys.resumeFromLast) as? Bool
 
         textScale = savedScale ?? 0.85
         compactStats = savedCompact ?? true
         detailDescriptionLines = savedLines ?? 4
         commentTextScale = savedCommentScale ?? 0.9
         videoCardScale = savedVideoCardScale ?? 0.9
+        resumeFromLast = savedResume ?? true
     }
 }

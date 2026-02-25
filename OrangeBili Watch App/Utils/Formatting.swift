@@ -3,21 +3,31 @@ import Foundation
 enum Formatting {
     private static let absoluteDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale.current
+        formatter.dateStyle = .medium
         return formatter
     }()
 
     static func count(_ value: Int) -> String {
-        if value >= 10_000 {
-            return String(format: "%.1f万", Double(value) / 10_000).replacingOccurrences(of: ".0", with: "")
+        let language = Locale.current.languageCode ?? "en"
+        if language.hasPrefix("zh") {
+            if value >= 10_000 {
+                return String(format: "%.1f万", Double(value) / 10_000).replacingOccurrences(of: ".0", with: "")
+            }
+            return "\(value)"
+        }
+        if value >= 1_000_000 {
+            return String(format: "%.1fM", Double(value) / 1_000_000).replacingOccurrences(of: ".0", with: "")
+        }
+        if value >= 1_000 {
+            return String(format: "%.1fK", Double(value) / 1_000).replacingOccurrences(of: ".0", with: "")
         }
         return "\(value)"
     }
 
     static func time(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.locale = Locale.current
         return formatter.localizedString(for: date, relativeTo: Date())
     }
 
@@ -37,5 +47,10 @@ enum Formatting {
             return String(format: "%02d:%02d", parts[0], parts[1])
         }
         return String(trimmed.prefix(8))
+    }
+
+    static func timeText(_ seconds: Int) -> String {
+        let safe = max(seconds, 0)
+        return String(format: "%02d:%02d", safe / 60, safe % 60)
     }
 }
