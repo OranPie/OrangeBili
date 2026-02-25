@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		AD6B88602F4C8279001B747F /* OrangeBili Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = AD6B885F2F4C8279001B747F /* OrangeBili Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3D215F2507B31AE47E805B63 /* OrangeBiliCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EAD18AF4681AE91C0112035 /* OrangeBiliCore */; };
+		A78D3F9DEC74A466E142D08A /* OrangeBiliUI in Frameworks */ = {isa = PBXBuildFile; productRef = CD199CF3298B8D703077C0DA /* OrangeBiliUI */; };
+		8D40E0BE7C43F707F80C1341 /* OrangeBiliCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EAD18AF4681AE91C0112035 /* OrangeBiliCore */; };
+		E619DEB8B89EE1685AD6B021 /* OrangeBiliUI in Frameworks */ = {isa = PBXBuildFile; productRef = CD199CF3298B8D703077C0DA /* OrangeBiliUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D215F2507B31AE47E805B63 /* OrangeBiliCore in Frameworks */,
+				A78D3F9DEC74A466E142D08A /* OrangeBiliUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D40E0BE7C43F707F80C1341 /* OrangeBiliCore in Frameworks */,
+				E619DEB8B89EE1685AD6B021 /* OrangeBiliUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +118,8 @@
 			);
 			name = OrangeBili;
 			packageProductDependencies = (
+				9EAD18AF4681AE91C0112035 /* OrangeBiliCore */,
+				CD199CF3298B8D703077C0DA /* OrangeBiliUI */,
 			);
 			productName = OrangeBili;
 			productReference = AD6B884F2F4C8278001B747F /* OrangeBili.app */;
@@ -132,6 +142,8 @@
 			);
 			name = "OrangeBili Watch App";
 			packageProductDependencies = (
+				9EAD18AF4681AE91C0112035 /* OrangeBiliCore */,
+				CD199CF3298B8D703077C0DA /* OrangeBiliUI */,
 			);
 			productName = "OrangeBili Watch App";
 			productReference = AD6B885F2F4C8279001B747F /* OrangeBili Watch App.app */;
@@ -165,6 +177,9 @@
 			);
 			mainGroup = AD6B88462F4C8278001B747F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C34740E1B17C7D96ED270B1B /* OrangeBiliShared */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AD6B88502F4C8278001B747F /* Products */;
 			projectDirPath = "";
@@ -217,6 +232,26 @@
 			targetProxy = AD6B88612F4C8279001B747F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C34740E1B17C7D96ED270B1B /* OrangeBiliShared */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = OrangeBiliShared;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9EAD18AF4681AE91C0112035 /* OrangeBiliCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34740E1B17C7D96ED270B1B /* OrangeBiliShared */;
+			productName = OrangeBiliCore;
+		};
+		CD199CF3298B8D703077C0DA /* OrangeBiliUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34740E1B17C7D96ED270B1B /* OrangeBiliShared */;
+			productName = OrangeBiliUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AD6B886D2F4C827A001B747F /* Debug */ = {

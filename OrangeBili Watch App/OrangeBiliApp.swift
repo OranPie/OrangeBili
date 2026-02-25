@@ -1,4 +1,6 @@
 import SwiftUI
+import OrangeBiliCore
+import OrangeBiliUI
 
 @main
 struct OrangeBili_Watch_AppApp: App {
@@ -9,6 +11,7 @@ struct OrangeBili_Watch_AppApp: App {
     @StateObject private var downloadManager = OfflineDownloadManager.shared
     @StateObject private var debugLogStore = DebugLogStore.shared
     @StateObject private var apiBackend = BiliAPIBackend.shared
+    @StateObject private var historySyncer = WatchHistorySyncer()
 
     var body: some Scene {
         WindowGroup {
@@ -20,6 +23,7 @@ struct OrangeBili_Watch_AppApp: App {
                 .environmentObject(downloadManager)
                 .environmentObject(debugLogStore)
                 .environmentObject(apiBackend)
+                .environmentObject(historySyncer)
         }
     }
 }
