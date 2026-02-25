@@ -12,6 +12,8 @@
 		A78D3F9DEC74A466E142D08A /* OrangeBiliUI in Frameworks */ = {isa = PBXBuildFile; productRef = CD199CF3298B8D703077C0DA /* OrangeBiliUI */; };
 		8D40E0BE7C43F707F80C1341 /* OrangeBiliCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EAD18AF4681AE91C0112035 /* OrangeBiliCore */; };
 		E619DEB8B89EE1685AD6B021 /* OrangeBiliUI in Frameworks */ = {isa = PBXBuildFile; productRef = CD199CF3298B8D703077C0DA /* OrangeBiliUI */; };
+		D7F6B2700DFB5584823FBD1D /* OrangeBiliCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EAD18AF4681AE91C0112035 /* OrangeBiliCore */; };
+		1993AAB51D65D60D9E585116 /* OrangeBiliUI in Frameworks */ = {isa = PBXBuildFile; productRef = CD199CF3298B8D703077C0DA /* OrangeBiliUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,7 @@
 /* Begin PBXFileReference section */
 		AD6B884F2F4C8278001B747F /* OrangeBili.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrangeBili.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD6B885F2F4C8279001B747F /* OrangeBili Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OrangeBili Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D87A8C14C6E276CF2360039 /* OrangeBiliTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrangeBiliTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +55,11 @@
 		AD6B88632F4C8279001B747F /* OrangeBili Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "OrangeBili Watch App";
+			sourceTree = "<group>";
+		};
+		AD7FFE187439B0E5237274C6 /* OrangeBiliTV */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = OrangeBiliTV;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +83,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C971301D29AF02E36894BEF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7F6B2700DFB5584823FBD1D /* OrangeBiliCore in Frameworks */,
+				1993AAB51D65D60D9E585116 /* OrangeBiliUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -83,6 +100,7 @@
 			children = (
 				AD6B88512F4C8278001B747F /* OrangeBili */,
 				AD6B88632F4C8279001B747F /* OrangeBili Watch App */,
+				AD7FFE187439B0E5237274C6 /* OrangeBiliTV */,
 				AD6B88502F4C8278001B747F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,6 +110,7 @@
 			children = (
 				AD6B884F2F4C8278001B747F /* OrangeBili.app */,
 				AD6B885F2F4C8279001B747F /* OrangeBili Watch App.app */,
+				7D87A8C14C6E276CF2360039 /* OrangeBiliTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,6 +168,30 @@
 			productReference = AD6B885F2F4C8279001B747F /* OrangeBili Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9CDCC8D1CED0D7E777C29CC0 /* OrangeBiliTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DA340A743414C3E5302302A /* Build configuration list for PBXNativeTarget "OrangeBiliTV" */;
+			buildPhases = (
+				45CFE0167AEF1BFB482C9447 /* Sources */,
+				C971301D29AF02E36894BEF3 /* Frameworks */,
+				1125F1159506FC82116BB271 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AD7FFE187439B0E5237274C6 /* OrangeBiliTV */,
+			);
+			name = OrangeBiliTV;
+			packageProductDependencies = (
+				9EAD18AF4681AE91C0112035 /* OrangeBiliCore */,
+				CD199CF3298B8D703077C0DA /* OrangeBiliUI */,
+			);
+			productName = OrangeBiliTV;
+			productReference = 7D87A8C14C6E276CF2360039 /* OrangeBiliTV.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -163,6 +206,9 @@
 						CreatedOnToolsVersion = 16.0;
 					};
 					AD6B885E2F4C8279001B747F = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					9CDCC8D1CED0D7E777C29CC0 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -187,6 +233,7 @@
 			targets = (
 				AD6B884E2F4C8278001B747F /* OrangeBili */,
 				AD6B885E2F4C8279001B747F /* OrangeBili Watch App */,
+				9CDCC8D1CED0D7E777C29CC0 /* OrangeBiliTV */,
 			);
 		};
 /* End PBXProject section */
@@ -206,6 +253,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1125F1159506FC82116BB271 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -217,6 +271,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AD6B885B2F4C8279001B747F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45CFE0167AEF1BFB482C9447 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -494,6 +555,61 @@
 			};
 			name = Release;
 		};
+		6EDFA52151788CBD1103A93E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"OrangeBiliTV/Preview Content\"";
+				DEVELOPMENT_TEAM = PXM595K4ZG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = OrangeBili;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ie.orangep.OrangeBili.tvos;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		B1955BCDFD427EFED3B417DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"OrangeBiliTV/Preview Content\"";
+				DEVELOPMENT_TEAM = PXM595K4ZG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = OrangeBili;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ie.orangep.OrangeBili.tvos;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -520,6 +636,15 @@
 			buildConfigurations = (
 				AD6B88742F4C827A001B747F /* Debug */,
 				AD6B88752F4C827A001B747F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DA340A743414C3E5302302A /* Build configuration list for PBXNativeTarget "OrangeBiliTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EDFA52151788CBD1103A93E /* Debug */,
+				B1955BCDFD427EFED3B417DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

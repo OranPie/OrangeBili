@@ -4,41 +4,13 @@ import OrangeBiliCore
 struct QRLoginExperimentalView: View {
     @EnvironmentObject private var apiBackend: BiliAPIBackend
 
-    @State private var loginMode: LoginMode = .password
     @State private var qrcodeKey = ""
     @State private var qrcodeImageURL: URL?
     @State private var statusText = L10n.t("login.qr.hint")
     @State private var isLoading = false
     @State private var pollTask: Task<Void, Never>?
 
-    @State private var username = ""
-    @State private var password = ""
-    @State private var token = ""
-    @State private var challenge = ""
-    @State private var validate = ""
-    @State private var seccode = ""
-
-    @State private var smsCid = "86"
-    @State private var smsTel = ""
-    @State private var smsCode = ""
-    @State private var smsCaptchaKey = ""
-
     private let qrService = BiliQRLoginService()
-    private let credentialService = BiliCredentialLoginService()
-
-    private enum LoginMode: CaseIterable, Identifiable {
-        case password
-        case sms
-
-        var id: String { label }
-
-        var label: String {
-            switch self {
-            case .password: return L10n.t("login.mode.password")
-            case .sms: return L10n.t("login.mode.sms")
-            }
-        }
-    }
 
     var body: some View {
         List {
@@ -110,43 +82,6 @@ struct QRLoginExperimentalView: View {
                     }
                 }
             }
-
-            Section(L10n.t("login.experimental.section")) {
-                Picker(L10n.t("login.mode"), selection: $loginMode) {
-                    ForEach(LoginMode.allCases) { mode in
-                        Text(mode.label).tag(mode)
-                    }
-                }
-                .pickerStyle(.automatic)
-
-                if loginMode == .password {
-                    TextField(L10n.t("login.username"), text: $username)
-                    TextField(L10n.t("login.password"), text: $password)
-                    TextField(L10n.t("login.token"), text: $token)
-                    TextField(L10n.t("login.challenge"), text: $challenge)
-                    TextField(L10n.t("login.validate"), text: $validate)
-                    TextField(L10n.t("login.seccode"), text: $seccode)
-
-                    Button(isLoading ? L10n.t("action.processing") : L10n.t("login.password.action")) {
-                        Task { await loginWithPassword() }
-                    }
-                    .disabled(isLoading)
-                } else {
-                    TextField(L10n.t("login.sms.cid"), text: $smsCid)
-                    TextField(L10n.t("login.sms.tel"), text: $smsTel)
-                    TextField(L10n.t("login.sms.code"), text: $smsCode)
-                    TextField(L10n.t("login.sms.captcha"), text: $smsCaptchaKey)
-
-                    Button(isLoading ? L10n.t("action.processing") : L10n.t("login.sms.action")) {
-                        Task { await loginWithSMS() }
-                    }
-                    .disabled(isLoading)
-                }
-
-                Text(L10n.t("login.experimental.hint"))
-                    .font(.system(size: 9))
-                    .foregroundStyle(.secondary)
-            }
         }
         .listStyle(.plain)
         .navigationTitle(L10n.t("login.qr.title"))
@@ -216,63 +151,6 @@ struct QRLoginExperimentalView: View {
         pollTask?.cancel()
         pollTask = nil
         statusText = status
-    }
-
-    private func loginWithPassword() async {
-        isLoading = true
-        defer { isLoading = false }
-        do {
-            let session = try await credentialService.loginByPassword(
-                .init(
-                    username: username,
-                    password: password,
-                    token: token,
-                    challenge: challenge,
-                    validate: validate,
-                    seccode: seccode
-                )
-            )
-            await apiBackend.updateLoginSession(
-                sessdata: session.sessdata,
-                biliJct: session.biliJct,
-                dedeUserID: session.dedeUserID,
-                buvid3: session.buvid3,
-                buvid4: session.buvid4
-            )
-            statusText = L10n.t("login.password.success")
-            DebugLogStore.shared.log(category: "login", message: "password login success")
-        } catch {
-            statusText = L10n.f("login.password.fail", error.localizedDescription)
-            DebugLogStore.shared.log(category: "login", message: "password login fail: \(error.localizedDescription)")
-        }
-    }
-
-    private func loginWithSMS() async {
-        isLoading = true
-        defer { isLoading = false }
-        do {
-            let session = try await credentialService.loginBySMS(
-                .init(
-                    cid: smsCid,
-                    tel: smsTel,
-                    code: smsCode,
-                    source: "main_web",
-                    captchaKey: smsCaptchaKey
-                )
-            )
-            await apiBackend.updateLoginSession(
-                sessdata: session.sessdata,
-                biliJct: session.biliJct,
-                dedeUserID: session.dedeUserID,
-                buvid3: session.buvid3,
-                buvid4: session.buvid4
-            )
-            statusText = L10n.t("login.sms.success")
-            DebugLogStore.shared.log(category: "login", message: "sms login success")
-        } catch {
-            statusText = L10n.f("login.sms.fail", error.localizedDescription)
-            DebugLogStore.shared.log(category: "login", message: "sms login fail: \(error.localizedDescription)")
-        }
     }
 
     private func makeQRCodeURL(from value: String) -> URL? {

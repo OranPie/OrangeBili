@@ -152,15 +152,6 @@
 
 "login.actions" = "操作";
 "login.challenge" = "challenge";
-"login.experimental.hint" = "提示：Web 帐密/短信登录通常还要求完整风控参数，本页为实验透传。";
-"login.experimental.section" = "帐密/短信登录(实验)";
-"login.mode" = "模式";
-"login.mode.password" = "账号";
-"login.mode.sms" = "短信";
-"login.password" = "密码(通常需RSA后值)";
-"login.password.action" = "尝试账号登录";
-"login.password.fail" = "账号登录失败：%@";
-"login.password.success" = "账号登录成功";
 "login.qr.empty" = "暂无二维码";
 "login.qr.expired" = "二维码已过期，请重新生成";
 "login.qr.generate" = "生成二维码";
@@ -177,13 +168,6 @@
 "login.qr.title" = "Watch 扫码登录";
 "login.qr.waiting" = "等待扫码...";
 "login.seccode" = "seccode";
-"login.sms.action" = "尝试短信登录";
-"login.sms.captcha" = "captcha_key";
-"login.sms.cid" = "国家码";
-"login.sms.code" = "短信验证码";
-"login.sms.fail" = "短信登录失败：%@";
-"login.sms.success" = "短信登录成功";
-"login.sms.tel" = "手机号";
 "login.status" = "状态";
 "login.status.cleared" = "已清除登录状态";
 "login.status.loggedIn" = "当前已登录";
