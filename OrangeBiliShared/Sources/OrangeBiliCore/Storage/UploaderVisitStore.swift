@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public struct UploaderVisitRecord: Identifiable, Codable, Hashable {
     public let id: Int

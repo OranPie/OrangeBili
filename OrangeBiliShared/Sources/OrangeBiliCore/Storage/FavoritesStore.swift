@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public struct FavoriteRecord: Identifiable, Codable, Hashable {
     public let id: String
@@ -102,6 +103,29 @@ public final class FavoritesStore: ObservableObject, FavoritesStoreProtocol {
             self.persist(records: updated)
             DispatchQueue.main.async {
                 self.records = updated
+            }
+        }
+    }
+
+    public func merge(records incoming: [FavoriteRecord]) {
+        queue.async { [weak self] in
+            guard let self else { return }
+            var latestByBvid: [String: FavoriteRecord] = [:]
+
+            for record in self.records + incoming {
+                if let existing = latestByBvid[record.bvid] {
+                    if record.savedAt > existing.savedAt {
+                        latestByBvid[record.bvid] = record
+                    }
+                } else {
+                    latestByBvid[record.bvid] = record
+                }
+            }
+
+            let merged = latestByBvid.values.sorted { $0.savedAt > $1.savedAt }
+            self.persist(records: merged)
+            DispatchQueue.main.async {
+                self.records = merged
             }
         }
     }

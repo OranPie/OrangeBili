@@ -5,34 +5,42 @@ struct HistoryRecordsView: View {
     @EnvironmentObject private var historyStore: HistoryStore
 
     var body: some View {
-        List {
-            if historyStore.records.isEmpty {
-                EmptyStateView(L10n.t("history.empty"), systemImage: "clock")
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if historyStore.records.isEmpty {
+                            EmptyStateView(L10n.t("history.empty"), systemImage: "clock")
+                        } else {
+                            VideoListingView(videos: historyStore.records.map(\.asVideo), rowInsets: nil) { video in
+                                if let record = historyStore.records.first(where: { $0.bvid == video.bvid }), record.progressSeconds > 0 {
+                                    Text(L10n.f("history.lastProgress", Formatting.timeText(record.progressSeconds)))
+                                        .font(.system(size: UIStyle.fontSize(8)))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
+                }
             } else {
-                ForEach(historyStore.records) { record in
-                    NavigationLink {
-                        VideoDetailView(seedVideo: record.asVideo)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            VideoRowView(video: record.asVideo)
-                            if record.progressSeconds > 0 {
+                List {
+                    if historyStore.records.isEmpty {
+                        EmptyStateView(L10n.t("history.empty"), systemImage: "clock")
+                    } else {
+                        VideoListingView(videos: historyStore.records.map(\.asVideo)) { video in
+                            if let record = historyStore.records.first(where: { $0.bvid == video.bvid }), record.progressSeconds > 0 {
                                 Text(L10n.f("history.lastProgress", Formatting.timeText(record.progressSeconds)))
-                                    .font(.system(size: 8))
+                                    .font(.system(size: UIStyle.fontSize(8)))
                                     .foregroundStyle(.secondary)
                             }
                         }
                     }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            historyStore.delete(id: record.id)
-                        } label: {
-                            Label(L10n.t("action.delete"), systemImage: "trash")
-                        }
-                    }
                 }
+                .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .navigationTitle(L10n.t("history.title"))
     }
 }

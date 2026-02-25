@@ -272,6 +272,8 @@ public struct CompanionCommand: Codable {
     public enum Kind: String, Codable {
         case requestAuthState
         case syncHistory
+        case syncFavorites
+        case syncAccount
     }
 
     public let kind: Kind

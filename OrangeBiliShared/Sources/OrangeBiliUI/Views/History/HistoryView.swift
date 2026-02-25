@@ -13,6 +13,7 @@ struct HistoryView: View {
     @State private var cacheSizeBytes = 0
 
     var body: some View {
+
         List {
             Section {
                 NavigationLink {
@@ -126,7 +127,7 @@ struct HistoryView: View {
                 .font(.caption2)
             }
         }
-        .font(.system(size: 11))
+        .font(.system(size: UIStyle.fontSize(11)))
         .listStyle(.plain)
         .coordinateSpace(name: "scroll")
         .trackScrollOffset { tabBarState.update(offset: $0) }
@@ -168,22 +169,32 @@ private struct JumpToolsView: View {
     @State private var jumpUploaderMid: Int?
     @State private var jumpUploaderActive = false
 
+
+    @ViewBuilder
+    private func jumpTextField(_ title: String, text: Binding<String>) -> some View {
+#if os(macOS)
+        TextField(title, text: text)
+            .autocorrectionDisabled(true)
+            .font(Font.system(size: UIStyle.fontSize(11), weight: .regular, design: .monospaced))
+#else
+        TextField(title, text: text)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
+            .font(Font.system(size: UIStyle.fontSize(11), weight: .regular, design: .monospaced))
+#endif
+    }
+
     var body: some View {
+
         List {
             Section {
-                TextField(L10n.t("tools.jump.bvid"), text: $jumpBVID)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .font(.system(size: 11, design: .monospaced))
+                jumpTextField(L10n.t("tools.jump.bvid"), text: $jumpBVID)
 
                 Button(L10n.t("tools.jump.openVideo")) {
                     openBV()
                 }
 
-                TextField(L10n.t("tools.jump.uid"), text: $jumpUID)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .font(.system(size: 11, design: .monospaced))
+                jumpTextField(L10n.t("tools.jump.uid"), text: $jumpUID)
 
                 Button(L10n.t("tools.jump.openUploader")) {
                     openUID()
@@ -255,35 +266,35 @@ private struct LocalFavoritesView: View {
     @EnvironmentObject private var favoritesStore: FavoritesStore
 
     var body: some View {
-        List {
-            if favoritesStore.records.isEmpty {
-                EmptyStateView(L10n.t("favorites.empty"), systemImage: "heart")
-            } else {
-                ForEach(favoritesStore.records) { record in
-                    NavigationLink {
-                        VideoDetailView(seedVideo: record.asVideo)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(record.title)
-                                .font(.caption2)
-                                .lineLimit(2)
-                            Text("\(record.author) · \(record.bvid)")
-                                .font(.system(size: 9, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
+
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if favoritesStore.records.isEmpty {
+                            EmptyStateView(L10n.t("favorites.empty"), systemImage: "heart")
+                        } else {
+                            VideoListingView(videos: favoritesStore.records.map(\.asVideo), rowInsets: nil) { _ in
+                                EmptyView()
+                            }
                         }
                     }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            favoritesStore.remove(bvid: record.bvid)
-                        } label: {
-                            Label(L10n.t("action.delete"), systemImage: "trash")
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
+                }
+            } else {
+                List {
+                    if favoritesStore.records.isEmpty {
+                        EmptyStateView(L10n.t("favorites.empty"), systemImage: "heart")
+                    } else {
+                        VideoListingView(videos: favoritesStore.records.map(\.asVideo)) { _ in
+                            EmptyView()
                         }
                     }
                 }
+                .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .navigationTitle(L10n.t("favorites.local.title"))
     }
 }
@@ -292,6 +303,7 @@ private struct ActiveDownloadsView: View {
     @EnvironmentObject private var downloadManager: OfflineDownloadManager
 
     var body: some View {
+
         List {
             if activeDownloads.isEmpty {
                 EmptyStateView(L10n.t("downloads.active.empty"), systemImage: "arrow.down.circle")
@@ -302,16 +314,17 @@ private struct ActiveDownloadsView: View {
                             .font(.caption2)
                             .lineLimit(2)
                         Text(item.bvid)
-                            .font(.system(size: 8, design: .monospaced))
+                            .font(.system(size: UIStyle.fontSize(8), design: .monospaced))
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.middle)
 
                         Text(L10n.f("downloads.active.status", stateText(item.state), Int(item.progress * 100), formatBytes(Int(item.speedBytesPerSec))))
-                            .font(.system(size: 8))
+                            .font(.system(size: UIStyle.fontSize(8)))
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
+#if !os(tvOS)
                     .swipeActions {
                         if item.state == .downloading || item.state == .queued {
                             Button(L10n.t("action.cancel"), role: .destructive) {
@@ -324,6 +337,7 @@ private struct ActiveDownloadsView: View {
                             Label(L10n.t("action.delete"), systemImage: "trash")
                         }
                     }
+#endif
                 }
             }
         }
@@ -360,6 +374,7 @@ private struct CompletedDownloadsView: View {
     @EnvironmentObject private var downloadManager: OfflineDownloadManager
 
     var body: some View {
+
         List {
             if completedDownloads.isEmpty {
                 EmptyStateView(L10n.t("downloads.completed.empty"), systemImage: "checkmark.circle")
@@ -381,7 +396,7 @@ private struct CompletedDownloadsView: View {
                                     .font(.caption2)
                                     .lineLimit(2)
                                 Text(item.bvid)
-                                    .font(.system(size: 8, design: .monospaced))
+                                    .font(.system(size: UIStyle.fontSize(8), design: .monospaced))
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
                                     .truncationMode(.middle)

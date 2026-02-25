@@ -67,28 +67,50 @@ private struct CloudFavoriteFolderDetailView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        List {
-            if let errorMessage, videos.isEmpty {
-                EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
-            }
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if let errorMessage, videos.isEmpty {
+                            EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
+                        }
 
-            ForEach(videos) { video in
-                NavigationLink {
-                    VideoDetailView(seedVideo: video)
-                } label: {
-                    VideoRowView(video: video)
-                }
-            }
+                        VideoListingView(videos: videos, rowInsets: nil) { _ in
+                            EmptyView()
+                        }
 
-            if isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
+                        if isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        }
+                    }
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
                 }
+            } else {
+                List {
+                    if let errorMessage, videos.isEmpty {
+                        EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
+                    }
+
+                    VideoListingView(videos: videos) { _ in
+                        EmptyView()
+                    }
+
+                    if isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    }
+                }
+                .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .navigationTitle(folder.title)
         .task {
             await loadVideos()

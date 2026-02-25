@@ -24,14 +24,15 @@ struct UploaderVisitHistoryView: View {
                                 Text(record.name)
                                     .font(.caption2)
                                 Text(L10n.f("label.uid", record.id))
-                                    .font(.system(size: 8.5, design: .monospaced))
+                                    .font(.system(size: UIStyle.fontSize(8.5), design: .monospaced))
                                     .foregroundStyle(.secondary)
                                 Text(Formatting.time(record.visitedAt))
-                                    .font(.system(size: 8))
+                                    .font(.system(size: UIStyle.fontSize(8)))
                                     .foregroundStyle(.secondary)
                             }
                         }
                     }
+#if !os(tvOS)
                     .swipeActions {
                         Button(role: .destructive) {
                             store.delete(id: record.id)
@@ -39,6 +40,7 @@ struct UploaderVisitHistoryView: View {
                             Label(L10n.t("action.delete"), systemImage: "trash")
                         }
                     }
+#endif
                 }
             }
 

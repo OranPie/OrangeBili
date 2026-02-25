@@ -18,17 +18,17 @@ struct SummaryCard: View {
         HStack(spacing: 8) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.system(size: UIStyle.compactIconSize, weight: .semibold))
-                    .frame(width: 16)
+                    .font(.system(size: UIStyle.fontSize(UIStyle.compactIconSize), weight: .semibold))
+                    .frame(width: UIStyle.fontSize(20))
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.caption)
+                    .font(.system(size: UIStyle.fontSize(12), weight: .semibold))
                     .lineLimit(1)
                 if let subtitle, !subtitle.isEmpty {
                     Text(subtitle)
-                        .font(.system(size: 9))
+                        .font(.system(size: UIStyle.fontSize(10)))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
@@ -38,12 +38,15 @@ struct SummaryCard: View {
 
             if let trailing, !trailing.isEmpty {
                 Text(trailing)
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: UIStyle.fontSize(10), weight: .semibold))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
         }
         .padding(UIStyle.cardPadding)
         .background(Color.gray.opacity(0.14), in: RoundedRectangle(cornerRadius: UIStyle.cardCornerRadius))
+#if os(tvOS)
+        .frame(minHeight: UIStyle.buttonMinSize)
+#endif
     }
 }

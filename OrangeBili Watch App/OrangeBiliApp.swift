@@ -4,14 +4,40 @@ import OrangeBiliUI
 
 @main
 struct OrangeBili_Watch_AppApp: App {
-    @StateObject private var historyStore = HistoryStore()
-    @StateObject private var renderSettings = RenderSettings()
-    @StateObject private var favoritesStore = FavoritesStore()
-    @StateObject private var uploaderVisitStore = UploaderVisitStore()
-    @StateObject private var downloadManager = OfflineDownloadManager.shared
-    @StateObject private var debugLogStore = DebugLogStore.shared
-    @StateObject private var apiBackend = BiliAPIBackend.shared
-    @StateObject private var historySyncer = WatchHistorySyncer()
+    @StateObject private var historyStore: HistoryStore
+    @StateObject private var renderSettings: RenderSettings
+    @StateObject private var favoritesStore: FavoritesStore
+    @StateObject private var uploaderVisitStore: UploaderVisitStore
+    @StateObject private var downloadManager: OfflineDownloadManager
+    @StateObject private var debugLogStore: DebugLogStore
+    @StateObject private var apiBackend: BiliAPIBackend
+    @StateObject private var historySyncer: WatchHistorySyncer
+    @StateObject private var companionSyncer: WatchCompanionSyncer
+
+    init() {
+        let historyStore = HistoryStore()
+        let renderSettings = RenderSettings()
+        let favoritesStore = FavoritesStore()
+        let uploaderVisitStore = UploaderVisitStore()
+        let downloadManager = OfflineDownloadManager.shared
+        let debugLogStore = DebugLogStore.shared
+        let apiBackend = BiliAPIBackend.shared
+        let historySyncer = WatchHistorySyncer()
+
+        _historyStore = StateObject(wrappedValue: historyStore)
+        _renderSettings = StateObject(wrappedValue: renderSettings)
+        _favoritesStore = StateObject(wrappedValue: favoritesStore)
+        _uploaderVisitStore = StateObject(wrappedValue: uploaderVisitStore)
+        _downloadManager = StateObject(wrappedValue: downloadManager)
+        _debugLogStore = StateObject(wrappedValue: debugLogStore)
+        _apiBackend = StateObject(wrappedValue: apiBackend)
+        _historySyncer = StateObject(wrappedValue: historySyncer)
+        _companionSyncer = StateObject(wrappedValue: WatchCompanionSyncer(
+            historyStore: historyStore,
+            favoritesStore: favoritesStore,
+            apiBackend: apiBackend
+        ))
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +50,7 @@ struct OrangeBili_Watch_AppApp: App {
                 .environmentObject(debugLogStore)
                 .environmentObject(apiBackend)
                 .environmentObject(historySyncer)
+                .environmentObject(companionSyncer)
         }
     }
 }

@@ -1,12 +1,15 @@
 import Foundation
-import SwiftUI
+import Combine
 
 @MainActor
 public final class RenderSettings: ObservableObject {
+    private var isUpdating = false
+
     @Published public var textScale: Double {
         didSet {
-            textScale = min(max(textScale, 0.65), 1.35)
-            defaults.set(textScale, forKey: Keys.textScale)
+            if let clamped = clamp(textScale, min: 0.65, max: 1.35, for: Keys.textScale) {
+                textScale = clamped
+            }
         }
     }
 
@@ -16,22 +19,25 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var detailDescriptionLines: Int {
         didSet {
-            detailDescriptionLines = min(max(detailDescriptionLines, 2), 8)
-            defaults.set(detailDescriptionLines, forKey: Keys.detailDescriptionLines)
+            if let clamped = clamp(detailDescriptionLines, min: 2, max: 8, for: Keys.detailDescriptionLines) {
+                detailDescriptionLines = clamped
+            }
         }
     }
 
     @Published public var commentTextScale: Double {
         didSet {
-            commentTextScale = min(max(commentTextScale, 0.65), 1.4)
-            defaults.set(commentTextScale, forKey: Keys.commentTextScale)
+            if let clamped = clamp(commentTextScale, min: 0.65, max: 1.4, for: Keys.commentTextScale) {
+                commentTextScale = clamped
+            }
         }
     }
 
     @Published public var videoCardScale: Double {
         didSet {
-            videoCardScale = min(max(videoCardScale, 0.75), 1.05)
-            defaults.set(videoCardScale, forKey: Keys.videoCardScale)
+            if let clamped = clamp(videoCardScale, min: 0.75, max: 1.05, for: Keys.videoCardScale) {
+                videoCardScale = clamped
+            }
         }
     }
 
@@ -45,22 +51,25 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var danmakuOpacity: Double {
         didSet {
-            danmakuOpacity = min(max(danmakuOpacity, 0.2), 1.0)
-            defaults.set(danmakuOpacity, forKey: Keys.danmakuOpacity)
+            if let clamped = clamp(danmakuOpacity, min: 0.2, max: 1.0, for: Keys.danmakuOpacity) {
+                danmakuOpacity = clamped
+            }
         }
     }
 
     @Published public var danmakuScale: Double {
         didSet {
-            danmakuScale = min(max(danmakuScale, 0.6), 1.6)
-            defaults.set(danmakuScale, forKey: Keys.danmakuScale)
+            if let clamped = clamp(danmakuScale, min: 0.6, max: 1.6, for: Keys.danmakuScale) {
+                danmakuScale = clamped
+            }
         }
     }
 
     @Published public var danmakuSpeed: Double {
         didSet {
-            danmakuSpeed = min(max(danmakuSpeed, 0.5), 2.0)
-            defaults.set(danmakuSpeed, forKey: Keys.danmakuSpeed)
+            if let clamped = clamp(danmakuSpeed, min: 0.5, max: 2.0, for: Keys.danmakuSpeed) {
+                danmakuSpeed = clamped
+            }
         }
     }
 
@@ -86,15 +95,17 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var danmakuDensity: Int {
         didSet {
-            danmakuDensity = min(max(danmakuDensity, 1), 5)
-            defaults.set(danmakuDensity, forKey: Keys.danmakuDensity)
+            if let clamped = clamp(danmakuDensity, min: 1, max: 5, for: Keys.danmakuDensity) {
+                danmakuDensity = clamped
+            }
         }
     }
 
     @Published public var danmakuMaxLines: Int {
         didSet {
-            danmakuMaxLines = min(max(danmakuMaxLines, 1), 6)
-            defaults.set(danmakuMaxLines, forKey: Keys.danmakuMaxLines)
+            if let clamped = clamp(danmakuMaxLines, min: 1, max: 6, for: Keys.danmakuMaxLines) {
+                danmakuMaxLines = clamped
+            }
         }
     }
 
@@ -163,11 +174,28 @@ public final class RenderSettings: ObservableObject {
         let savedSearchQuery = defaults.object(forKey: Keys.danmakuSearchQuery) as? String
         let savedSearchOnly = defaults.object(forKey: Keys.danmakuSearchOnly) as? Bool
 
-        textScale = savedScale ?? 0.85
+        #if os(tvOS)
+        let defaultTextScale = 1.05
+        let defaultCommentScale = 1.0
+        let defaultVideoCardScale = 1.0
+        let defaultDetailLines = 5
+        #elseif os(macOS)
+        let defaultTextScale = 1.0
+        let defaultCommentScale = 0.95
+        let defaultVideoCardScale = 0.95
+        let defaultDetailLines = 5
+        #else
+        let defaultTextScale = 0.9
+        let defaultCommentScale = 0.9
+        let defaultVideoCardScale = 0.9
+        let defaultDetailLines = 4
+        #endif
+
+        textScale = savedScale ?? defaultTextScale
         compactStats = savedCompact ?? true
-        detailDescriptionLines = savedLines ?? 4
-        commentTextScale = savedCommentScale ?? 0.9
-        videoCardScale = savedVideoCardScale ?? 0.9
+        detailDescriptionLines = savedLines ?? defaultDetailLines
+        commentTextScale = savedCommentScale ?? defaultCommentScale
+        videoCardScale = savedVideoCardScale ?? defaultVideoCardScale
         resumeFromLast = savedResume ?? true
         danmakuEnabled = savedDanmakuEnabled ?? false
         danmakuOpacity = savedDanmakuOpacity ?? 0.85
@@ -184,6 +212,18 @@ public final class RenderSettings: ObservableObject {
         danmakuUserHashBlocklist = savedUserHashBlocklist ?? ""
         danmakuSearchQuery = savedSearchQuery ?? ""
         danmakuSearchOnly = savedSearchOnly ?? false
+    }
+    private func clamp<T: Comparable>(_ value: T, min lower: T, max upper: T, for key: String) -> T? {
+        if isUpdating {
+            defaults.set(value, forKey: key)
+            return nil
+        }
+        let clamped = Swift.min(Swift.max(value, lower), upper)
+        defaults.set(clamped, forKey: key)
+        guard clamped != value else { return nil }
+        isUpdating = true
+        defer { isUpdating = false }
+        return clamped
     }
 }
 

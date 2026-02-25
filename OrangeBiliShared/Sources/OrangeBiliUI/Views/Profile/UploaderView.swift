@@ -10,94 +10,179 @@ struct UploaderView: View {
     }
 
     var body: some View {
-        List {
-            if let uploader = viewModel.uploader {
-                Section {
-                    HStack(spacing: 8) {
-                        AsyncCachedImage(url: uploader.avatarURL) {
-                            Circle().fill(.gray.opacity(0.3))
-                        }
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if let uploader = viewModel.uploader {
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 8) {
+                                    AsyncCachedImage(url: uploader.avatarURL) {
+                                        Circle().fill(.gray.opacity(0.3))
+                                    }
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(uploader.name)
-                                .font(.caption)
-                                .bold()
-                            Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                            Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                            Text(L10n.f("label.uid", uploader.id))
-                                .font(.system(size: 9, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    if !uploader.signature.isEmpty {
-                        Text(uploader.signature)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(3)
-                    }
-                }
-
-                Section(L10n.t("uploader.content")) {
-                    NavigationLink(L10n.t("uploader.videos")) {
-                        UploaderVideosView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
-                    }
-                    NavigationLink(L10n.t("uploader.articles")) {
-                        UploaderArticlesView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
-                    }
-                }
-
-                if !viewModel.recentVideos.isEmpty {
-                    Section(L10n.t("uploader.latestVideos")) {
-                        ForEach(viewModel.recentVideos) { video in
-                            NavigationLink {
-                                VideoDetailView(seedVideo: video)
-                            } label: {
-                                VideoRowView(video: video)
-                            }
-                        }
-                    }
-                }
-
-                if !viewModel.recentArticles.isEmpty {
-                    Section(L10n.t("uploader.latestArticles")) {
-                        ForEach(viewModel.recentArticles) { article in
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(article.title)
-                                    .font(.caption2)
-                                    .lineLimit(2)
-                                if !article.summary.isEmpty {
-                                    Text(article.summary)
-                                        .font(.system(size: 8))
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(2)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(uploader.name)
+                                            .font(.caption)
+                                            .bold()
+                                        Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        Text(L10n.f("label.uid", uploader.id))
+                                            .font(.system(size: 9, design: .monospaced))
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
-                                if let published = article.publishedAt {
-                                    Text(L10n.f("label.published", Formatting.absoluteDate(published)))
-                                        .font(.system(size: 8))
+
+                                if !uploader.signature.isEmpty {
+                                    Text(uploader.signature)
+                                        .font(.caption2)
                                         .foregroundStyle(.secondary)
+                                        .lineLimit(3)
                                 }
                             }
+
+                            sectionHeader(L10n.t("uploader.content"))
+                            NavigationLink(L10n.t("uploader.videos")) {
+                                UploaderVideosView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
+                            }
+                            NavigationLink(L10n.t("uploader.articles")) {
+                                UploaderArticlesView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
+                            }
+
+                            if !viewModel.recentVideos.isEmpty {
+                                sectionHeader(L10n.t("uploader.latestVideos"))
+                                VideoListingView(videos: viewModel.recentVideos, rowInsets: nil) { _ in
+                                    EmptyView()
+                                }
+                            }
+
+                            if !viewModel.recentArticles.isEmpty {
+                                sectionHeader(L10n.t("uploader.latestArticles"))
+                                ForEach(viewModel.recentArticles) { article in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(article.title)
+                                            .font(.caption2)
+                                            .lineLimit(2)
+                                        if !article.summary.isEmpty {
+                                            Text(article.summary)
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(.secondary)
+                                                .lineLimit(2)
+                                        }
+                                        if let published = article.publishedAt {
+                                            Text(L10n.f("label.published", Formatting.absoluteDate(published)))
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                }
+                            }
+                        } else if viewModel.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else {
+                            EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
                         }
                     }
-                }
-            } else if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
                 }
             } else {
-                EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
+                List {
+                    if let uploader = viewModel.uploader {
+                        Section {
+                            HStack(spacing: 8) {
+                                AsyncCachedImage(url: uploader.avatarURL) {
+                                    Circle().fill(.gray.opacity(0.3))
+                                }
+                                .frame(width: 40, height: 40)
+                                .clipShape(Circle())
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(uploader.name)
+                                        .font(.caption)
+                                        .bold()
+                                    Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    Text(L10n.f("label.uid", uploader.id))
+                                        .font(.system(size: 9, design: .monospaced))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+
+                            if !uploader.signature.isEmpty {
+                                Text(uploader.signature)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(3)
+                            }
+                        }
+
+                        Section(L10n.t("uploader.content")) {
+                            NavigationLink(L10n.t("uploader.videos")) {
+                                UploaderVideosView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
+                            }
+                            NavigationLink(L10n.t("uploader.articles")) {
+                                UploaderArticlesView(mid: viewModel.uploaderMid, uploaderName: uploader.name)
+                            }
+                        }
+
+                        if !viewModel.recentVideos.isEmpty {
+                            Section(L10n.t("uploader.latestVideos")) {
+                                VideoListingView(videos: viewModel.recentVideos) { _ in
+                                    EmptyView()
+                                }
+                            }
+                        }
+
+                        if !viewModel.recentArticles.isEmpty {
+                            Section(L10n.t("uploader.latestArticles")) {
+                                ForEach(viewModel.recentArticles) { article in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(article.title)
+                                            .font(.caption2)
+                                            .lineLimit(2)
+                                        if !article.summary.isEmpty {
+                                            Text(article.summary)
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(.secondary)
+                                                .lineLimit(2)
+                                        }
+                                        if let published = article.publishedAt {
+                                            Text(L10n.f("label.published", Formatting.absoluteDate(published)))
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else {
+                        EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
+                    }
+                }
+                .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .navigationTitle(L10n.t("uploader.title"))
         .task {
             await viewModel.load()
@@ -105,6 +190,13 @@ struct UploaderView: View {
                 visitStore.save(profile: uploader)
             }
         }
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.headline)
+            .padding(.top, 4)
     }
 }
 
@@ -121,34 +213,62 @@ private struct UploaderVideosView: View {
     }
 
     var body: some View {
-        List {
-            if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
-                EmptyStateView(error, systemImage: "exclamationmark.triangle")
-            }
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
+                            EmptyStateView(error, systemImage: "exclamationmark.triangle")
+                        }
 
-            ForEach(viewModel.videos) { video in
-                NavigationLink {
-                    VideoDetailView(seedVideo: video)
-                } label: {
-                    VideoRowView(video: video)
-                }
-            }
+                        VideoListingView(videos: viewModel.videos, rowInsets: nil) { _ in
+                            EmptyView()
+                        }
 
-            if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                }
-            } else if !viewModel.videos.isEmpty {
-                Color.clear
-                    .frame(height: 1)
-                    .onAppear {
-                        Task { await viewModel.loadMore() }
+                        if viewModel.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else if !viewModel.videos.isEmpty {
+                            Color.clear
+                                .frame(height: 1)
+                                .onAppear {
+                                    Task { await viewModel.loadMore() }
+                                }
+                        }
                     }
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
+                }
+            } else {
+                List {
+                    if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
+                        EmptyStateView(error, systemImage: "exclamationmark.triangle")
+                    }
+
+                    VideoListingView(videos: viewModel.videos) { _ in
+                        EmptyView()
+                    }
+
+                    if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else if !viewModel.videos.isEmpty {
+                        Color.clear
+                            .frame(height: 1)
+                            .onAppear {
+                                Task { await viewModel.loadMore() }
+                            }
+                    }
+                }
+                .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .navigationTitle(L10n.f("uploader.videos.title", uploaderName))
         .task {
             await viewModel.loadInitialIfNeeded()

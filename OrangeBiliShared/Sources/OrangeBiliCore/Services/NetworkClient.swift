@@ -4,6 +4,11 @@ protocol NetworkClientProtocol {
     func request<T: Decodable>(_ endpoint: BiliEndpoint, as type: T.Type) async throws -> T
 }
 
+private struct FriendlyNetworkError: LocalizedError {
+    let message: String
+    var errorDescription: String? { message }
+}
+
 struct NetworkClient: NetworkClientProtocol {
     struct RetryPolicy {
         let maxAttempts: Int
@@ -94,7 +99,11 @@ struct NetworkClient: NetworkClientProtocol {
                 log(debugCategory, "network ok endpoint=\(endpoint.path) attempt=\(attempt), bytes=\(data.count)")
                 return decoded
             } catch {
-                lastError = error
+                if let tlsMessage = tlsFriendlyMessage(from: error) {
+                    lastError = FriendlyNetworkError(message: tlsMessage)
+                } else {
+                    lastError = error
+                }
                 log(debugCategory, "attempt=\(attempt) fail endpoint=\(endpoint.path): \(describe(error))")
                 if attempt < retryPolicy.maxAttempts, shouldRetry(error: error) {
                     let delay = retryDelay(forAttempt: attempt)
@@ -176,7 +185,13 @@ struct NetworkClient: NetworkClientProtocol {
 
         if let urlError = error as? URLError {
             switch urlError.code {
-            case .timedOut, .cannotConnectToHost, .networkConnectionLost, .notConnectedToInternet, .cannotFindHost, .dnsLookupFailed:
+            // Offline/DNS failures should surface immediately instead of feeling "stuck" in retries.
+            case .notConnectedToInternet, .cannotFindHost, .dnsLookupFailed:
+                return false
+            // TLS certificate/handshake failures are deterministic in current environment.
+            case .secureConnectionFailed, .serverCertificateHasBadDate, .serverCertificateHasUnknownRoot, .serverCertificateNotYetValid, .serverCertificateUntrusted, .clientCertificateRejected, .clientCertificateRequired:
+                return false
+            case .timedOut, .cannotConnectToHost, .networkConnectionLost:
                 return true
             default:
                 return false
@@ -203,6 +218,16 @@ struct NetworkClient: NetworkClientProtocol {
             return "URLError(\(urlError.code.rawValue)): \(urlError.localizedDescription)"
         }
         return error.localizedDescription
+    }
+
+    private func tlsFriendlyMessage(from error: Error) -> String? {
+        guard let urlError = error as? URLError else { return nil }
+        switch urlError.code {
+        case .secureConnectionFailed, .serverCertificateHasBadDate, .serverCertificateHasUnknownRoot, .serverCertificateNotYetValid, .serverCertificateUntrusted, .clientCertificateRejected, .clientCertificateRequired:
+            return "TLS 握手失败（证书不被当前设备信任）。请检查系统时间、VPN/代理抓包证书，或先在同设备 Safari 打开 https://api.bilibili.com 验证证书链。"
+        default:
+            return nil
+        }
     }
 
     private func isUnauthorized(_ error: Error) -> Bool {

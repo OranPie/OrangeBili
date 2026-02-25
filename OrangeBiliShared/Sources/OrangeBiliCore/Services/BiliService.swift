@@ -221,12 +221,19 @@ private struct LossyInt: Decodable {
         if let intValue = try? container.decode(Int.self) {
             value = intValue
         } else if let int64Value = try? container.decode(Int64.self) {
-            value = Int(int64Value)
+            value = Int(exactly: int64Value) ?? (int64Value > 0 ? Int.max : Int.min)
         } else if let doubleValue = try? container.decode(Double.self) {
-            value = Int(doubleValue)
+            if !doubleValue.isFinite {
+                value = 0
+            } else if doubleValue >= Double(Int.max) {
+                value = Int.max
+            } else if doubleValue <= Double(Int.min) {
+                value = Int.min
+            } else {
+                value = Int(doubleValue)
+            }
         } else if let stringValue = try? container.decode(String.self) {
-            let digits = stringValue.replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
-            value = Int(digits) ?? 0
+            value = stringValue.boundedIntValue ?? 0
         } else {
             value = 0
         }
@@ -234,6 +241,25 @@ private struct LossyInt: Decodable {
 
     init(_ value: Int) {
         self.value = value
+    }
+}
+
+private extension String {
+    var boundedIntValue: Int? {
+        let digits = replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
+        guard !digits.isEmpty else { return nil }
+        if let parsed = Int(digits) {
+            return parsed
+        }
+        if let parsed64 = Int64(digits) {
+            return Int(exactly: parsed64) ?? (parsed64 > 0 ? Int.max : Int.min)
+        }
+        if let parsedDouble = Double(digits), parsedDouble.isFinite {
+            if parsedDouble >= Double(Int.max) { return Int.max }
+            if parsedDouble <= Double(Int.min) { return Int.min }
+            return Int(parsedDouble)
+        }
+        return nil
     }
 }
 

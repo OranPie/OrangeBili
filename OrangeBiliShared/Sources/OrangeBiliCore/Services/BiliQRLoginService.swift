@@ -22,7 +22,7 @@ public struct BiliQRLoginService {
 
     public func generate() async throws -> QRLoginGenerateResult {
         let request = try makeRequest(path: "/x/passport-login/web/qrcode/generate", query: [:])
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await fetchData(for: request)
         let envelope = try JSONDecoder().decode(GenerateEnvelope.self, from: data)
         guard envelope.code == 0, let body = envelope.data else {
             throw BiliError.apiError(code: envelope.code, message: envelope.message)
@@ -32,7 +32,7 @@ public struct BiliQRLoginService {
 
     public func poll(qrcodeKey: String) async throws -> QRLoginPollResult {
         let request = try makeRequest(path: "/x/passport-login/web/qrcode/poll", query: ["qrcode_key": qrcodeKey])
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await fetchData(for: request)
         let envelope = try JSONDecoder().decode(PollEnvelope.self, from: data)
         guard envelope.code == 0, let body = envelope.data else {
             throw BiliError.apiError(code: envelope.code, message: envelope.message)
@@ -94,6 +94,23 @@ public struct BiliQRLoginService {
             buvid3: cookieMap["buvid3"],
             buvid4: cookieMap["buvid4"]
         )
+    }
+
+    private func fetchData(for request: URLRequest) async throws -> (Data, URLResponse) {
+        try await withCheckedThrowingContinuation { continuation in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let data, let response else {
+                    continuation.resume(throwing: URLError(.badServerResponse))
+                    return
+                }
+                continuation.resume(returning: (data, response))
+            }
+            task.resume()
+        }
     }
 }
 

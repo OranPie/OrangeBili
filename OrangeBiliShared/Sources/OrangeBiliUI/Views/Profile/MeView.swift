@@ -40,7 +40,7 @@ struct MeView: View {
                 }
             }
         }
-        .font(.system(size: 11))
+        .font(.system(size: UIStyle.fontSize(11)))
         .listStyle(.plain)
         .coordinateSpace(name: "scroll")
         .trackScrollOffset { tabBarState.update(offset: $0) }
@@ -103,7 +103,35 @@ private struct RenderSettingsView: View {
                     Text(L10n.f("render.textScale", String(format: "%.2f", render.textScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+#if os(tvOS)
+                    HStack(spacing: 12) {
+                        Button {
+                            render.textScale = max(0.65, render.textScale - 0.05)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+
+                        Text(String(format: "%.2f", render.textScale))
+                            .font(.caption2)
+                            .frame(minWidth: 40)
+
+                        Button {
+                            render.textScale = min(1.35, render.textScale + 0.05)
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+                    }
+#else
                     Slider(value: $render.textScale, in: 0.65 ... 1.35, step: 0.05)
+#endif
                 }
 
                 Toggle(L10n.t("render.compact"), isOn: $render.compactStats)
@@ -127,6 +155,9 @@ private struct RenderSettingsView: View {
                         Image(systemName: "minus.circle.fill")
                     }
                     .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
 
                     Text("\(render.detailDescriptionLines)")
                         .font(.caption2)
@@ -140,20 +171,79 @@ private struct RenderSettingsView: View {
                         Image(systemName: "plus.circle.fill")
                     }
                     .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L10n.f("render.commentScale", String(format: "%.2f", render.commentTextScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+#if os(tvOS)
+                    HStack(spacing: 12) {
+                        Button {
+                            render.commentTextScale = max(0.65, render.commentTextScale - 0.05)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+
+                        Text(String(format: "%.2f", render.commentTextScale))
+                            .font(.caption2)
+                            .frame(minWidth: 40)
+
+                        Button {
+                            render.commentTextScale = min(1.4, render.commentTextScale + 0.05)
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+                    }
+#else
                     Slider(value: $render.commentTextScale, in: 0.65 ... 1.4, step: 0.05)
+#endif
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L10n.f("render.cardScale", String(format: "%.2f", render.videoCardScale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+#if os(tvOS)
+                    HStack(spacing: 12) {
+                        Button {
+                            render.videoCardScale = max(0.75, render.videoCardScale - 0.05)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+
+                        Text(String(format: "%.2f", render.videoCardScale))
+                            .font(.caption2)
+                            .frame(minWidth: 40)
+
+                        Button {
+                            render.videoCardScale = min(1.05, render.videoCardScale + 0.05)
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+#if os(tvOS)
+                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+#endif
+                    }
+#else
                     Slider(value: $render.videoCardScale, in: 0.75 ... 1.05, step: 0.05)
+#endif
                 }
             }
         }

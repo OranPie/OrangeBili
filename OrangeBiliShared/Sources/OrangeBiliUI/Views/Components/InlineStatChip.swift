@@ -11,7 +11,7 @@ struct InlineStatChip: View {
             Text(text)
                 .lineLimit(1)
         }
-        .font(.system(size: 8.5, weight: .medium))
+        .font(.system(size: UIStyle.fontSize(9.5), weight: .medium))
         .padding(UIStyle.chipPadding)
         .background(Color.gray.opacity(0.15), in: Capsule())
     }

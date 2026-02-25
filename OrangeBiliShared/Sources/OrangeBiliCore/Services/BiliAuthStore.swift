@@ -52,7 +52,11 @@ public actor BiliAuthStore {
 
     public func loggedInMid() -> Int? {
         guard let raw = session?.dedeUserID?.nonEmpty else { return nil }
-        return Int(raw)
+        return raw.boundedIntValue
+    }
+
+    public func currentSession() -> BiliLoginSession? {
+        session
     }
 
     func cookieHeader(for endpoint: BiliEndpoint) -> String? {
@@ -86,5 +90,18 @@ private extension String {
     var nonEmpty: String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    var boundedIntValue: Int? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if let parsed = Int(trimmed) {
+            return parsed
+        }
+        if let parsed64 = Int64(trimmed),
+           let exact = Int(exactly: parsed64) {
+            return exact
+        }
+        return nil
     }
 }

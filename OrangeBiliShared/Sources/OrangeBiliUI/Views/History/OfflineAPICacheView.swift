@@ -37,13 +37,14 @@ struct OfflineAPICacheView: View {
                     ForEach(cacheEntries) { entry in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(entry.shortKey)
-                                .font(.system(size: 8, design: .monospaced))
+                                .font(.system(size: UIStyle.fontSize(8), design: .monospaced))
                                 .lineLimit(1)
                                 .truncationMode(.middle)
                             Text("\(formatBytes(entry.fileSize)) · \(Formatting.time(entry.updatedAt))")
-                                .font(.system(size: 8))
+                                .font(.system(size: UIStyle.fontSize(8)))
                                 .foregroundStyle(.secondary)
                         }
+#if !os(tvOS)
                         .swipeActions {
                             Button(role: .destructive) {
                                 Task {
@@ -55,6 +56,7 @@ struct OfflineAPICacheView: View {
                                 Label(L10n.t("action.delete"), systemImage: "trash")
                             }
                         }
+#endif
                     }
                 }
 

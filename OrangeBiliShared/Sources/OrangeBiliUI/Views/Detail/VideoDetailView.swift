@@ -29,6 +29,7 @@ struct VideoDetailView: View {
     @State private var tags: [String] = []
 
     var body: some View {
+        let platformScale = UIStyle.platformScale * UIStyle.platformScale
         List {
             if let detail = viewModel.detail {
                 Section {
@@ -37,11 +38,16 @@ struct VideoDetailView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(.gray.opacity(0.3))
                         }
-                        .frame(height: 76)
+                        .aspectRatio(16 / 9, contentMode: .fit)
+#if os(tvOS)
+                        .frame(height: 360)
+#else
+                        .frame(height: 120)
+#endif
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                         Text(detail.title)
-                            .font(.system(size: 11.5 * render.textScale, weight: .semibold))
+                            .font(.system(size: 11.5 * render.textScale * platformScale, weight: .semibold))
                             .lineLimit(2)
 
                         HStack(spacing: 4) {
@@ -52,11 +58,11 @@ struct VideoDetailView: View {
                         if !detail.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             CompactDisclosure {
                                 Text(L10n.t("detail.description"))
-                                    .font(.caption2)
+                                    .font(.system(size: 8.5 * render.textScale * platformScale))
                                     .foregroundStyle(.secondary)
                             } content: {
                                 Text(detail.description)
-                                    .font(.system(size: 9 * render.textScale))
+                                    .font(.system(size: 9 * render.textScale * platformScale))
                                     .foregroundStyle(.secondary)
                                     .lineLimit(min(render.detailDescriptionLines, 4))
                             }
@@ -74,7 +80,7 @@ struct VideoDetailView: View {
 
                         CompactDisclosure {
                             Text(L10n.t("detail.stats.more"))
-                                .font(.caption2)
+                                .font(.system(size: 8.5 * render.textScale * platformScale))
                                 .foregroundStyle(.secondary)
                         } content: {
                             HStack(spacing: 6) {
@@ -90,12 +96,7 @@ struct VideoDetailView: View {
 
                 if !tags.isEmpty {
                     Section(L10n.t("detail.tags")) {
-                        let firstLine = Array(tags.prefix(4))
-                        let secondLine = Array(tags.dropFirst(4).prefix(4))
-                        compactTagLine(firstLine)
-                        if !secondLine.isEmpty {
-                            compactTagLine(secondLine)
-                        }
+                        compactTagLine(tags)
                     }
                 }
 
@@ -103,6 +104,50 @@ struct VideoDetailView: View {
                     let downloadedItem = localDownloadedItem(for: detail.bvid)
                     let activeStatus = activeDownloadStatus(for: detail.bvid)
 
+#if os(tvOS)
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            Button {
+                                favoritesStore.toggle(video: seedVideo.with(cid: detail.cid))
+                            } label: {
+                                compactActionTile(
+                                    title: favoritesStore.isFavorite(bvid: seedVideo.bvid) ? L10n.t("action.unfavorite") : L10n.t("action.favorite"),
+                                    systemImage: favoritesStore.isFavorite(bvid: seedVideo.bvid) ? "heart.slash.fill" : "heart.fill"
+                                )
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                Task { await startOfflineDownload(detail: detail) }
+                            } label: {
+                                compactActionTile(
+                                    title: downloadedItem != nil ? L10n.t("detail.downloaded") : L10n.t("action.download"),
+                                    systemImage: downloadedItem != nil ? "checkmark.circle.fill" : "arrow.down.circle"
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(downloadedItem != nil || activeStatus != nil)
+                        }
+
+                        HStack(spacing: 10) {
+                            if let local = downloadedItem {
+                                NavigationLink {
+                                    VideoPlayerView(video: seedVideo.with(cid: detail.cid), cid: detail.cid, localFileURL: local.localFileURL)
+                                } label: {
+                                    compactActionTile(title: L10n.t("action.play.offline"), systemImage: "play.circle.fill")
+                                }
+                                .buttonStyle(.plain)
+                            } else {
+                                NavigationLink {
+                                    VideoPlayerView(video: seedVideo.with(cid: detail.cid), cid: detail.cid)
+                                } label: {
+                                    compactActionTile(title: L10n.t("action.play"), systemImage: "play.fill")
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+#else
                     HStack(spacing: 6) {
                         Button {
                             favoritesStore.toggle(video: seedVideo.with(cid: detail.cid))
@@ -141,6 +186,7 @@ struct VideoDetailView: View {
                             .buttonStyle(.plain)
                         }
                     }
+#endif
 
                     HStack(spacing: 6) {
                         Button {
@@ -190,7 +236,7 @@ struct VideoDetailView: View {
                             Text(formatBytes(Int(status.speedBytesPerSec)) + "/s")
                                 .lineLimit(1)
                         }
-                        .font(.system(size: 8.5 * render.textScale))
+                        .font(.system(size: 8.5 * render.textScale * platformScale))
                         .foregroundStyle(.secondary)
                     } else if downloadedItem != nil {
                         HStack(spacing: 4) {
@@ -198,13 +244,13 @@ struct VideoDetailView: View {
                             Text(L10n.t("detail.downloaded.local"))
                                 .lineLimit(1)
                         }
-                        .font(.system(size: 8.5 * render.textScale))
+                        .font(.system(size: 8.5 * render.textScale * platformScale))
                         .foregroundStyle(.secondary)
                     }
 
                     if let actionStatus {
                         Text(actionStatus)
-                            .font(.system(size: 8.5 * render.textScale))
+                            .font(.system(size: 8.5 * render.textScale * platformScale))
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
@@ -219,6 +265,7 @@ struct VideoDetailView: View {
                 EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
             }
         }
+        .font(.system(size: UIStyle.normalTextSize))
         .listStyle(.plain)
         .navigationTitle(L10n.t("detail.title"))
         .task {
@@ -247,16 +294,17 @@ struct VideoDetailView: View {
 
     @ViewBuilder
     private func metaChip(label: String, value: String, monospaced: Bool) -> some View {
+        let platformScale = UIStyle.platformScale * UIStyle.platformScale
         HStack(spacing: 2) {
                 Text(label)
-                .font(.system(size: 7.5 * render.textScale, weight: .bold))
+                .font(.system(size: 7.5 * render.textScale * platformScale, weight: .bold))
                 Text(value)
-                .font(.system(size: 7.5 * render.textScale, weight: .medium, design: monospaced ? .monospaced : .default))
+                .font(.system(size: 7.5 * render.textScale * platformScale, weight: .medium, design: monospaced ? .monospaced : .default))
                 .lineLimit(1)
                 .truncationMode(.middle)
         }
-        .padding(.horizontal, 5)
-        .padding(.vertical, 1.5)
+        .padding(.horizontal, UIStyle.chipPadding.leading)
+        .padding(.vertical, UIStyle.chipPadding.top)
         .background(Color.gray.opacity(0.14), in: Capsule())
     }
 
@@ -284,15 +332,22 @@ struct VideoDetailView: View {
 
     @ViewBuilder
     private func compactActionTile(title: String, systemImage: String) -> some View {
+        let platformScale = UIStyle.platformScale * UIStyle.platformScale
         HStack(spacing: 4) {
             Image(systemName: systemImage)
             Text(title)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
         }
-        .font(.system(size: 8.8 * render.textScale, weight: .semibold))
-        .frame(maxWidth: .infinity, minHeight: 24)
+        .font(.system(size: 10.5 * render.textScale * platformScale, weight: .semibold))
+#if os(tvOS)
+        .frame(maxWidth: .infinity, minHeight: UIStyle.buttonMinSize)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+#else
+        .frame(maxWidth: .infinity, minHeight: 28)
         .padding(.horizontal, 4)
+#endif
         .background(Color.gray.opacity(0.14), in: RoundedRectangle(cornerRadius: 7))
     }
 
@@ -340,21 +395,22 @@ struct VideoDetailView: View {
 
     @ViewBuilder
     private func compactTagLine(_ keywords: [String]) -> some View {
-        HStack(spacing: 5) {
-            ForEach(keywords, id: \.self) { keyword in
-                Button {
-                    destination = .tag(keyword)
-                } label: {
-                    Text("#\(keyword)")
-                        .font(.system(size: 8.2 * render.textScale, weight: .semibold))
-                        .lineLimit(1)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.gray.opacity(0.15), in: Capsule())
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 5) {
+                ForEach(keywords, id: \.self) { keyword in
+                    Button {
+                        destination = .tag(keyword)
+                    } label: {
+                        Text("#\(keyword)")
+                            .font(.system(size: 10 * render.textScale * UIStyle.platformScale * UIStyle.platformScale, weight: .semibold))
+                            .lineLimit(1)
+                            .padding(.horizontal, UIStyle.chipPadding.leading)
+                            .padding(.vertical, UIStyle.chipPadding.top)
+                            .background(Color.gray.opacity(0.15), in: Capsule())
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
-            Spacer(minLength: 0)
         }
     }
 
@@ -399,33 +455,63 @@ private struct TagVideosView: View {
     @State private var hasMore = true
 
     var body: some View {
-        List {
-            if let errorMessage, videos.isEmpty {
-                Text(errorMessage)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
+        Group {
+            if case .grid = UIStyle.videoLayout {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
+                        if let errorMessage, videos.isEmpty {
+                            Text(errorMessage)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
 
-            ForEach(videos) { video in
-                NavigationLink {
-                    VideoDetailView(seedVideo: video)
-                } label: {
-                    VideoRowView(video: video)
-                }
-            }
+                        VideoListingView(videos: videos, rowInsets: nil) { _ in
+                            EmptyView()
+                        }
 
-            if isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                }
-            } else if !videos.isEmpty, hasMore {
-                Color.clear
-                    .frame(height: 1)
-                    .onAppear {
-                        Task { await loadMore() }
+                        if isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else if !videos.isEmpty, hasMore {
+                            Color.clear
+                                .frame(height: 1)
+                                .onAppear {
+                                    Task { await loadMore() }
+                                }
+                        }
                     }
+                    .padding(.horizontal, UIStyle.listRowInsets.leading)
+                    .padding(.vertical, UIStyle.listRowInsets.top)
+                }
+            } else {
+                List {
+                    if let errorMessage, videos.isEmpty {
+                        Text(errorMessage)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    VideoListingView(videos: videos) { _ in
+                        EmptyView()
+                    }
+
+                    if isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else if !videos.isEmpty, hasMore {
+                        Color.clear
+                            .frame(height: 1)
+                            .onAppear {
+                                Task { await loadMore() }
+                            }
+                    }
+                }
             }
         }
         .navigationTitle("#\(keyword)")

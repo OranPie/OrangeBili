@@ -1,5 +1,6 @@
 import AVFoundation
 import Foundation
+import Combine
 
 @MainActor
 public final class PlayerViewModel: ObservableObject {
@@ -177,11 +178,20 @@ public final class PlayerViewModel: ObservableObject {
     private func observeProgress() {
         observer = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { [weak self] time in
             guard let self else { return }
-            self.progressSeconds = Int(time.seconds)
+            if let safeProgress = Self.safeIntFromDouble(time.seconds) {
+                self.progressSeconds = safeProgress
+            }
             let duration = self.player?.currentItem?.duration.seconds ?? .nan
-            if duration.isFinite, duration > 0 {
-                self.totalDurationSeconds = Int(duration)
+            if let safeDuration = Self.safeIntFromDouble(duration), safeDuration > 0 {
+                self.totalDurationSeconds = safeDuration
             }
         }
+    }
+
+    private static func safeIntFromDouble(_ value: Double) -> Int? {
+        guard value.isFinite else { return nil }
+        if value >= Double(Int.max) { return Int.max }
+        if value <= Double(Int.min) { return Int.min }
+        return Int(value)
     }
 }

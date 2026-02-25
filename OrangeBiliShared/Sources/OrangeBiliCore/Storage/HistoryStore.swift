@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public protocol HistoryStoreProtocol {
     func loadRecords() -> [HistoryRecord]
@@ -68,6 +69,30 @@ public final class HistoryStore: ObservableObject, HistoryStoreProtocol {
             self.persist(records: filtered)
             DispatchQueue.main.async {
                 self.records = filtered
+            }
+        }
+    }
+
+    public func merge(records incoming: [HistoryRecord]) {
+        queue.async { [weak self] in
+            guard let self else { return }
+            var latestByBvid: [String: HistoryRecord] = [:]
+
+            for record in self.records + incoming {
+                if let existing = latestByBvid[record.bvid] {
+                    if record.watchedAt > existing.watchedAt {
+                        latestByBvid[record.bvid] = record
+                    }
+                } else {
+                    latestByBvid[record.bvid] = record
+                }
+            }
+
+            let merged = latestByBvid.values.sorted { $0.watchedAt > $1.watchedAt }
+            let trimmed = Array(merged.prefix(200))
+            self.persist(records: trimmed)
+            DispatchQueue.main.async {
+                self.records = trimmed
             }
         }
     }
