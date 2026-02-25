@@ -273,6 +273,9 @@ struct VideoDetailView: View {
                 headers: headers,
                 coverURL: detail.coverURL
             )
+            Task {
+                _ = try? await DanmakuService.shared.fetchDanmaku(cid: detail.cid)
+            }
         } catch {
             DebugLogStore.shared.log(category: "download", message: "start fail \(detail.bvid): \(error.localizedDescription)")
         }

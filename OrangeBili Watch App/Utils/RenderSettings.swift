@@ -39,6 +39,81 @@ final class RenderSettings: ObservableObject {
         didSet { defaults.set(resumeFromLast, forKey: Keys.resumeFromLast) }
     }
 
+    @Published var danmakuEnabled: Bool {
+        didSet { defaults.set(danmakuEnabled, forKey: Keys.danmakuEnabled) }
+    }
+
+    @Published var danmakuOpacity: Double {
+        didSet {
+            danmakuOpacity = min(max(danmakuOpacity, 0.2), 1.0)
+            defaults.set(danmakuOpacity, forKey: Keys.danmakuOpacity)
+        }
+    }
+
+    @Published var danmakuScale: Double {
+        didSet {
+            danmakuScale = min(max(danmakuScale, 0.6), 1.6)
+            defaults.set(danmakuScale, forKey: Keys.danmakuScale)
+        }
+    }
+
+    @Published var danmakuSpeed: Double {
+        didSet {
+            danmakuSpeed = min(max(danmakuSpeed, 0.5), 2.0)
+            defaults.set(danmakuSpeed, forKey: Keys.danmakuSpeed)
+        }
+    }
+
+    @Published var danmakuAreaRaw: String {
+        didSet { defaults.set(danmakuAreaRaw, forKey: Keys.danmakuAreaRaw) }
+    }
+
+    @Published var danmakuAllowTop: Bool {
+        didSet { defaults.set(danmakuAllowTop, forKey: Keys.danmakuAllowTop) }
+    }
+
+    @Published var danmakuAllowBottom: Bool {
+        didSet { defaults.set(danmakuAllowBottom, forKey: Keys.danmakuAllowBottom) }
+    }
+
+    @Published var danmakuAllowScroll: Bool {
+        didSet { defaults.set(danmakuAllowScroll, forKey: Keys.danmakuAllowScroll) }
+    }
+
+    @Published var danmakuUseOriginalColor: Bool {
+        didSet { defaults.set(danmakuUseOriginalColor, forKey: Keys.danmakuUseOriginalColor) }
+    }
+
+    @Published var danmakuDensity: Int {
+        didSet {
+            danmakuDensity = min(max(danmakuDensity, 1), 5)
+            defaults.set(danmakuDensity, forKey: Keys.danmakuDensity)
+        }
+    }
+
+    @Published var danmakuMaxLines: Int {
+        didSet {
+            danmakuMaxLines = min(max(danmakuMaxLines, 1), 6)
+            defaults.set(danmakuMaxLines, forKey: Keys.danmakuMaxLines)
+        }
+    }
+
+    @Published var danmakuKeywordBlocklist: String {
+        didSet { defaults.set(danmakuKeywordBlocklist, forKey: Keys.danmakuKeywordBlocklist) }
+    }
+
+    @Published var danmakuUserHashBlocklist: String {
+        didSet { defaults.set(danmakuUserHashBlocklist, forKey: Keys.danmakuUserHashBlocklist) }
+    }
+
+    @Published var danmakuSearchQuery: String {
+        didSet { defaults.set(danmakuSearchQuery, forKey: Keys.danmakuSearchQuery) }
+    }
+
+    @Published var danmakuSearchOnly: Bool {
+        didSet { defaults.set(danmakuSearchOnly, forKey: Keys.danmakuSearchOnly) }
+    }
+
     private let defaults = UserDefaults.standard
 
     private enum Keys {
@@ -48,6 +123,21 @@ final class RenderSettings: ObservableObject {
         static let commentTextScale = "render.commentTextScale"
         static let videoCardScale = "render.videoCardScale"
         static let resumeFromLast = "render.resumeFromLast"
+        static let danmakuEnabled = "render.danmaku.enabled"
+        static let danmakuOpacity = "render.danmaku.opacity"
+        static let danmakuScale = "render.danmaku.scale"
+        static let danmakuSpeed = "render.danmaku.speed"
+        static let danmakuAreaRaw = "render.danmaku.area"
+        static let danmakuAllowTop = "render.danmaku.allowTop"
+        static let danmakuAllowBottom = "render.danmaku.allowBottom"
+        static let danmakuAllowScroll = "render.danmaku.allowScroll"
+        static let danmakuUseOriginalColor = "render.danmaku.useOriginalColor"
+        static let danmakuDensity = "render.danmaku.density"
+        static let danmakuMaxLines = "render.danmaku.maxLines"
+        static let danmakuKeywordBlocklist = "render.danmaku.keywordBlocklist"
+        static let danmakuUserHashBlocklist = "render.danmaku.userHashBlocklist"
+        static let danmakuSearchQuery = "render.danmaku.searchQuery"
+        static let danmakuSearchOnly = "render.danmaku.searchOnly"
     }
 
     init() {
@@ -57,6 +147,21 @@ final class RenderSettings: ObservableObject {
         let savedCommentScale = defaults.object(forKey: Keys.commentTextScale) as? Double
         let savedVideoCardScale = defaults.object(forKey: Keys.videoCardScale) as? Double
         let savedResume = defaults.object(forKey: Keys.resumeFromLast) as? Bool
+        let savedDanmakuEnabled = defaults.object(forKey: Keys.danmakuEnabled) as? Bool
+        let savedDanmakuOpacity = defaults.object(forKey: Keys.danmakuOpacity) as? Double
+        let savedDanmakuScale = defaults.object(forKey: Keys.danmakuScale) as? Double
+        let savedDanmakuSpeed = defaults.object(forKey: Keys.danmakuSpeed) as? Double
+        let savedDanmakuArea = defaults.object(forKey: Keys.danmakuAreaRaw) as? String
+        let savedAllowTop = defaults.object(forKey: Keys.danmakuAllowTop) as? Bool
+        let savedAllowBottom = defaults.object(forKey: Keys.danmakuAllowBottom) as? Bool
+        let savedAllowScroll = defaults.object(forKey: Keys.danmakuAllowScroll) as? Bool
+        let savedUseColor = defaults.object(forKey: Keys.danmakuUseOriginalColor) as? Bool
+        let savedDensity = defaults.object(forKey: Keys.danmakuDensity) as? Int
+        let savedMaxLines = defaults.object(forKey: Keys.danmakuMaxLines) as? Int
+        let savedKeywordBlocklist = defaults.object(forKey: Keys.danmakuKeywordBlocklist) as? String
+        let savedUserHashBlocklist = defaults.object(forKey: Keys.danmakuUserHashBlocklist) as? String
+        let savedSearchQuery = defaults.object(forKey: Keys.danmakuSearchQuery) as? String
+        let savedSearchOnly = defaults.object(forKey: Keys.danmakuSearchOnly) as? Bool
 
         textScale = savedScale ?? 0.85
         compactStats = savedCompact ?? true
@@ -64,5 +169,27 @@ final class RenderSettings: ObservableObject {
         commentTextScale = savedCommentScale ?? 0.9
         videoCardScale = savedVideoCardScale ?? 0.9
         resumeFromLast = savedResume ?? true
+        danmakuEnabled = savedDanmakuEnabled ?? false
+        danmakuOpacity = savedDanmakuOpacity ?? 0.85
+        danmakuScale = savedDanmakuScale ?? 1.0
+        danmakuSpeed = savedDanmakuSpeed ?? 1.0
+        danmakuAreaRaw = savedDanmakuArea ?? DanmakuArea.full.rawValue
+        danmakuAllowTop = savedAllowTop ?? true
+        danmakuAllowBottom = savedAllowBottom ?? true
+        danmakuAllowScroll = savedAllowScroll ?? true
+        danmakuUseOriginalColor = savedUseColor ?? true
+        danmakuDensity = savedDensity ?? 3
+        danmakuMaxLines = savedMaxLines ?? 3
+        danmakuKeywordBlocklist = savedKeywordBlocklist ?? ""
+        danmakuUserHashBlocklist = savedUserHashBlocklist ?? ""
+        danmakuSearchQuery = savedSearchQuery ?? ""
+        danmakuSearchOnly = savedSearchOnly ?? false
+    }
+}
+
+extension RenderSettings {
+    var danmakuArea: DanmakuArea {
+        get { DanmakuArea(rawValue: danmakuAreaRaw) ?? .full }
+        set { danmakuAreaRaw = newValue.rawValue }
     }
 }

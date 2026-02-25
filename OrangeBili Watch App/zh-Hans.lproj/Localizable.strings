@@ -80,6 +80,30 @@
 "detail.title" = "详情";
 "detail.uploader" = "UP主";
 
+"danmaku.title" = "弹幕";
+"danmaku.section.basic" = "基础";
+"danmaku.section.position" = "位置";
+"danmaku.section.display" = "显示";
+"danmaku.section.filter" = "过滤";
+"danmaku.enable" = "启用弹幕";
+"danmaku.opacity" = "透明度 %@";
+"danmaku.scale" = "字号 %@";
+"danmaku.speed" = "速度 %@";
+"danmaku.area" = "显示区域";
+"danmaku.area.full" = "全屏";
+"danmaku.area.top" = "上半屏";
+"danmaku.area.bottom" = "下半屏";
+"danmaku.allow.scroll" = "允许滚动";
+"danmaku.allow.top" = "允许顶部";
+"danmaku.allow.bottom" = "允许底部";
+"danmaku.color.original" = "使用原始颜色";
+"danmaku.density" = "密度";
+"danmaku.maxLines" = "最大行数";
+"danmaku.block.keywords" = "屏蔽关键词(逗号)";
+"danmaku.block.users" = "屏蔽用户hash(逗号)";
+"danmaku.search.query" = "搜索关键词";
+"danmaku.search.only" = "仅显示搜索";
+
 "downloads.active.empty" = "暂无下载任务";
 "downloads.active.status" = "%@ · %d%% · %@/s";
 "downloads.active.title" = "下载任务";

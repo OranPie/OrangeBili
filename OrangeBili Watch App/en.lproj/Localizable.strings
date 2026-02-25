@@ -80,6 +80,30 @@
 "detail.title" = "Detail";
 "detail.uploader" = "Uploader";
 
+"danmaku.title" = "Danmaku";
+"danmaku.section.basic" = "Basics";
+"danmaku.section.position" = "Position";
+"danmaku.section.display" = "Display";
+"danmaku.section.filter" = "Filters";
+"danmaku.enable" = "Enable danmaku";
+"danmaku.opacity" = "Opacity %@";
+"danmaku.scale" = "Size %@";
+"danmaku.speed" = "Speed %@";
+"danmaku.area" = "Area";
+"danmaku.area.full" = "Full";
+"danmaku.area.top" = "Top";
+"danmaku.area.bottom" = "Bottom";
+"danmaku.allow.scroll" = "Allow scroll";
+"danmaku.allow.top" = "Allow top";
+"danmaku.allow.bottom" = "Allow bottom";
+"danmaku.color.original" = "Use original color";
+"danmaku.density" = "Density";
+"danmaku.maxLines" = "Max lines";
+"danmaku.block.keywords" = "Block keywords (comma)";
+"danmaku.block.users" = "Block user hash (comma)";
+"danmaku.search.query" = "Search keyword";
+"danmaku.search.only" = "Show search only";
+
 "downloads.active.empty" = "No active downloads";
 "downloads.active.status" = "%@ · %d%% · %@/s";
 "downloads.active.title" = "Active Downloads";

@@ -108,6 +108,10 @@ private struct RenderSettingsView: View {
                 Toggle(L10n.t("render.compact"), isOn: $render.compactStats)
                 Toggle(L10n.t("render.resume"), isOn: $render.resumeFromLast)
 
+                NavigationLink(L10n.t("danmaku.title")) {
+                    DanmakuSettingsView()
+                }
+
                 HStack(spacing: 8) {
                     Text(L10n.t("render.descriptionLines"))
                         .font(.caption2)

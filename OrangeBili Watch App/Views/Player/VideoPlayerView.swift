@@ -7,6 +7,7 @@ struct VideoPlayerView: View {
     @EnvironmentObject private var historyStore: HistoryStore
     @EnvironmentObject private var render: RenderSettings
     @StateObject private var viewModel: PlayerViewModel
+    @StateObject private var danmakuViewModel = DanmakuViewModel()
     @State private var controlsVisible = true
     @State private var resumeSeconds: Int?
     @State private var showResumePrompt = false
@@ -50,7 +51,17 @@ struct VideoPlayerView: View {
         }
         .task {
             await viewModel.load()
+            if render.danmakuEnabled {
+                await danmakuViewModel.load(cid: viewModel.cid)
+            }
             await checkResume()
+        }
+        .onChange(of: render.danmakuEnabled) { _, enabled in
+            if enabled {
+                Task { await danmakuViewModel.load(cid: viewModel.cid) }
+            } else {
+                danmakuViewModel.reset()
+            }
         }
         .onDisappear {
             historyStore.savePlayback(video: viewModel.video, progressSeconds: viewModel.progressSeconds)
@@ -73,6 +84,13 @@ struct VideoPlayerView: View {
                             controlsVisible.toggle()
                         }
                     }
+
+                if render.danmakuEnabled {
+                    DanmakuOverlayView(
+                        viewModel: danmakuViewModel,
+                        currentTime: Double(viewModel.progressSeconds)
+                    )
+                }
 
                 if controlsVisible {
                     controlsPanel
@@ -148,6 +166,12 @@ struct VideoPlayerView: View {
                     Text(String(format: "%.2gx", viewModel.playbackRate))
                         .font(.system(size: 9, weight: .semibold))
                         .frame(minWidth: 34)
+                }
+
+                Button {
+                    render.danmakuEnabled.toggle()
+                } label: {
+                    Image(systemName: render.danmakuEnabled ? "text.bubble.fill" : "text.bubble")
                 }
 
                 Button {
