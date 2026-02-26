@@ -113,7 +113,7 @@ public struct ContentView: View {
 
     #if os(watchOS)
     private var bottomBar: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             if tabBarState.isCollapsed {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -121,9 +121,9 @@ public struct ContentView: View {
                     }
                 } label: {
                     Image(systemName: "chevron.up")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: 9, weight: .semibold))
                         .foregroundStyle(.white)
-                        .frame(width: 32, height: 16)
+                        .frame(width: 28, height: 12)
                         .background(.black.opacity(0.8), in: Capsule())
                 }
                 .buttonStyle(.plain)
@@ -135,19 +135,21 @@ public struct ContentView: View {
                                 selectedTab = tab
                             }
                         } label: {
-                            VStack(spacing: 2) {
+                            HStack(spacing: 3) {
                                 Image(systemName: tab.icon)
-                                    .font(.system(size: 12, weight: .semibold))
-                                Text(tab.title)
-                                    .font(.system(size: 10, weight: .medium))
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.8)
+                                    .font(.system(size: 10, weight: .semibold))
+                                if selectedTab == tab {
+                                    Text(tab.title)
+                                        .font(.system(size: 8, weight: .semibold))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.75)
+                                }
                             }
-                            .frame(maxWidth: .infinity, minHeight: 34)
-                            .padding(.vertical, 2)
+                            .frame(maxWidth: .infinity, minHeight: 24)
+                            .padding(.vertical, 1)
                             .foregroundStyle(selectedTab == tab ? Color.black : Color.white)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: 6)
                                     .fill(selectedTab == tab ? Theme.accent : Color.clear)
                             )
                             .contentShape(Rectangle())
@@ -155,26 +157,23 @@ public struct ContentView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, 6)
-                .padding(.top, 5)
-                .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 10))
-                .onLongPressGesture {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        tabBarState.toggle()
+                .padding(.horizontal, 4)
+                .padding(.vertical, 3)
+                .background(.black.opacity(0.78), in: RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .trailing) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            tabBarState.isCollapsed = true
+                        }
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.9))
+                            .frame(width: 14, height: 14)
                     }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 2)
                 }
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        tabBarState.isCollapsed = true
-                    }
-                } label: {
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.9))
-                        .frame(height: 12)
-                }
-                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 4)
