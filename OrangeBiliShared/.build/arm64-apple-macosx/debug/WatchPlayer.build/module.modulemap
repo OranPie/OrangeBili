@@ -1,4 +1,0 @@
-module WatchPlayer {
-    header "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayer-Swift.h"
-    requires objc
-}

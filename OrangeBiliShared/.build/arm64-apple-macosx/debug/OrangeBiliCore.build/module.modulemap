@@ -1,4 +1,0 @@
-module OrangeBiliCore {
-    header "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OrangeBiliCore-Swift.h"
-    requires objc
-}

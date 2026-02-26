@@ -13,13 +13,14 @@ Languages: Swift 5.9+, localized in English and Simplified Chinese.
 All builds use Xcode project (`OrangeBili.xcodeproj`). The shared framework resolves automatically as a local SPM package.
 
 ```bash
-# watchOS (primary platform)
+# watchOS (primary platform) — ARCHS=arm64 required, FFmpeg libs are arm64-only
 xcodebuild -project "OrangeBili.xcodeproj" \
   -scheme "OrangeBili Watch App" \
   -configuration Debug -sdk watchsimulator \
   -destination "generic/platform=watchOS Simulator" \
   -derivedDataPath "./DerivedData" \
-  CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+  CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+  ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
 
 # iOS Companion
 xcodebuild -project "OrangeBili.xcodeproj" \

@@ -12,3 +12,6 @@ build/
 # Python
 __pycache__/
 *.pyc
+
+# SwiftPM
+OrangeBiliShared/.build/
