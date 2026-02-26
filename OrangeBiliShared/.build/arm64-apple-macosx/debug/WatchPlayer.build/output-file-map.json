@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/master.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchPlayer/WatchPlayerView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView.swiftdeps"
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "": {
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/master.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/ShimmerModifier.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/SkeletonViews.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/ScrollOffset.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/TabBarState.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/Theme.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/UIStyle.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentDetailView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentsView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/AsyncCachedImage.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/CompactDisclosure.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/EmptyStateView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/InlineStatChip.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/SummaryCard.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoListingView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoRowView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/ContentView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/GlobalLogView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchSoftDecodePoCView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchVideoProbeLabView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Detail/VideoDetailView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/DanmakuCacheView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryRecordsView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineAPICacheView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineVideoManageView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Home/HomeView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/DanmakuOverlayView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/PlayerControlsPanel.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/VideoPlayerView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/AboutView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/CloudFavoritesView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/DanmakuSettingsView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/FollowingListView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/MeView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/QRLoginExperimentalView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/SettingsView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderVisitHistoryView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/VideoFeatureCompactView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Search/SearchView.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView.swiftdeps"
+  },
+  "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DerivedSources/resource_bundle_accessor.swift": {
+    "dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor.d",
+    "object": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor.swiftdeps"
+  }
+}

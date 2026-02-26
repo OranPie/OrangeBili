@@ -16,10 +16,12 @@ struct VideoListingView<Subtitle: View>: View {
         self.subtitle = subtitle
     }
 
+    @State private var initialLoadComplete = false
+
     var body: some View {
         switch UIStyle.videoLayout {
         case .row:
-            ForEach(videos) { video in
+            ForEach(Array(videos.enumerated()), id: \.element.id) { index, video in
                 NavigationLink {
                     VideoDetailView(seedVideo: video)
                 } label: {
@@ -29,6 +31,17 @@ struct VideoListingView<Subtitle: View>: View {
                     }
                 }
                 .listRowInsets(rowInsets ?? UIStyle.listRowInsets)
+                .opacity(initialLoadComplete ? 1 : 0)
+                .offset(y: initialLoadComplete ? 0 : 12)
+                .animation(
+                    .easeOut(duration: 0.25).delay(Double(min(index, 8)) * 0.04),
+                    value: initialLoadComplete
+                )
+            }
+            .onAppear {
+                if !initialLoadComplete {
+                    initialLoadComplete = true
+                }
             }
         case let .grid(columns):
             VideoGridView(videos: videos, columns: columns, rowInsets: rowInsets, subtitle: subtitle)

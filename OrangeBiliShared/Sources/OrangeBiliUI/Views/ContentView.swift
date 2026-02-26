@@ -53,6 +53,31 @@ public struct ContentView: View {
                 bottomBar
             }
         }
+        #elseif os(macOS)
+        NavigationSplitView {
+            List(selection: $selectedTab) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    Label(tab.title, systemImage: tab.icon)
+                        .tag(tab)
+                }
+            }
+            .navigationTitle("OrangeBili")
+            .listStyle(.sidebar)
+        } detail: {
+            NavigationStack {
+                switch selectedTab {
+                case .home:
+                    HomeView()
+                case .search:
+                    SearchView(viewModel: searchViewModel)
+                case .history:
+                    HistoryView()
+                case .me:
+                    MeView()
+                }
+            }
+            .environmentObject(tabBarState)
+        }
         #else
         TabView(selection: $selectedTab) {
             NavigationStack {
@@ -86,6 +111,7 @@ public struct ContentView: View {
         #endif
     }
 
+    #if os(watchOS)
     private var bottomBar: some View {
         VStack(spacing: 4) {
             if tabBarState.isCollapsed {
@@ -122,7 +148,7 @@ public struct ContentView: View {
                             .foregroundStyle(selectedTab == tab ? Color.black : Color.white)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedTab == tab ? Color.white : Color.clear)
+                                    .fill(selectedTab == tab ? Theme.accent : Color.clear)
                             )
                             .contentShape(Rectangle())
                         }
@@ -155,4 +181,5 @@ public struct ContentView: View {
         .padding(.bottom, 2)
         .sensoryFeedback(.selection, trigger: selectedTab)
     }
+    #endif
 }

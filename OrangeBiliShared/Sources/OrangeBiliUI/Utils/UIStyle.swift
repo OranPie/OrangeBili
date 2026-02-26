@@ -10,6 +10,8 @@ enum UIStyle {
     static var videoLayout: VideoLayout {
 #if os(tvOS)
         return .grid(columns: 2)
+#elseif os(macOS)
+        return .grid(columns: 3)
 #else
         return .row
 #endif
@@ -19,7 +21,7 @@ enum UIStyle {
     static let videoTitleScale: CGFloat = 1.2
 
     #if os(watchOS)
-    static let platformScale: CGFloat = 0.9
+    static let platformScale: CGFloat = 0.95
     #elseif os(tvOS)
     static let platformScale: CGFloat = 1.35
     static let buttonMinSize: CGFloat = 52
@@ -55,6 +57,15 @@ enum UIStyle {
     static let compactRowSpacing: CGFloat = 14
     static let compactIconSize: CGFloat = 18
     static let disclosureSpacing: CGFloat = 10
+    #elseif os(macOS)
+    static let listRowInsets = EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+    static let cardPadding = EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14)
+    static let cardCornerRadius: CGFloat = 12
+    static let chipCornerRadius: CGFloat = 10
+    static let chipPadding = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+    static let compactRowSpacing: CGFloat = 10
+    static let compactIconSize: CGFloat = 14
+    static let disclosureSpacing: CGFloat = 8
     #else
     static let listRowInsets = EdgeInsets(top: 8, leading: 14, bottom: 8, trailing: 14)
     static let cardPadding = EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)

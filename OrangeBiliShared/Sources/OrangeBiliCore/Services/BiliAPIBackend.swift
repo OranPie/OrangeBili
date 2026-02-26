@@ -55,6 +55,10 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         try await service.fetchPopular(page: page, size: size)
     }
 
+    public func fetchRecommendFeed(page: Int) async throws -> [BiliVideo] {
+        try await service.fetchRecommendFeed(page: page)
+    }
+
     public func searchVideos(keyword: String, page: Int, order: String) async throws -> [BiliVideo] {
         try await service.searchVideos(keyword: keyword, page: page, order: order)
     }
@@ -71,8 +75,8 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         try await service.fetchVideoDetail(bvid: bvid)
     }
 
-    public func fetchPlayURL(bvid: String, cid: Int, quality: Int) async throws -> PlayStream {
-        try await service.fetchPlayURL(bvid: bvid, cid: cid, quality: quality)
+    public func fetchPlayURL(bvid: String, cid: Int, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream {
+        try await service.fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: preferredCodec)
     }
 
     public func fetchComments(aid: Int, page: Int) async throws -> [CommentItem] {
@@ -83,8 +87,8 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         try await service.fetchUploader(mid: mid, page: page)
     }
 
-    public func fetchUploaderVideos(mid: Int, page: Int) async throws -> [BiliVideo] {
-        try await service.fetchUploaderVideos(mid: mid, page: page)
+    public func fetchUploaderVideos(mid: Int, page: Int, order: String = "pubdate") async throws -> [BiliVideo] {
+        try await service.fetchUploaderVideos(mid: mid, page: page, order: order)
     }
 
     public func fetchUploaderArticles(mid: Int, page: Int) async throws -> [UploaderArticle] {

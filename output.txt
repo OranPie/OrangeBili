@@ -1,0 +1,467 @@
+WCSession iOS app not installed
+-[WCSession updateApplicationContext:error:]_block_invoke failed due to WCErrorDomain:7018
+WCSession iOS app not installed
+-[WCSession updateApplicationContext:error:]_block_invoke failed due to WCErrorDomain:7018
+WCSession iOS app not installed
+-[WCSession updateApplicationContext:error:]_block_invoke failed due to WCErrorDomain:7018
+WCSession iOS app not installed
+-[WCSession updateApplicationContext:error:]_block_invoke failed due to WCErrorDomain:7018
+[WatchVideoProbeLab] Using external player URL: https://cn-zjhz3-wasu-bcache-11.bilivideo.com/upgcxcode/29/33/35407923329/35407923329-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&platform=html5&mid=312156694&gen=playurlv3&og=ali&nbs=1&trid=0000467e7cfb8c7541fe8c850d2dd991b27h&oi=979641278&deadline=1772111703&os=bcache&upsig=b6c52c5b147ca4f9a175884dc4cd061e&uparams=e,uipk,platform,mid,gen,og,nbs,trid,oi,deadline,os&cdnid=20018&bvc=vod&nettype=0&bw=289481&f=h_0_0&agrr=0&buvid=&build=0&dl=0&orderid=0,1
+[ConcreteOutputContext] WARNING: AVF context unavailable for +[MRAVConcreteOutputContext sharedAudioPresentationContext]_block_invoke
+Failed to set AVSC notifications attribute: (null)
+Crown Sequencer was set up without a view property. This will inevitably lead to incorrect crown indicator states
+Crown Sequencer was set up without a view property. This will inevitably lead to incorrect crown indicator states
+xpc request failed: takeAssertion:withUUID:completion: requires "com.apple.carousel.backlightaccess" entitlement
+AddInstanceForFactory: No factory registered for id <CFUUID 0x600000304ca0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+       LoudnessManager.mm:709   unable to open stream for LoudnessManager plist
+[WatchSoftDecodePoC] created local player for 35407923329-1-16.mp4
+[WatchSoftDecodePoC] decoder opened: https://cn-zjhz3-wasu-bcache-11.bilivideo.com/upgcxcode/29/33/35407923329/35407923329-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&platform=html5&mid=312156694&gen=playurlv3&og=ali&nbs=1&trid=0000467e7cfb8c7541fe8c850d2dd991b27h&oi=979641278&deadline=1772111703&os=bcache&upsig=b6c52c5b147ca4f9a175884dc4cd061e&uparams=e,uipk,platform,mid,gen,og,nbs,trid,oi,deadline,os&cdnid=20018&bvc=vod&nettype=0&bw=289481&f=h_0_0&agrr=0&buvid=&build=0&dl=0&orderid=0,1
+xpc request failed: releaseAssertion:completion: requires "com.apple.carousel.backlightaccess" entitlement
+[ConcreteOutputContext] WARNING: AVF context unavailable for SYSTEM
+Failed to set AVSC notifications attribute: (null)
+xpc request failed: takeAssertion:withUUID:completion: requires "com.apple.carousel.backlightaccess" entitlement
+[WatchSoftDecodePoC] decoder closed
+Crown Sequencer was set up without a view property. This will inevitably lead to incorrect crown indicator states
+Crown Sequencer was set up without a view property. This will inevitably lead to incorrect crown indicator states
+xpc request failed: releaseAssertion:completion: requires "com.apple.carousel.backlightaccess" entitlement
+xpc request failed: takeAssertion:withUUID:completion: requires "com.apple.carousel.backlightaccess" entitlement
+xpc request failed: releaseAssertion:completion: requires "com.apple.carousel.backlightaccess" entitlement
+[WatchSoftDecodePoC] created local player for 35407923329-1-16.mp4
+[WatchSoftDecodePoC] decoder opened: https://cn-zjhz3-wasu-bcache-11.bilivideo.com/upgcxcode/29/33/35407923329/35407923329-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&platform=html5&mid=312156694&gen=playurlv3&og=ali&nbs=1&trid=0000467e7cfb8c7541fe8c850d2dd991b27h&oi=979641278&deadline=1772111703&os=bcache&upsig=b6c52c5b147ca4f9a175884dc4cd061e&uparams=e,uipk,platform,mid,gen,og,nbs,trid,oi,deadline,os&cdnid=20018&bvc=vod&nettype=0&bw=289481&f=h_0_0&agrr=0&buvid=&build=0&dl=0&orderid=0,1
+Crown Sequencer was set up without a view property. This will inevitably lead to incorrect crown indicator states
+[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[WatchSoftDecodePoC] decode miss t=342.43 miss=1
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8bee: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf8c9e: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8e06: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8eb4: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf8f57: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9013: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf90ca: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9140: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9215: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf92c5: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9302: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf93bc: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9425: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf94d2: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf958e: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf95da: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf9687: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf96c7: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf976d: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf9800: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9ebc: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf9f55: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbf9fed: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa182: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbfa21c: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa32f: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa3d7: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbfa481: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa4e7: partial file
+[0m[WatchSoftDecodePoC] decode miss t=343.64 miss=30
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbfa57d: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa5cd: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa694: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbfa73b: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbfa80e: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 0, offset 0xbfa8c8: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[WatchSoftDecodePoC] decode miss t=344.93 miss=60
+[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;39m[tls @ 0x60000305f210] [0m[1;31mIO Error: -9806
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[0;33mPacket corrupt (stream = 0, dts = 5479072).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c243b0] [0m[1;31mmissing picture in access unit with size 514
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mInvalid NAL unit size (1509 > 510).
+[0m[0;36m[h264 @ 0x126c15e40] [0m[1;31mError splitting the input into NAL units.
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xbf8b3b: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[WatchSoftDecodePoC] decode miss t=346.18 miss=90
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[WatchSoftDecodePoC] decode miss t=347.43 miss=120
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[WatchSoftDecodePoC] decode miss t=348.68 miss=150
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[WatchSoftDecodePoC] decode miss t=349.93 miss=180
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc08091: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[WatchSoftDecodePoC] decode miss t=351.22 miss=210
+[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m[0;35m[mov,mp4,m4a,3gp,3g2,mj2 @ 0x103125b80] [0m[1;31mstream 1, offset 0xc294e9: partial file
+[0m

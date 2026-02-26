@@ -1,0 +1,4 @@
+module WatchDecodeCore {
+    umbrella "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchDecodeCore/include"
+    export *
+}

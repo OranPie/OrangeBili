@@ -1,26 +1,68 @@
 import AVFoundation
 import Foundation
 import Combine
+#if canImport(CoreImage)
+import CoreImage
+#endif
+#if canImport(VideoToolbox)
+import VideoToolbox
+#endif
+
+public struct VideoFormatInfo {
+    public let codec: String
+    public let codecRaw: FourCharCode
+    public let width: Int
+    public let height: Int
+    public let bitsPerComponent: Int
+    public let transferFunction: String
+    public let colorPrimaries: String
+    public let yCbCrMatrix: String
+    public let isHDR: Bool
+    public let isHEVC: Bool
+    public let is10Bit: Bool
+    public let hevcHWSupported: Bool
+    public let allExtensions: String
+    public let streamURL: String
+    public let pixelFormat: String
+
+    public var summary: String {
+        "\(codec) \(width)x\(height) \(bitsPerComponent)bit pxfmt=\(pixelFormat) | transfer=\(transferFunction) primaries=\(colorPrimaries) matrix=\(yCbCrMatrix) | HDR=\(isHDR) HEVC_HW=\(hevcHWSupported) | url=\(streamURL)"
+    }
+}
 
 @MainActor
 public final class PlayerViewModel: ObservableObject {
     @Published public var isLoading = true
     @Published public var errorMessage: String?
     @Published public var progressSeconds: Int = 0
+    @Published public private(set) var currentTime: Double = 0
     @Published public var totalDurationSeconds: Int = 0
     @Published public var playbackRate: Float = 1.0
     @Published public var isMuted: Bool = false
     @Published public var sourceLabel: String = L10n.t("player.source.main")
+    @Published public var colorFixActive: Bool = false
+    @Published public var videoFormatInfo: VideoFormatInfo?
+    @Published public private(set) var playbackRequestHeaders: [String: String] = [:]
+    @Published public var loopPlayback: Bool = false
+    @Published public private(set) var didFinishPlaying: Bool = false
 
     public let video: BiliVideo
     public let cid: Int
     public let localFileURL: URL?
+    public var preferredQuality: Int = 32
+    public var preferredCodec: PreferredCodec = .auto
     private let service: BiliServiceProtocol
     public private(set) var player: AVPlayer?
     private var observer: Any?
+    private var continuousObserver: Any?
     private var streamURLs: [URL] = []
     private var streamHeaders: [String: String] = [:]
     private var currentStreamIndex = 0
+    private var dashAudioURL: URL?
+    private var endObserver: NSObjectProtocol?
+    #if canImport(CoreImage)
+    private let ciContext = CIContext()
+    #endif
 
     public init(video: BiliVideo, cid: Int, localFileURL: URL? = nil, service: BiliServiceProtocol = BiliAPIBackend.shared) {
         self.video = video
@@ -34,22 +76,44 @@ public final class PlayerViewModel: ObservableObject {
         errorMessage = nil
 
         if let localFileURL, FileManager.default.fileExists(atPath: localFileURL.path) {
-            let item = AVPlayerItem(url: localFileURL)
+            let asset = AVURLAsset(url: localFileURL)
+            let item = AVPlayerItem(asset: asset)
             let player = AVPlayer(playerItem: item)
             player.isMuted = isMuted
             self.player = player
             observeProgress()
             isLoading = false
             player.playImmediately(atRate: playbackRate)
+            Task {
+                let info = await inspectVideoFormat(asset: asset)
+                videoFormatInfo = info
+                DebugLogStore.shared.log(category: "player", message: "format: \(info.summary)")
+                DebugLogStore.shared.log(category: "player.ext", message: "extensions: \(info.allExtensions)")
+            }
+            #if canImport(CoreImage)
+            Task {
+                await applyColorFixIfNeeded(asset: asset, item: item)
+            }
+            #endif
             return
         }
 
         do {
-            let headers = [
+            var headers = [
                 "Referer": "https://www.bilibili.com",
                 "User-Agent": PlatformInfo.userAgent
             ]
+            if let session = await BiliAuthStore.shared.currentSession(),
+               let cookie = Self.cookieHeader(from: session) {
+                headers["Cookie"] = cookie
+            }
             streamHeaders = headers
+            playbackRequestHeaders = headers
+            DebugLogStore.shared.log(
+                category: "player.request",
+                message: "headers ua=\(headers["User-Agent"] != nil) referer=\(headers["Referer"] != nil) cookie=\(headers["Cookie"] != nil)"
+            )
+            dashAudioURL = nil
             streamURLs = try await collectPlayableURLs()
             currentStreamIndex = 0
             sourceLabel = streamURLs.count > 1
@@ -133,6 +197,14 @@ public final class PlayerViewModel: ObservableObject {
             player?.removeTimeObserver(observer)
             self.observer = nil
         }
+        if let continuousObserver {
+            player?.removeTimeObserver(continuousObserver)
+            self.continuousObserver = nil
+        }
+        if let endObserver {
+            NotificationCenter.default.removeObserver(endObserver)
+            self.endObserver = nil
+        }
         player?.pause()
         player = nil
     }
@@ -140,8 +212,17 @@ public final class PlayerViewModel: ObservableObject {
     private func collectPlayableURLs() async throws -> [URL] {
         var urls: [URL] = []
         var seen = Set<String>()
-        for quality in [16, 32] {
-            if let stream = try? await service.fetchPlayURL(bvid: video.bvid, cid: cid, quality: quality) {
+        // Try preferred quality first, then fallbacks
+        var qualities = [preferredQuality]
+        for q in [16, 32] where !qualities.contains(q) {
+            qualities.append(q)
+        }
+        for quality in qualities {
+            if let stream = try? await service.fetchPlayURL(bvid: video.bvid, cid: cid, quality: quality, preferredCodec: preferredCodec) {
+                // Capture DASH audio from the first successful stream
+                if dashAudioURL == nil, let audioURL = stream.audioURL {
+                    dashAudioURL = audioURL
+                }
                 let candidates = [stream.url] + stream.backupURLs
                 for url in candidates where (url.scheme ?? "").lowercased() == "https" {
                     let key = url.absoluteString
@@ -163,19 +244,93 @@ public final class PlayerViewModel: ObservableObject {
             player?.removeTimeObserver(observer)
             self.observer = nil
         }
+        if let continuousObserver {
+            player?.removeTimeObserver(continuousObserver)
+            self.continuousObserver = nil
+        }
         player?.pause()
 
-        let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
-        let item = AVPlayerItem(asset: asset)
+        let videoAsset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
+
+        let item: AVPlayerItem
+        if let audioURL = dashAudioURL {
+            // DASH: merge separate video + audio tracks via AVMutableComposition
+            let audioAsset = AVURLAsset(url: audioURL, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
+            if let compositionItem = Self.makeDASHCompositionItem(videoAsset: videoAsset, audioAsset: audioAsset) {
+                item = compositionItem
+            } else {
+                // Fallback: video-only
+                item = AVPlayerItem(asset: videoAsset)
+            }
+        } else {
+            item = AVPlayerItem(asset: videoAsset)
+        }
+
         item.preferredForwardBufferDuration = 2
         let player = AVPlayer(playerItem: item)
         player.automaticallyWaitsToMinimizeStalling = true
         player.isMuted = isMuted
         self.player = player
         observeProgress()
+
+        Task {
+            let info = await inspectVideoFormat(asset: videoAsset)
+            videoFormatInfo = info
+            DebugLogStore.shared.log(category: "player", message: "format: \(info.summary)")
+            DebugLogStore.shared.log(category: "player.ext", message: "extensions: \(info.allExtensions)")
+        }
+
+        #if canImport(CoreImage)
+        Task {
+            await applyColorFixIfNeeded(asset: videoAsset, item: item)
+        }
+        #endif
+    }
+
+    private nonisolated static func makeDASHCompositionItem(videoAsset: AVURLAsset, audioAsset: AVURLAsset) -> AVPlayerItem? {
+        let composition = AVMutableComposition()
+        guard let videoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid),
+              let audioTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid) else {
+            return nil
+        }
+
+        do {
+            // Use a large time range; AVPlayer will clamp to actual duration
+            let timeRange = CMTimeRange(start: .zero, duration: CMTime(seconds: 86400, preferredTimescale: 600))
+
+            if let sourceVideoTrack = videoAsset.tracks(withMediaType: .video).first {
+                try videoTrack.insertTimeRange(timeRange, of: sourceVideoTrack, at: .zero)
+            }
+            if let sourceAudioTrack = audioAsset.tracks(withMediaType: .audio).first {
+                try audioTrack.insertTimeRange(timeRange, of: sourceAudioTrack, at: .zero)
+            }
+            return AVPlayerItem(asset: composition)
+        } catch {
+            DebugLogStore.shared.log(category: "player", message: "DASH composition failed: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     private func observeProgress() {
+        if let endObserver {
+            NotificationCenter.default.removeObserver(endObserver)
+            self.endObserver = nil
+        }
+        endObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: player?.currentItem,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                if self.loopPlayback {
+                    self.seek(to: 0)
+                    self.player?.playImmediately(atRate: self.playbackRate)
+                } else {
+                    self.didFinishPlaying = true
+                }
+            }
+        }
         observer = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { [weak self] time in
             guard let self else { return }
             if let safeProgress = Self.safeIntFromDouble(time.seconds) {
@@ -186,6 +341,117 @@ public final class PlayerViewModel: ObservableObject {
                 self.totalDurationSeconds = safeDuration
             }
         }
+        continuousObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 30), queue: .main) { [weak self] time in
+            guard let self else { return }
+            let seconds = time.seconds
+            if seconds.isFinite {
+                self.currentTime = seconds
+            }
+        }
+    }
+
+    #if canImport(CoreImage)
+    private func applyColorFixIfNeeded(asset: AVURLAsset, item: AVPlayerItem) async {
+        let needsFix = await detectProblematicFormat(asset: asset)
+        guard needsFix else { return }
+
+        let composition = try? await AVVideoComposition(
+            asset: asset,
+            applyingCIFiltersWithHandler: { [weak self] request in
+                let image = request.sourceImage.clamped(to: request.sourceImage.extent)
+                request.finish(with: image, context: self?.ciContext)
+            }
+        )
+        item.videoComposition = composition
+        colorFixActive = true
+    }
+
+    nonisolated private func detectProblematicFormat(asset: AVURLAsset) async -> Bool {
+        guard let track = try? await asset.loadTracks(withMediaType: .video).first,
+              let descriptions = try? await track.load(.formatDescriptions),
+              let desc = descriptions.first else {
+            return false
+        }
+
+        let codec = CMFormatDescriptionGetMediaSubType(desc)
+        let extensions = CMFormatDescriptionGetExtensions(desc) as? [String: Any] ?? [:]
+
+        let isHEVC = codec == kCMVideoCodecType_HEVC
+
+        let transfer = extensions["CVTransferFunction"] as? String ?? ""
+        let primaries = extensions["CVColorPrimaries"] as? String ?? ""
+        let isHDR = transfer.contains("HLG") || transfer.contains("PQ") ||
+                    transfer.contains("2100") || primaries.contains("2020")
+
+        let bitsPerComponent = extensions["BitsPerComponent"] as? Int ?? 8
+        let is10Bit = bitsPerComponent > 8
+
+        #if canImport(VideoToolbox)
+        let hevcHWSupported = VTIsHardwareDecodeSupported(kCMVideoCodecType_HEVC)
+        #else
+        let hevcHWSupported = false
+        #endif
+
+        return isHDR || is10Bit || (isHEVC && !hevcHWSupported)
+    }
+    #endif
+
+    nonisolated private func inspectVideoFormat(asset: AVURLAsset) async -> VideoFormatInfo {
+        let urlStr = asset.url.absoluteString
+        let urlSuffix = String(urlStr.prefix(120))
+
+        guard let track = try? await asset.loadTracks(withMediaType: .video).first,
+              let descriptions = try? await track.load(.formatDescriptions),
+              let desc = descriptions.first else {
+            return VideoFormatInfo(codec: "unknown", codecRaw: 0, width: 0, height: 0, bitsPerComponent: 0, transferFunction: "", colorPrimaries: "", yCbCrMatrix: "", isHDR: false, isHEVC: false, is10Bit: false, hevcHWSupported: false, allExtensions: "", streamURL: urlSuffix, pixelFormat: "")
+        }
+
+        let codec = CMFormatDescriptionGetMediaSubType(desc)
+        let dimensions = CMVideoFormatDescriptionGetDimensions(desc)
+        let extensions = CMFormatDescriptionGetExtensions(desc) as? [String: Any] ?? [:]
+
+        let isHEVC = codec == kCMVideoCodecType_HEVC
+        let isAVC = codec == kCMVideoCodecType_H264
+
+        let codecName: String
+        if isHEVC { codecName = "HEVC/H.265" }
+        else if isAVC { codecName = "AVC/H.264" }
+        else { codecName = String(format: "%c%c%c%c", (codec >> 24) & 0xFF, (codec >> 16) & 0xFF, (codec >> 8) & 0xFF, codec & 0xFF) }
+
+        let transfer = extensions["CVTransferFunction"] as? String ?? ""
+        let primaries = extensions["CVColorPrimaries"] as? String ?? ""
+        let matrix = extensions["CVYCbCrMatrix"] as? String ?? ""
+        let bitsPerComponent = extensions["BitsPerComponent"] as? Int ?? 8
+        let is10Bit = bitsPerComponent > 8
+        let isHDR = transfer.contains("HLG") || transfer.contains("PQ") ||
+                    transfer.contains("2100") || primaries.contains("2020")
+
+        // Extract pixel format
+        let pixelFormatRaw = extensions["CVPixelFormatType"] as? Int
+            ?? extensions["PixelFormatType"] as? Int ?? 0
+        let pixelFormat: String
+        if pixelFormatRaw > 0 {
+            pixelFormat = String(format: "0x%08X (%d)", pixelFormatRaw, pixelFormatRaw)
+        } else {
+            pixelFormat = "–"
+        }
+
+        #if canImport(VideoToolbox)
+        let hevcHW = VTIsHardwareDecodeSupported(kCMVideoCodecType_HEVC)
+        #else
+        let hevcHW = false
+        #endif
+
+        let extStr = extensions.map { "\($0.key)=\($0.value)" }.sorted().joined(separator: "; ")
+
+        return VideoFormatInfo(
+            codec: codecName, codecRaw: codec,
+            width: Int(dimensions.width), height: Int(dimensions.height),
+            bitsPerComponent: bitsPerComponent,
+            transferFunction: transfer, colorPrimaries: primaries, yCbCrMatrix: matrix,
+            isHDR: isHDR, isHEVC: isHEVC, is10Bit: is10Bit, hevcHWSupported: hevcHW,
+            allExtensions: extStr, streamURL: urlSuffix, pixelFormat: pixelFormat
+        )
     }
 
     private static func safeIntFromDouble(_ value: Double) -> Int? {
@@ -193,5 +459,25 @@ public final class PlayerViewModel: ObservableObject {
         if value >= Double(Int.max) { return Int.max }
         if value <= Double(Int.min) { return Int.min }
         return Int(value)
+    }
+}
+
+private extension PlayerViewModel {
+    static func cookieHeader(from session: BiliLoginSession) -> String? {
+        guard session.isValid else { return nil }
+        var items: [String] = ["SESSDATA=\(session.sessdata)"]
+        if let biliJct = session.biliJct, !biliJct.isEmpty {
+            items.append("bili_jct=\(biliJct)")
+        }
+        if let dedeUserID = session.dedeUserID, !dedeUserID.isEmpty {
+            items.append("DedeUserID=\(dedeUserID)")
+        }
+        if let buvid3 = session.buvid3, !buvid3.isEmpty {
+            items.append("buvid3=\(buvid3)")
+        }
+        if let buvid4 = session.buvid4, !buvid4.isEmpty {
+            items.append("buvid4=\(buvid4)")
+        }
+        return items.joined(separator: "; ")
     }
 }

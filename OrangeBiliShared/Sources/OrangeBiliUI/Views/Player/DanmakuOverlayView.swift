@@ -3,29 +3,144 @@ import OrangeBiliCore
 
 struct DanmakuOverlayView: View {
     @ObservedObject var viewModel: DanmakuViewModel
-    let currentTime: Double
+    @ObservedObject var playerViewModel: PlayerViewModel
 
     @EnvironmentObject private var render: RenderSettings
 
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                ForEach(viewModel.active) { item in
-                    Text(item.item.text)
-                        .font(.system(size: item.fontSize, weight: .semibold))
-                        .foregroundStyle(item.color.opacity(render.danmakuOpacity))
-                        .position(
-                            x: viewModel.xPosition(for: item, time: currentTime, width: proxy.size.width),
-                            y: item.y
-                        )
-                        .allowsHitTesting(false)
+        TimelineView(.animation) { timeline in
+            Canvas { context, size in
+                let time = playerViewModel.currentTime
+                let contentRect = videoContentRect(in: size)
+                viewModel.currentVideoTime = time
+                viewModel.update(time: time, size: contentRect.size, settings: render)
+
+                for item in viewModel.active {
+                    drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
                 }
-            }
-            .onChange(of: currentTime) { _, newValue in
-                viewModel.update(time: newValue, size: proxy.size, settings: render)
             }
         }
         .allowsHitTesting(false)
     }
-}
 
+    /// Compute the actual video content area within the view, excluding black bars.
+    private func videoContentRect(in size: CGSize) -> CGRect {
+        guard let info = playerViewModel.videoFormatInfo,
+              info.width > 0, info.height > 0 else {
+            return CGRect(origin: .zero, size: size)
+        }
+        let videoAspect = CGFloat(info.width) / CGFloat(info.height)
+        let viewAspect = size.width / size.height
+
+        if videoAspect > viewAspect {
+            // Wider video → letterbox (black bars top/bottom)
+            let h = size.width / videoAspect
+            return CGRect(x: 0, y: (size.height - h) / 2, width: size.width, height: h)
+        } else {
+            // Taller video → pillarbox (black bars left/right)
+            let w = size.height * videoAspect
+            return CGRect(x: (size.width - w) / 2, y: 0, width: w, height: size.height)
+        }
+    }
+
+    private func drawDanmaku(_ item: DanmakuViewModel.RenderDanmaku, in context: inout GraphicsContext, contentRect: CGRect, time: Double) {
+        let elapsed = time - item.startTime
+        let progress = min(max(elapsed / item.duration, 0), 1)
+        let cw = contentRect.size.width
+        let ch = contentRect.size.height
+        let ox = contentRect.minX
+        let oy = contentRect.minY
+
+        var x: CGFloat
+        var y = item.y + oy
+        var opacity = render.danmakuOpacity
+        var rotation = Angle.zero
+
+        switch item.mode {
+        case .scroll:
+            let total = cw + item.textWidth + 12
+            x = ox + cw - total * progress + item.textWidth / 2
+
+        case .reverse:
+            let total = cw + item.textWidth + 12
+            x = ox - item.textWidth / 2 + total * progress
+
+        case .top, .bottom:
+            x = ox + cw / 2
+
+        case .advanced:
+            guard let p = item.advancedParams else { return }
+            let moveProgress = advancedMoveProgress(elapsed: elapsed, params: p)
+            let refW: CGFloat = 945
+            let refH: CGFloat = 600
+            let sx = p.startX > 1 ? p.startX / refW : p.startX
+            let sy = p.startY > 1 ? p.startY / refH : p.startY
+            let ex = p.endX > 1 ? p.endX / refW : p.endX
+            let ey = p.endY > 1 ? p.endY / refH : p.endY
+            x = ox + lerp(sx, ex, moveProgress) * cw
+            y = oy + lerp(sy, ey, moveProgress) * ch
+            opacity = lerp(p.startOpacity, p.endOpacity, progress)
+            rotation = .degrees(p.zRotate)
+        }
+
+        var textContext = context
+        textContext.opacity = opacity
+
+        if rotation != .zero {
+            textContext.translateBy(x: x, y: y)
+            textContext.rotate(by: rotation)
+            textContext.translateBy(x: -x, y: -y)
+        }
+
+        let resolvedText = textContext.resolve(
+            Text(item.text)
+                .font(.system(size: item.fontSize, weight: .semibold))
+                .foregroundColor(item.color)
+        )
+
+        let anchor: UnitPoint = item.mode == .advanced ? .topLeading : .center
+        let point = CGPoint(x: x, y: y)
+
+        // Draw stroke outline behind text (non-advanced only)
+        if render.danmakuStrokeEnabled && item.mode != .advanced {
+            let sw = render.danmakuStrokeWidth
+            let strokeText = textContext.resolve(
+                Text(item.text)
+                    .font(.system(size: item.fontSize, weight: .semibold))
+                    .foregroundColor(.black)
+            )
+            for dx in [-sw, 0, sw] {
+                for dy in [-sw, 0, sw] {
+                    if dx == 0 && dy == 0 { continue }
+                    textContext.draw(strokeText, at: CGPoint(x: point.x + dx, y: point.y + dy), anchor: anchor)
+                }
+            }
+        }
+
+        textContext.draw(resolvedText, at: point, anchor: anchor)
+    }
+
+    // MARK: - Advanced mode helpers
+
+    private func advancedMoveProgress(elapsed: Double, params: AdvancedDanmakuParams) -> Double {
+        let delayS = params.moveDelay / 1000.0
+        let moveS = params.moveTime / 1000.0
+        if elapsed < delayS { return 0 }
+        let moveElapsed = elapsed - delayS
+        if moveS <= 0 { return 1 }
+        let raw = min(moveElapsed / moveS, 1.0)
+        return params.linearSpeedUp ? raw : easeInOut(raw)
+    }
+
+    private func easeInOut(_ t: Double) -> Double {
+        t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+    }
+
+    private func lerp(_ a: CGFloat, _ b: CGFloat, _ t: Double) -> CGFloat {
+        a + (b - a) * CGFloat(t)
+    }
+
+    private func lerp(_ a: Double, _ b: Double, _ t: Double) -> Double {
+        a + (b - a) * t
+    }
+}

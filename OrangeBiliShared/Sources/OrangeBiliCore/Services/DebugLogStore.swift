@@ -21,6 +21,13 @@ public final class DebugLogStore: ObservableObject {
 
     private let fileURL: URL
     private let queue = DispatchQueue(label: "debug.log.store", qos: .utility)
+    private var persistWorkItem: DispatchWorkItem?
+
+    #if os(watchOS)
+    private let maxEntries = 400
+    #else
+    private let maxEntries = 1200
+    #endif
 
     private init(filename: String = "debug_logs.json") {
         let folder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
@@ -34,8 +41,8 @@ public final class DebugLogStore: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.entries.insert(entry, at: 0)
-            self.entries = Array(self.entries.prefix(1200))
-            self.persist()
+            self.entries = Array(self.entries.prefix(self.maxEntries))
+            self.schedulePersist()
         }
     }
 
@@ -44,6 +51,13 @@ public final class DebugLogStore: ObservableObject {
             self?.entries = []
             self?.persist()
         }
+    }
+
+    private func schedulePersist() {
+        persistWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in self?.persist() }
+        persistWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: item)
     }
 
     private func loadFromDisk() -> [DebugLogEntry] {

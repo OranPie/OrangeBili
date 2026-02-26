@@ -13,6 +13,6 @@ struct InlineStatChip: View {
         }
         .font(.system(size: UIStyle.fontSize(9.5), weight: .medium))
         .padding(UIStyle.chipPadding)
-        .background(Color.gray.opacity(0.15), in: Capsule())
+        .background(Theme.cardBackground, in: Capsule())
     }
 }

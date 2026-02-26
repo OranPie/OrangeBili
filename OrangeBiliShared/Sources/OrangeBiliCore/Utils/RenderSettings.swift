@@ -1,6 +1,15 @@
 import Foundation
 import Combine
 
+public enum PreferredCodec: String, CaseIterable, Codable {
+    case auto, avc, hevc
+}
+
+public enum WatchPlayerVendor: String, CaseIterable, Codable {
+    case videoPlayer
+    case ffmpegMinimal
+}
+
 @MainActor
 public final class RenderSettings: ObservableObject {
     private var isUpdating = false
@@ -19,7 +28,7 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var detailDescriptionLines: Int {
         didSet {
-            if let clamped = clamp(detailDescriptionLines, min: 2, max: 8, for: Keys.detailDescriptionLines) {
+            if let clamped = clamp(detailDescriptionLines, min: 2, max: 20, for: Keys.detailDescriptionLines) {
                 detailDescriptionLines = clamped
             }
         }
@@ -65,6 +74,14 @@ public final class RenderSettings: ObservableObject {
         }
     }
 
+    @Published public var danmakuAdvancedScale: Double {
+        didSet {
+            if let clamped = clamp(danmakuAdvancedScale, min: 0.6, max: 2.4, for: Keys.danmakuAdvancedScale) {
+                danmakuAdvancedScale = clamped
+            }
+        }
+    }
+
     @Published public var danmakuSpeed: Double {
         didSet {
             if let clamped = clamp(danmakuSpeed, min: 0.5, max: 2.0, for: Keys.danmakuSpeed) {
@@ -93,9 +110,13 @@ public final class RenderSettings: ObservableObject {
         didSet { defaults.set(danmakuUseOriginalColor, forKey: Keys.danmakuUseOriginalColor) }
     }
 
+    @Published public var danmakuSourceRaw: String {
+        didSet { defaults.set(danmakuSourceRaw, forKey: Keys.danmakuSourceRaw) }
+    }
+
     @Published public var danmakuDensity: Int {
         didSet {
-            if let clamped = clamp(danmakuDensity, min: 1, max: 5, for: Keys.danmakuDensity) {
+            if let clamped = clamp(danmakuDensity, min: 1, max: 8, for: Keys.danmakuDensity) {
                 danmakuDensity = clamped
             }
         }
@@ -103,7 +124,7 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var danmakuMaxLines: Int {
         didSet {
-            if let clamped = clamp(danmakuMaxLines, min: 1, max: 6, for: Keys.danmakuMaxLines) {
+            if let clamped = clamp(danmakuMaxLines, min: 1, max: 12, for: Keys.danmakuMaxLines) {
                 danmakuMaxLines = clamped
             }
         }
@@ -125,6 +146,42 @@ public final class RenderSettings: ObservableObject {
         didSet { defaults.set(danmakuSearchOnly, forKey: Keys.danmakuSearchOnly) }
     }
 
+    @Published public var danmakuStrokeEnabled: Bool {
+        didSet { defaults.set(danmakuStrokeEnabled, forKey: Keys.danmakuStrokeEnabled) }
+    }
+
+    @Published public var danmakuStrokeWidth: Double {
+        didSet {
+            if let clamped = clamp(danmakuStrokeWidth, min: 0.3, max: 2.0, for: Keys.danmakuStrokeWidth) {
+                danmakuStrokeWidth = clamped
+            }
+        }
+    }
+
+    @Published public var danmakuAdvancedOnly: Bool {
+        didSet { defaults.set(danmakuAdvancedOnly, forKey: Keys.danmakuAdvancedOnly) }
+    }
+
+    @Published public var preferredQuality: Int {
+        didSet { defaults.set(preferredQuality, forKey: Keys.preferredQuality) }
+    }
+
+    @Published public var preferredCodecRaw: String {
+        didSet { defaults.set(preferredCodecRaw, forKey: Keys.preferredCodecRaw) }
+    }
+
+    @Published public var showVideoDebugInfo: Bool {
+        didSet { defaults.set(showVideoDebugInfo, forKey: Keys.showVideoDebugInfo) }
+    }
+
+    @Published public var watchPlayerVendorRaw: String {
+        didSet { defaults.set(watchPlayerVendorRaw, forKey: Keys.watchPlayerVendorRaw) }
+    }
+
+    @Published public var languageOverride: String {
+        didSet { defaults.set(languageOverride, forKey: Keys.languageOverride) }
+    }
+
     private let defaults = UserDefaults.standard
 
     private enum Keys {
@@ -137,18 +194,28 @@ public final class RenderSettings: ObservableObject {
         static let danmakuEnabled = "render.danmaku.enabled"
         static let danmakuOpacity = "render.danmaku.opacity"
         static let danmakuScale = "render.danmaku.scale"
+        static let danmakuAdvancedScale = "render.danmaku.advancedScale"
         static let danmakuSpeed = "render.danmaku.speed"
         static let danmakuAreaRaw = "render.danmaku.area"
         static let danmakuAllowTop = "render.danmaku.allowTop"
         static let danmakuAllowBottom = "render.danmaku.allowBottom"
         static let danmakuAllowScroll = "render.danmaku.allowScroll"
         static let danmakuUseOriginalColor = "render.danmaku.useOriginalColor"
+        static let danmakuSourceRaw = "render.danmaku.source"
         static let danmakuDensity = "render.danmaku.density"
         static let danmakuMaxLines = "render.danmaku.maxLines"
         static let danmakuKeywordBlocklist = "render.danmaku.keywordBlocklist"
         static let danmakuUserHashBlocklist = "render.danmaku.userHashBlocklist"
         static let danmakuSearchQuery = "render.danmaku.searchQuery"
         static let danmakuSearchOnly = "render.danmaku.searchOnly"
+        static let danmakuStrokeEnabled = "render.danmaku.strokeEnabled"
+        static let danmakuStrokeWidth = "render.danmaku.strokeWidth"
+        static let danmakuAdvancedOnly = "render.danmaku.advancedOnly"
+        static let preferredQuality = "render.preferredQuality"
+        static let preferredCodecRaw = "render.preferredCodec"
+        static let showVideoDebugInfo = "render.showVideoDebugInfo"
+        static let watchPlayerVendorRaw = "render.watchPlayerVendor"
+        static let languageOverride = "render.languageOverride"
     }
 
     public init() {
@@ -161,6 +228,7 @@ public final class RenderSettings: ObservableObject {
         let savedDanmakuEnabled = defaults.object(forKey: Keys.danmakuEnabled) as? Bool
         let savedDanmakuOpacity = defaults.object(forKey: Keys.danmakuOpacity) as? Double
         let savedDanmakuScale = defaults.object(forKey: Keys.danmakuScale) as? Double
+        let savedDanmakuAdvancedScale = defaults.object(forKey: Keys.danmakuAdvancedScale) as? Double
         let savedDanmakuSpeed = defaults.object(forKey: Keys.danmakuSpeed) as? Double
         let savedDanmakuArea = defaults.object(forKey: Keys.danmakuAreaRaw) as? String
         let savedAllowTop = defaults.object(forKey: Keys.danmakuAllowTop) as? Bool
@@ -168,11 +236,20 @@ public final class RenderSettings: ObservableObject {
         let savedAllowScroll = defaults.object(forKey: Keys.danmakuAllowScroll) as? Bool
         let savedUseColor = defaults.object(forKey: Keys.danmakuUseOriginalColor) as? Bool
         let savedDensity = defaults.object(forKey: Keys.danmakuDensity) as? Int
+        let savedDanmakuSource = defaults.object(forKey: Keys.danmakuSourceRaw) as? String
         let savedMaxLines = defaults.object(forKey: Keys.danmakuMaxLines) as? Int
         let savedKeywordBlocklist = defaults.object(forKey: Keys.danmakuKeywordBlocklist) as? String
         let savedUserHashBlocklist = defaults.object(forKey: Keys.danmakuUserHashBlocklist) as? String
         let savedSearchQuery = defaults.object(forKey: Keys.danmakuSearchQuery) as? String
         let savedSearchOnly = defaults.object(forKey: Keys.danmakuSearchOnly) as? Bool
+        let savedStrokeEnabled = defaults.object(forKey: Keys.danmakuStrokeEnabled) as? Bool
+        let savedStrokeWidth = defaults.object(forKey: Keys.danmakuStrokeWidth) as? Double
+        let savedAdvancedOnly = defaults.object(forKey: Keys.danmakuAdvancedOnly) as? Bool
+        let savedPreferredQuality = defaults.object(forKey: Keys.preferredQuality) as? Int
+        let savedPreferredCodec = defaults.object(forKey: Keys.preferredCodecRaw) as? String
+        let savedShowVideoDebugInfo = defaults.object(forKey: Keys.showVideoDebugInfo) as? Bool
+        let savedWatchPlayerVendor = defaults.object(forKey: Keys.watchPlayerVendorRaw) as? String
+        let savedLanguageOverride = defaults.object(forKey: Keys.languageOverride) as? String
 
         #if os(tvOS)
         let defaultTextScale = 1.05
@@ -200,6 +277,11 @@ public final class RenderSettings: ObservableObject {
         danmakuEnabled = savedDanmakuEnabled ?? false
         danmakuOpacity = savedDanmakuOpacity ?? 0.85
         danmakuScale = savedDanmakuScale ?? 1.0
+        #if os(macOS) || os(tvOS)
+        danmakuAdvancedScale = savedDanmakuAdvancedScale ?? 1.25
+        #else
+        danmakuAdvancedScale = savedDanmakuAdvancedScale ?? 1.0
+        #endif
         danmakuSpeed = savedDanmakuSpeed ?? 1.0
         danmakuAreaRaw = savedDanmakuArea ?? DanmakuArea.full.rawValue
         danmakuAllowTop = savedAllowTop ?? true
@@ -207,11 +289,20 @@ public final class RenderSettings: ObservableObject {
         danmakuAllowScroll = savedAllowScroll ?? true
         danmakuUseOriginalColor = savedUseColor ?? true
         danmakuDensity = savedDensity ?? 3
+        danmakuSourceRaw = savedDanmakuSource ?? DanmakuSource.protobuf.rawValue
         danmakuMaxLines = savedMaxLines ?? 3
         danmakuKeywordBlocklist = savedKeywordBlocklist ?? ""
         danmakuUserHashBlocklist = savedUserHashBlocklist ?? ""
         danmakuSearchQuery = savedSearchQuery ?? ""
         danmakuSearchOnly = savedSearchOnly ?? false
+        danmakuStrokeEnabled = savedStrokeEnabled ?? true
+        danmakuStrokeWidth = savedStrokeWidth ?? 0.5
+        danmakuAdvancedOnly = savedAdvancedOnly ?? false
+        preferredQuality = savedPreferredQuality ?? 32
+        preferredCodecRaw = savedPreferredCodec ?? PreferredCodec.auto.rawValue
+        showVideoDebugInfo = savedShowVideoDebugInfo ?? false
+        watchPlayerVendorRaw = savedWatchPlayerVendor ?? WatchPlayerVendor.videoPlayer.rawValue
+        languageOverride = savedLanguageOverride ?? "system"
     }
     private func clamp<T: Comparable>(_ value: T, min lower: T, max upper: T, for key: String) -> T? {
         if isUpdating {
@@ -231,5 +322,31 @@ public extension RenderSettings {
     var danmakuArea: DanmakuArea {
         get { DanmakuArea(rawValue: danmakuAreaRaw) ?? .full }
         set { danmakuAreaRaw = newValue.rawValue }
+    }
+
+    var danmakuSourceEnum: DanmakuSource {
+        get { DanmakuSource(rawValue: danmakuSourceRaw) ?? .protobuf }
+        set { danmakuSourceRaw = newValue.rawValue }
+    }
+
+    var preferredCodec: PreferredCodec {
+        get { PreferredCodec(rawValue: preferredCodecRaw) ?? .auto }
+        set { preferredCodecRaw = newValue.rawValue }
+    }
+
+    var watchPlayerVendor: WatchPlayerVendor {
+        get { WatchPlayerVendor(rawValue: watchPlayerVendorRaw) ?? .videoPlayer }
+        set { watchPlayerVendorRaw = newValue.rawValue }
+    }
+
+    static let qualityOptions: [(id: Int, label: String)] = [
+        (16, "360P"),
+        (32, "480P"),
+        (64, "720P"),
+        (80, "1080P"),
+    ]
+
+    var qualityLabel: String {
+        Self.qualityOptions.first(where: { $0.id == preferredQuality })?.label ?? "480P"
     }
 }

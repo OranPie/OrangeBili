@@ -15,6 +15,12 @@ struct CommentsView: View {
                 EmptyStateView(error, systemImage: "exclamationmark.triangle")
             }
 
+            if viewModel.isLoading && viewModel.comments.isEmpty {
+                ForEach(0..<4, id: \.self) { _ in
+                    SkeletonCommentRow()
+                }
+            }
+
             ForEach(viewModel.comments) { comment in
                 NavigationLink {
                     CommentDetailView(comment: comment)
@@ -61,6 +67,9 @@ struct CommentsView: View {
         .listStyle(.plain)
         .navigationTitle(L10n.t("comments.title"))
         .task {
+            await viewModel.loadInitialIfNeeded()
+        }
+        .refreshable {
             await viewModel.loadInitialIfNeeded()
         }
     }

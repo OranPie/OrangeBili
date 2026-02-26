@@ -44,7 +44,7 @@ struct SummaryCard: View {
             }
         }
         .padding(UIStyle.cardPadding)
-        .background(Color.gray.opacity(0.14), in: RoundedRectangle(cornerRadius: UIStyle.cardCornerRadius))
+        .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: UIStyle.cardCornerRadius))
 #if os(tvOS)
         .frame(minHeight: UIStyle.buttonMinSize)
 #endif

@@ -5,29 +5,42 @@ struct AsyncCachedImage<Placeholder: View>: View {
     let url: URL?
     let placeholder: Placeholder
 
+    @State private var loadedImage: Image?
+    @State private var failed = false
+
     init(url: URL?, @ViewBuilder placeholder: () -> Placeholder) {
         self.url = url
         self.placeholder = placeholder()
     }
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case let .success(image):
+        Group {
+            if let image = loadedImage {
                 image
                     .resizable()
                     .scaledToFill()
-            case .failure:
+            } else if failed {
                 placeholder
                     .overlay(
                         Image(systemName: "photo")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     )
-            case .empty:
+            } else {
                 placeholder
-            @unknown default:
-                placeholder
+            }
+        }
+        .task(id: url) {
+            guard let url else {
+                failed = true
+                return
+            }
+            loadedImage = nil
+            failed = false
+            if let image = await ImageCacheStore.shared.image(for: url) {
+                loadedImage = image
+            } else {
+                failed = true
             }
         }
     }

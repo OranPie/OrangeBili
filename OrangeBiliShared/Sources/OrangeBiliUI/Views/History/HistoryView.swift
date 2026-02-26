@@ -11,6 +11,8 @@ struct HistoryView: View {
 
     @State private var cacheFiles = 0
     @State private var cacheSizeBytes = 0
+    @State private var danmakuCacheFiles = 0
+    @State private var danmakuCacheSizeBytes = 0
 
     var body: some View {
 
@@ -85,6 +87,25 @@ struct HistoryView: View {
                 .font(.caption2)
 
                 NavigationLink {
+                    DanmakuCacheView()
+                } label: {
+                    SummaryCard(
+                        L10n.t("tools.danmakuCache"),
+                        subtitle: L10n.t("tools.danmakuCache.subtitle"),
+                        systemImage: "text.bubble",
+                        trailing: "\(danmakuCacheFiles)"
+                    )
+                }
+
+                HStack {
+                    Text(L10n.t("tools.danmakuCache.size"))
+                    Spacer()
+                    Text(formatBytes(danmakuCacheSizeBytes))
+                        .foregroundStyle(.secondary)
+                }
+                .font(.caption2)
+
+                NavigationLink {
                     ActiveDownloadsView()
                 } label: {
                     SummaryCard(
@@ -126,6 +147,20 @@ struct HistoryView: View {
                 }
                 .font(.caption2)
             }
+
+            Section {
+                NavigationLink {
+                    AboutView()
+                } label: {
+                    SummaryCard(L10n.t("me.about.app"), subtitle: L10n.t("me.about.subtitle"), systemImage: "info.circle")
+                }
+
+                NavigationLink {
+                    VideoFeatureCompactView()
+                } label: {
+                    SummaryCard(L10n.t("me.about.features"), subtitle: L10n.t("me.about.hint"), systemImage: "play.rectangle.on.rectangle")
+                }
+            }
         }
         .font(.system(size: UIStyle.fontSize(11)))
         .listStyle(.plain)
@@ -148,6 +183,8 @@ struct HistoryView: View {
     private func refreshCacheStats() async {
         cacheFiles = await OfflineCacheStore.shared.cachedFilesCount()
         cacheSizeBytes = await OfflineCacheStore.shared.totalCacheSizeBytes()
+        danmakuCacheFiles = await DanmakuCacheStore.shared.cachedFilesCount()
+        danmakuCacheSizeBytes = await DanmakuCacheStore.shared.totalCacheSizeBytes()
     }
 
     private func formatBytes(_ bytes: Int) -> String {

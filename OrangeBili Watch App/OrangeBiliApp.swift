@@ -50,6 +50,7 @@ struct OrangeBili_Watch_AppApp: App {
                 .environmentObject(debugLogStore)
                 .environmentObject(apiBackend)
                 .environmentObject(historySyncer)
+                .environmentObject(historySyncer as HistorySyncer)
                 .environmentObject(companionSyncer)
         }
     }

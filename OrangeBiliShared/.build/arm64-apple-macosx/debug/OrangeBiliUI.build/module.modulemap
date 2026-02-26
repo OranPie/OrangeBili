@@ -1,0 +1,4 @@
+module OrangeBiliUI {
+    header "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OrangeBiliUI-Swift.h"
+    requires objc
+}

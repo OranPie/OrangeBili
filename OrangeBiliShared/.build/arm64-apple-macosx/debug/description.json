@@ -1,0 +1,1910 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/Info.plist" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/Info.plist"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/Info.plist"
+        }
+      ]
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/en.lproj/Localizable.strings" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Resources/en.lproj/Localizable.strings"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/en.lproj/Localizable.strings"
+        }
+      ]
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/zh-hans.lproj/Localizable.strings" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Resources/zh-Hans.lproj/Localizable.strings"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliCore.bundle/zh-hans.lproj/Localizable.strings"
+        }
+      ]
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliUI.bundle/Info.plist" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Info.plist"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliUI.bundle/Info.plist"
+        }
+      ]
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliUI.bundle/watch_probe.mp4" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Resources/watch_probe.mp4"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliShared_OrangeBiliUI.bundle/watch_probe.mp4"
+        }
+      ]
+    }
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.OrangeBiliCore-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/sources",
+      "importPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/BiliModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/DanmakuModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAPIBackend.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAuthStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliCredentialLoginService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliEndpoint.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliError.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliQRLoginService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DebugLogStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/NetworkClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineDownloadManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/ProtobufDanmakuParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/WBISigner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/FavoritesStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/HistoryStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/ImageCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/SearchHistoryStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/UploaderVisitStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/Formatting.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/HistorySyncer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/L10n.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/PlatformInfo.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/RenderSettings.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/CommentsViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/DanmakuViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HistoryViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HomeViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/PlayerViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/SearchViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/UploaderViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/VideoDetailViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<OrangeBiliCore-arm64-apple-macosx15.0-debug.module-resources>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "OrangeBiliCore",
+      "moduleOutputPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/OrangeBiliCore.swiftmodule",
+      "objects" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliModels.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuModels.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliAPIBackend.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliAuthStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliCredentialLoginService.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliEndpoint.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliError.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliQRLoginService.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliService.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuCacheStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuParser.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuService.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DebugLogStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/NetworkClient.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OfflineCacheStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OfflineDownloadManager.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/ProtobufDanmakuParser.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/WBISigner.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/FavoritesStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistoryStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/ImageCacheStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/SearchHistoryStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/UploaderVisitStore.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/Formatting.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistorySyncer.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/L10n.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/PlatformInfo.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/RenderSettings.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/CommentsViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistoryViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HomeViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/PlayerViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/SearchViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/UploaderViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/VideoDetailViewModel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/resource_bundle_accessor.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OrangeBiliCore-Swift.h",
+        "-swift-version",
+        "5",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "orangebilishared"
+      ],
+      "outputFileMapPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliAPIBackend.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliAuthStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliCredentialLoginService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliEndpoint.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliError.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliQRLoginService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/BiliService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuCacheStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuParser.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DebugLogStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/NetworkClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OfflineCacheStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OfflineDownloadManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/ProtobufDanmakuParser.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/WBISigner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/FavoritesStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistoryStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/ImageCacheStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/SearchHistoryStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/UploaderVisitStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/Formatting.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistorySyncer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/L10n.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/PlatformInfo.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/RenderSettings.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/CommentsViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DanmakuViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HistoryViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/HomeViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/PlayerViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/SearchViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/UploaderViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/VideoDetailViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/resource_bundle_accessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/OrangeBiliCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/BiliModels.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/DanmakuModels.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAPIBackend.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAuthStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliCredentialLoginService.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliEndpoint.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliError.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliQRLoginService.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliService.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuCacheStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuParser.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuService.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DebugLogStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/NetworkClient.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineCacheStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineDownloadManager.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/ProtobufDanmakuParser.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/WBISigner.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/FavoritesStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/HistoryStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/ImageCacheStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/SearchHistoryStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/UploaderVisitStore.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/Formatting.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/HistorySyncer.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/L10n.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/PlatformInfo.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/RenderSettings.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/CommentsViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/DanmakuViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HistoryViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HomeViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/PlayerViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/SearchViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/UploaderViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/VideoDetailViewModel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DerivedSources/resource_bundle_accessor.swift"
+      ],
+      "tempsPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.OrangeBiliUI-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/sources",
+      "importPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/ShimmerModifier.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/SkeletonViews.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/ScrollOffset.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/TabBarState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/Theme.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/UIStyle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/AsyncCachedImage.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/CompactDisclosure.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/InlineStatChip.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/SummaryCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoListingView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoRowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/GlobalLogView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchSoftDecodePoCView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchVideoProbeLabView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Detail/VideoDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/DanmakuCacheView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryRecordsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineAPICacheView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineVideoManageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Home/HomeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/DanmakuOverlayView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/PlayerControlsPanel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/VideoPlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/AboutView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/CloudFavoritesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/DanmakuSettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/FollowingListView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/MeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/QRLoginExperimentalView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderVisitHistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/VideoFeatureCompactView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Search/SearchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<OrangeBiliUI-arm64-apple-macosx15.0-debug.module-resources>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/OrangeBiliCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "OrangeBiliUI",
+      "moduleOutputPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/OrangeBiliUI.swiftmodule",
+      "objects" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView.swift.o",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OrangeBiliUI-Swift.h",
+        "-swift-version",
+        "5",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "orangebilishared"
+      ],
+      "outputFileMapPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ShimmerModifier.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SkeletonViews.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ScrollOffset.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/TabBarState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/Theme.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UIStyle.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CommentsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AsyncCachedImage.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CompactDisclosure.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/EmptyStateView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/InlineStatChip.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SummaryCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoListingView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoRowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/GlobalLogView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchSoftDecodePoCView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/WatchVideoProbeLabView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuCacheView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryRecordsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HistoryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineAPICacheView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OfflineVideoManageView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/HomeView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuOverlayView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/PlayerControlsPanel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoPlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/AboutView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/CloudFavoritesView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DanmakuSettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/FollowingListView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/MeView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/QRLoginExperimentalView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/UploaderVisitHistoryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/VideoFeatureCompactView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/SearchView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/resource_bundle_accessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/OrangeBiliUI.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/ShimmerModifier.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/SkeletonViews.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/ScrollOffset.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/TabBarState.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/Theme.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/UIStyle.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentDetailView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentsView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/AsyncCachedImage.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/CompactDisclosure.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/EmptyStateView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/InlineStatChip.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/SummaryCard.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoListingView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoRowView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/ContentView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/GlobalLogView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchSoftDecodePoCView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchVideoProbeLabView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Detail/VideoDetailView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/DanmakuCacheView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryRecordsView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineAPICacheView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineVideoManageView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Home/HomeView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/DanmakuOverlayView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/PlayerControlsPanel.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/VideoPlayerView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/AboutView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/CloudFavoritesView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/DanmakuSettingsView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/FollowingListView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/MeView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/QRLoginExperimentalView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/SettingsView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderVisitHistoryView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/VideoFeatureCompactView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Search/SearchView.swift",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DerivedSources/resource_bundle_accessor.swift"
+      ],
+      "tempsPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.WatchCustomPlayer-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/sources",
+      "importPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchCustomPlayer/WatchCustomPlayer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "WatchCustomPlayer",
+      "moduleOutputPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/WatchCustomPlayer.swiftmodule",
+      "objects" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/WatchCustomPlayer.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/WatchCustomPlayer-Swift.h",
+        "-swift-version",
+        "5",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "orangebilishared"
+      ],
+      "outputFileMapPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/WatchCustomPlayer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/WatchCustomPlayer.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchCustomPlayer/WatchCustomPlayer.swift"
+      ],
+      "tempsPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.WatchPlayer-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/sources",
+      "importPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchPlayer/WatchPlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "WatchPlayer",
+      "moduleOutputPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/WatchPlayer.swiftmodule",
+      "objects" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayer-Swift.h",
+        "-swift-version",
+        "5",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "orangebilishared"
+      ],
+      "outputFileMapPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules/WatchPlayer.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchPlayer/WatchPlayerView.swift"
+      ],
+      "tempsPath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "OrangeBiliCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "OrangeBiliCore",
+      "-package-name",
+      "orangebilishared",
+      "-incremental",
+      "-c",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/BiliModels.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/DanmakuModels.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAPIBackend.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAuthStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliCredentialLoginService.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliEndpoint.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliError.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliQRLoginService.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliService.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuCacheStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuParser.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuService.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DebugLogStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/NetworkClient.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineCacheStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineDownloadManager.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/ProtobufDanmakuParser.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/WBISigner.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/FavoritesStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/HistoryStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/ImageCacheStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/SearchHistoryStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/UploaderVisitStore.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/Formatting.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/HistorySyncer.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/L10n.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/PlatformInfo.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/RenderSettings.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/CommentsViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/DanmakuViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HistoryViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HomeViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/PlayerViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/SearchViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/UploaderViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/VideoDetailViewModel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DerivedSources/resource_bundle_accessor.swift",
+      "-I",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/OrangeBiliCore-Swift.h",
+      "-swift-version",
+      "5",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "orangebilishared",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "OrangeBiliUI" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "OrangeBiliUI",
+      "-package-name",
+      "orangebilishared",
+      "-incremental",
+      "-c",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/ShimmerModifier.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/SkeletonViews.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/ScrollOffset.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/TabBarState.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/Theme.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/UIStyle.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentDetailView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentsView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/AsyncCachedImage.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/CompactDisclosure.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/EmptyStateView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/InlineStatChip.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/SummaryCard.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoListingView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoRowView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/ContentView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/GlobalLogView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchSoftDecodePoCView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchVideoProbeLabView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Detail/VideoDetailView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/DanmakuCacheView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryRecordsView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineAPICacheView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineVideoManageView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Home/HomeView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/DanmakuOverlayView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/PlayerControlsPanel.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/VideoPlayerView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/AboutView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/CloudFavoritesView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/DanmakuSettingsView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/FollowingListView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/MeView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/QRLoginExperimentalView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/SettingsView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderVisitHistoryView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/VideoFeatureCompactView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Search/SearchView.swift",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DerivedSources/resource_bundle_accessor.swift",
+      "-I",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/OrangeBiliUI-Swift.h",
+      "-swift-version",
+      "5",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "orangebilishared",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "WatchCustomPlayer" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "WatchCustomPlayer",
+      "-package-name",
+      "orangebilishared",
+      "-incremental",
+      "-c",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchCustomPlayer/WatchCustomPlayer.swift",
+      "-I",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/WatchCustomPlayer-Swift.h",
+      "-swift-version",
+      "5",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "orangebilishared",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "WatchPlayer" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "WatchPlayer",
+      "-package-name",
+      "orangebilishared",
+      "-incremental",
+      "-c",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchPlayer/WatchPlayerView.swift",
+      "-I",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/WatchPlayer-Swift.h",
+      "-swift-version",
+      "5",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "orangebilishared",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "OrangeBiliCore" : [
+
+    ],
+    "OrangeBiliUI" : [
+      "OrangeBiliCore"
+    ],
+    "WatchCustomPlayer" : [
+
+    ],
+    "WatchDecodeCore" : [
+
+    ],
+    "WatchPlayer" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "writeCommands" : {
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/BiliModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Models/DanmakuModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAPIBackend.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliAuthStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliCredentialLoginService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliEndpoint.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliError.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliQRLoginService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/BiliService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DanmakuService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/DebugLogStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/NetworkClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/OfflineDownloadManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/ProtobufDanmakuParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Services/WBISigner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/FavoritesStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/HistoryStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/ImageCacheStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/SearchHistoryStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Storage/UploaderVisitStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/Formatting.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/HistorySyncer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/L10n.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/PlatformInfo.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/Utils/RenderSettings.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/CommentsViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/DanmakuViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HistoryViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/HomeViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/PlayerViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/SearchViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/UploaderViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliCore/ViewModels/VideoDetailViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/DerivedSources/resource_bundle_accessor.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliCore.build/sources"
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/ShimmerModifier.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Components/SkeletonViews.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/ScrollOffset.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/TabBarState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/Theme.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Utils/UIStyle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Comments/CommentsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/AsyncCachedImage.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/CompactDisclosure.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/InlineStatChip.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/SummaryCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoListingView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Components/VideoRowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/GlobalLogView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchSoftDecodePoCView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Debug/WatchVideoProbeLabView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Detail/VideoDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/DanmakuCacheView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryRecordsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/HistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineAPICacheView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/History/OfflineVideoManageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Home/HomeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/DanmakuOverlayView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/PlayerControlsPanel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Player/VideoPlayerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/AboutView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/CloudFavoritesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/DanmakuSettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/FollowingListView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/MeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/QRLoginExperimentalView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/UploaderVisitHistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Profile/VideoFeatureCompactView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/OrangeBiliUI/Views/Search/SearchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/DerivedSources/resource_bundle_accessor.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/OrangeBiliUI.build/sources"
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchCustomPlayer/WatchCustomPlayer.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchCustomPlayer.build/sources"
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/Sources/WatchPlayer/WatchPlayerView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/WatchPlayer.build/sources"
+    },
+    "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/yanyige/Desktop/OrangeBili/OrangeBiliShared/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

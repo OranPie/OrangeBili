@@ -11,14 +11,20 @@ struct HomeView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: UIStyle.videoGridSpacing) {
                         if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
-                            EmptyStateView(error, systemImage: "exclamationmark.triangle")
+                            EmptyStateView(error, systemImage: "exclamationmark.triangle") {
+                                Task { await viewModel.refresh() }
+                            }
                         }
 
-                        VideoListingView(videos: viewModel.videos, rowInsets: nil) { _ in
-                            EmptyView()
+                        if viewModel.isLoading && viewModel.videos.isEmpty {
+                            SkeletonVideoList(count: 5)
+                        } else {
+                            VideoListingView(videos: viewModel.videos, rowInsets: nil) { _ in
+                                EmptyView()
+                            }
                         }
 
-                        if viewModel.isLoading {
+                        if viewModel.isLoading && !viewModel.videos.isEmpty {
                             HStack {
                                 Spacer()
                                 ProgressView()
@@ -38,14 +44,20 @@ struct HomeView: View {
             } else {
                 List {
                     if let error = viewModel.errorMessage, viewModel.videos.isEmpty {
-                        EmptyStateView(error, systemImage: "exclamationmark.triangle")
+                        EmptyStateView(error, systemImage: "exclamationmark.triangle") {
+                            Task { await viewModel.refresh() }
+                        }
                     }
 
-                    VideoListingView(videos: viewModel.videos) { _ in
-                        EmptyView()
+                    if viewModel.isLoading && viewModel.videos.isEmpty {
+                        SkeletonVideoList(count: 5)
+                    } else {
+                        VideoListingView(videos: viewModel.videos) { _ in
+                            EmptyView()
+                        }
                     }
 
-                    if viewModel.isLoading {
+                    if viewModel.isLoading && !viewModel.videos.isEmpty {
                         HStack {
                             Spacer()
                             ProgressView()

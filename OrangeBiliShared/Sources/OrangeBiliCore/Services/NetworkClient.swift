@@ -80,7 +80,11 @@ struct NetworkClient: NetworkClientProtocol {
 
         for attempt in 1 ... retryPolicy.maxAttempts {
             var request = try endpoint.makeRequest(with: query)
+            #if os(watchOS)
+            let timeout = min(60.0, 30.0 + Double(attempt - 1) * 15.0)
+            #else
             let timeout = min(45.0, 15.0 + Double(attempt - 1) * 10.0)
+            #endif
             request.timeoutInterval = timeout
 
             if let cookie = await authStore.cookieHeader(for: endpoint) {
@@ -203,7 +207,9 @@ struct NetworkClient: NetworkClientProtocol {
 
     private func retryDelay(forAttempt attempt: Int) -> UInt64 {
         let multiplier = UInt64(1 << max(0, attempt - 1))
-        return retryPolicy.baseDelayNanoseconds * multiplier
+        let base = retryPolicy.baseDelayNanoseconds * multiplier
+        let jitter = UInt64.random(in: 0...(base / 4))
+        return base + jitter
     }
 
     private func log(_ category: String, _ message: String) {

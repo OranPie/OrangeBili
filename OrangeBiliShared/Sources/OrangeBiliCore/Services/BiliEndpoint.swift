@@ -2,6 +2,7 @@ import Foundation
 
 enum BiliEndpoint {
     case popular(page: Int, size: Int)
+    case recommendFeed(page: Int)
     case search(keyword: String, page: Int, order: String)
     case searchLegacy(keyword: String, page: Int, order: String)
     case searchUsers(keyword: String, page: Int)
@@ -18,8 +19,8 @@ enum BiliEndpoint {
     case uploaderLegacy(mid: Int)
     case uploaderRelation(mid: Int)
     case uploaderUpStat(mid: Int)
-    case uploaderVideos(mid: Int, page: Int)
-    case uploaderVideosLegacy(mid: Int, page: Int)
+    case uploaderVideos(mid: Int, page: Int, order: String)
+    case uploaderVideosLegacy(mid: Int, page: Int, order: String)
     case uploaderArticles(mid: Int, page: Int)
     case uploaderArticlesLegacy(mid: Int, page: Int)
 
@@ -39,8 +40,8 @@ enum BiliEndpoint {
             return .commentsLegacy(aid: aid, page: page)
         case let .uploader(mid):
             return .uploaderLegacy(mid: mid)
-        case let .uploaderVideos(mid, page):
-            return .uploaderVideosLegacy(mid: mid, page: page)
+        case let .uploaderVideos(mid, page, order):
+            return .uploaderVideosLegacy(mid: mid, page: page, order: order)
         case let .uploaderArticles(mid, page):
             return .uploaderArticlesLegacy(mid: mid, page: page)
         default:
@@ -83,16 +84,18 @@ enum BiliEndpoint {
             ordered = [.uploaderRelation(mid: mid)]
         case let .uploaderUpStat(mid):
             ordered = [.uploaderUpStat(mid: mid)]
-        case let .uploaderVideos(mid, page), let .uploaderVideosLegacy(mid, page):
+        case let .uploaderVideos(mid, page, order), let .uploaderVideosLegacy(mid, page, order):
             ordered = preferLoggedIn
-                ? [.uploaderVideos(mid: mid, page: page), .uploaderVideosLegacy(mid: mid, page: page)]
-                : [.uploaderVideosLegacy(mid: mid, page: page), .uploaderVideos(mid: mid, page: page)]
+                ? [.uploaderVideos(mid: mid, page: page, order: order), .uploaderVideosLegacy(mid: mid, page: page, order: order)]
+                : [.uploaderVideosLegacy(mid: mid, page: page, order: order), .uploaderVideos(mid: mid, page: page, order: order)]
         case let .uploaderArticles(mid, page), let .uploaderArticlesLegacy(mid, page):
             ordered = preferLoggedIn
                 ? [.uploaderArticles(mid: mid, page: page), .uploaderArticlesLegacy(mid: mid, page: page)]
                 : [.uploaderArticlesLegacy(mid: mid, page: page), .uploaderArticles(mid: mid, page: page)]
         case let .popular(page, size):
             ordered = [.popular(page: page, size: size)]
+        case let .recommendFeed(page):
+            ordered = [.recommendFeed(page: page)]
         }
 
         var deduped: [BiliEndpoint] = []
@@ -108,7 +111,7 @@ enum BiliEndpoint {
 
     var requiresWbi: Bool {
         switch self {
-        case .search, .searchUsers, .searchArticles, .detailWbi, .playURLWbi, .comments, .uploader, .uploaderVideos, .uploaderArticles:
+        case .search, .searchUsers, .searchArticles, .detailWbi, .playURLWbi, .comments, .uploader, .uploaderVideos, .uploaderArticles, .recommendFeed:
             return true
         default:
             return false
@@ -134,6 +137,8 @@ enum BiliEndpoint {
         switch self {
         case .popular, .comments, .commentsLegacy:
             return .none
+        case .recommendFeed:
+            return .optional
         case .search, .searchLegacy, .searchUsers, .searchUsersLegacy, .searchArticles, .searchArticlesLegacy, .detailWbi, .detail, .playURLWbi, .playURL, .uploader, .uploaderLegacy, .uploaderVideos, .uploaderVideosLegacy, .uploaderArticles, .uploaderArticlesLegacy:
             return .optional
         case .uploaderRelation, .uploaderUpStat:
@@ -181,6 +186,8 @@ enum BiliEndpoint {
             return "/x/space/wbi/article"
         case .uploaderArticlesLegacy:
             return "/x/space/article"
+        case .recommendFeed:
+            return "/x/web-interface/wbi/index/top/feed/rcmd"
         }
     }
 
@@ -251,22 +258,20 @@ enum BiliEndpoint {
                 "bvid": bvid,
                 "cid": String(cid),
                 "qn": String(quality),
-                "fnval": "0",
+                "fnval": "4048",
                 "fnver": "0",
-                "fourk": "0",
-                "platform": "html5",
-                "high_quality": "0"
+                "fourk": "1",
+                "platform": "html5"
             ]
         case let .playURL(bvid, cid, quality):
             return [
                 "bvid": bvid,
                 "cid": String(cid),
                 "qn": String(quality),
-                "fnval": "0",
+                "fnval": "4048",
                 "fnver": "0",
-                "fourk": "0",
-                "platform": "html5",
-                "high_quality": "0"
+                "fourk": "1",
+                "platform": "html5"
             ]
         case let .comments(aid, page):
             return [
@@ -293,14 +298,14 @@ enum BiliEndpoint {
             return ["vmid": String(mid)]
         case let .uploaderUpStat(mid):
             return ["mid": String(mid)]
-        case let .uploaderVideos(mid, page):
+        case let .uploaderVideos(mid, page, order):
             return [
                 "mid": String(mid),
                 "pn": String(page),
                 "ps": "10",
                 "tid": "0",
                 "keyword": "",
-                "order": "pubdate",
+                "order": order,
                 "platform": "web",
                 "web_location": "1550101",
                 "order_avoided": "true",
@@ -308,14 +313,14 @@ enum BiliEndpoint {
                 "dm_img_str": "V2ViR0wgMS",
                 "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBIRCBHcmFwaGljcyBEaXJlY3QzRDExIHZzXzVfMCBwc181XzApR29vZ2xlIEluYy4gKEludGVsKQ"
             ]
-        case let .uploaderVideosLegacy(mid, page):
+        case let .uploaderVideosLegacy(mid, page, order):
             return [
                 "mid": String(mid),
                 "pn": String(page),
                 "ps": "10",
                 "tid": "0",
                 "keyword": "",
-                "order": "pubdate"
+                "order": order
             ]
         case let .uploaderArticles(mid, page):
             return [
@@ -332,6 +337,13 @@ enum BiliEndpoint {
                 "ps": "10",
                 "sort": "publish_time"
             ]
+        case let .recommendFeed(page):
+            return [
+                "fresh_type": "4",
+                "ps": "12",
+                "fresh_idx": String(page),
+                "fresh_idx_1h": String(page)
+            ]
         }
     }
 
@@ -347,7 +359,7 @@ enum BiliEndpoint {
 
     var supportsOfflineCache: Bool {
         switch self {
-        case .popular, .playURL, .playURLWbi:
+        case .popular, .playURL, .playURLWbi, .recommendFeed:
             return false
         default:
             return true

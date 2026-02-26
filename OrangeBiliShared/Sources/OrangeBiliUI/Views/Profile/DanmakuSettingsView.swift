@@ -4,129 +4,27 @@ import OrangeBiliCore
 struct DanmakuSettingsView: View {
     @EnvironmentObject private var render: RenderSettings
 
-
-    @ViewBuilder
-    private func filterField(_ title: String, text: Binding<String>) -> some View {
-#if os(macOS)
-        TextField(title, text: text)
-            .autocorrectionDisabled(true)
-#else
-        TextField(title, text: text)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled(true)
-#endif
-    }
-
     var body: some View {
-
         List {
             Section(L10n.t("danmaku.section.basic")) {
+                Picker(L10n.t("danmaku.source"), selection: $render.danmakuSourceRaw) {
+                    Text(L10n.t("danmaku.source.protobuf")).tag(DanmakuSource.protobuf.rawValue)
+                    Text(L10n.t("danmaku.source.xml")).tag(DanmakuSource.xml.rawValue)
+                }
+
                 Toggle(L10n.t("danmaku.enable"), isOn: $render.danmakuEnabled)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.f("danmaku.opacity", String(format: "%.2f", render.danmakuOpacity)))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-#if os(tvOS)
-                    HStack(spacing: 12) {
-                        Button {
-                            render.danmakuOpacity = max(0.2, render.danmakuOpacity - 0.05)
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
+                sliderRow(L10n.f("danmaku.opacity", formatted(render.danmakuOpacity)),
+                          value: $render.danmakuOpacity, range: 0.2...1.0, step: 0.05)
 
-                        Text(String(format: "%.2f", render.danmakuOpacity))
-                            .font(.caption2)
-                            .frame(minWidth: 40)
+                sliderRow(L10n.f("danmaku.scale", formatted(render.danmakuScale)),
+                          value: $render.danmakuScale, range: 0.6...1.6, step: 0.05)
 
-                        Button {
-                            render.danmakuOpacity = min(1.0, render.danmakuOpacity + 0.05)
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-                    }
-#else
-                    Slider(value: $render.danmakuOpacity, in: 0.2 ... 1.0, step: 0.05)
-#endif
-                }
+                sliderRow(L10n.f("danmaku.advancedScale", formatted(render.danmakuAdvancedScale)),
+                          value: $render.danmakuAdvancedScale, range: 0.6...2.4, step: 0.05)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.f("danmaku.scale", String(format: "%.2f", render.danmakuScale)))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-#if os(tvOS)
-                    HStack(spacing: 12) {
-                        Button {
-                            render.danmakuScale = max(0.6, render.danmakuScale - 0.05)
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-
-                        Text(String(format: "%.2f", render.danmakuScale))
-                            .font(.caption2)
-                            .frame(minWidth: 40)
-
-                        Button {
-                            render.danmakuScale = min(1.6, render.danmakuScale + 0.05)
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-                    }
-#else
-                    Slider(value: $render.danmakuScale, in: 0.6 ... 1.6, step: 0.05)
-#endif
-                }
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.f("danmaku.speed", String(format: "%.2f", render.danmakuSpeed)))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-#if os(tvOS)
-                    HStack(spacing: 12) {
-                        Button {
-                            render.danmakuSpeed = max(0.5, render.danmakuSpeed - 0.05)
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-
-                        Text(String(format: "%.2f", render.danmakuSpeed))
-                            .font(.caption2)
-                            .frame(minWidth: 40)
-
-                        Button {
-                            render.danmakuSpeed = min(2.0, render.danmakuSpeed + 0.05)
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                        .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-                    }
-#else
-                    Slider(value: $render.danmakuSpeed, in: 0.5 ... 2.0, step: 0.05)
-#endif
-                }
+                sliderRow(L10n.f("danmaku.speed", formatted(render.danmakuSpeed)),
+                          value: $render.danmakuSpeed, range: 0.5...2.0, step: 0.05)
             }
 
             Section(L10n.t("danmaku.section.position")) {
@@ -144,101 +42,115 @@ struct DanmakuSettingsView: View {
             Section(L10n.t("danmaku.section.display")) {
                 Toggle(L10n.t("danmaku.color.original"), isOn: $render.danmakuUseOriginalColor)
 
-                HStack {
-                    Text(L10n.t("danmaku.density"))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text("\(render.danmakuDensity)")
-                        .font(.caption2)
+                Toggle(L10n.t("danmaku.stroke.enable"), isOn: $render.danmakuStrokeEnabled)
+
+                if render.danmakuStrokeEnabled {
+                    sliderRow(L10n.f("danmaku.stroke.width", formatted(render.danmakuStrokeWidth)),
+                              value: $render.danmakuStrokeWidth, range: 0.3...2.0, step: 0.1)
                 }
-#if os(tvOS)
-                HStack(spacing: 12) {
-                    Button {
-                        render.danmakuDensity = max(1, render.danmakuDensity - 1)
-                    } label: {
-                        Image(systemName: "minus.circle.fill")
-                    }
-                    .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
 
-                    Text("\(render.danmakuDensity)")
-                        .font(.caption2)
-                        .frame(minWidth: 24)
+                intSliderRow(L10n.t("danmaku.density"),
+                             value: $render.danmakuDensity, range: 1...8)
 
-                    Button {
-                        render.danmakuDensity = min(5, render.danmakuDensity + 1)
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                    .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-                }
-#else
-                Slider(value: Binding(
-                    get: { Double(render.danmakuDensity) },
-                    set: { render.danmakuDensity = Int($0.rounded()) }
-                ), in: 1 ... 5, step: 1)
-#endif
-
-                HStack {
-                    Text(L10n.t("danmaku.maxLines"))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text("\(render.danmakuMaxLines)")
-                        .font(.caption2)
-                }
-#if os(tvOS)
-                HStack(spacing: 12) {
-                    Button {
-                        render.danmakuMaxLines = max(1, render.danmakuMaxLines - 1)
-                    } label: {
-                        Image(systemName: "minus.circle.fill")
-                    }
-                    .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-
-                    Text("\(render.danmakuMaxLines)")
-                        .font(.caption2)
-                        .frame(minWidth: 24)
-
-                    Button {
-                        render.danmakuMaxLines = min(6, render.danmakuMaxLines + 1)
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                    .buttonStyle(.plain)
-#if os(tvOS)
-                        .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
-#endif
-                }
-#else
-                Slider(value: Binding(
-                    get: { Double(render.danmakuMaxLines) },
-                    set: { render.danmakuMaxLines = Int($0.rounded()) }
-                ), in: 1 ... 6, step: 1)
-#endif
+                intSliderRow(L10n.t("danmaku.maxLines"),
+                             value: $render.danmakuMaxLines, range: 1...12)
             }
 
             Section(L10n.t("danmaku.section.filter")) {
+                Toggle(L10n.t("danmaku.advancedOnly"), isOn: $render.danmakuAdvancedOnly)
                 filterField(L10n.t("danmaku.block.keywords"), text: $render.danmakuKeywordBlocklist)
-
                 filterField(L10n.t("danmaku.block.users"), text: $render.danmakuUserHashBlocklist)
-
                 filterField(L10n.t("danmaku.search.query"), text: $render.danmakuSearchQuery)
-
                 Toggle(L10n.t("danmaku.search.only"), isOn: $render.danmakuSearchOnly)
             }
         }
         .listStyle(.plain)
         .navigationTitle(L10n.t("danmaku.title"))
+    }
+
+    // MARK: - Reusable Rows
+
+    @ViewBuilder
+    private func sliderRow(_ label: String, value: Binding<Double>, range: ClosedRange<Double>, step: Double) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            #if os(tvOS)
+            tvStepper(display: formatted(value.wrappedValue)) {
+                value.wrappedValue = max(range.lowerBound, value.wrappedValue - step)
+            } onPlus: {
+                value.wrappedValue = min(range.upperBound, value.wrappedValue + step)
+            }
+            #else
+            Slider(value: value, in: range, step: step)
+            #endif
+        }
+    }
+
+    @ViewBuilder
+    private func intSliderRow(_ label: String, value: Binding<Int>, range: ClosedRange<Int>) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text("\(value.wrappedValue)")
+                .font(.caption2)
+        }
+        #if os(tvOS)
+        tvStepper(display: "\(value.wrappedValue)") {
+            value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1)
+        } onPlus: {
+            value.wrappedValue = min(range.upperBound, value.wrappedValue + 1)
+        }
+        #else
+        Slider(value: Binding(
+            get: { Double(value.wrappedValue) },
+            set: { value.wrappedValue = Int($0.rounded()) }
+        ), in: Double(range.lowerBound)...Double(range.upperBound), step: 1)
+        #endif
+    }
+
+    #if os(tvOS)
+    @ViewBuilder
+    private func tvStepper(display: String, onMinus: @escaping () -> Void, onPlus: @escaping () -> Void) -> some View {
+        HStack(spacing: 12) {
+            Button(action: onMinus) {
+                Image(systemName: "minus.circle.fill")
+            }
+            .buttonStyle(.plain)
+            .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+
+            Text(display)
+                .font(.caption2)
+                .frame(minWidth: 40)
+
+            Button(action: onPlus) {
+                Image(systemName: "plus.circle.fill")
+            }
+            .buttonStyle(.plain)
+            .frame(minWidth: UIStyle.buttonMinSize, minHeight: UIStyle.buttonMinSize)
+        }
+    }
+    #endif
+
+    @ViewBuilder
+    private func filterField(_ title: String, text: Binding<String>) -> some View {
+        #if os(macOS)
+        TextField(title, text: text)
+            .autocorrectionDisabled(true)
+        #else
+        TextField(title, text: text)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
+        #endif
+    }
+
+    // MARK: - Helpers
+
+    private func formatted(_ value: Double) -> String {
+        String(format: "%.2f", value)
     }
 
     private func areaTitle(_ area: DanmakuArea) -> String {
@@ -249,4 +161,3 @@ struct DanmakuSettingsView: View {
         }
     }
 }
-

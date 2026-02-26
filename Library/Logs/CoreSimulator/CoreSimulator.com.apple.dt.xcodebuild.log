@@ -1,0 +1,29 @@
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Unable to deliver request ({
+	    "developer_dir" = "/Applications/Xcode.app/Contents/Developer";
+	    request = "set_developer_dir";
+	}) because we are not connected to CoreSimulatorService.
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Failed to load liblaunch for runtime com.apple.CoreSimulator.SimRuntime.iOS-15-5: Error Domain=NSPOSIXErrorDomain Code=53 "Software caused connection abort" UserInfo={NSLocalizedFailureReason=XPC error talking to SimLaunchHostService: <dictionary: 0x1f9c49680> { count = 1, transaction: 0, voucher = 0x0, contents =
+		"XPCErrorDescription" => <string: 0x1f9c497c8> { length = 18, contents = "Connection invalid" }
+	}}
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Failed to load runtime matching data from server: Error Domain=NSPOSIXErrorDomain Code=61 "Connection refused" UserInfo={NSLocalizedDescription=CoreSimulatorService connection became invalid.  Simulator services will no longer be available.}
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Failed to unload libLaunch instance (null) from com.apple.CoreSimulator.SimLaunchHost-arm64: <OS_xpc_error: <dictionary: 0x1f9c49680> { count = 1, transaction: 0, voucher = 0x0, contents =
+		"XPCErrorDescription" => <string: 0x1f9c497c8> { length = 18, contents = "Connection invalid" }
+	}>
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Unable to deliver request ({
+	    request = "get_runtime_sdk_map";
+	}) because we are not connected to CoreSimulatorService.
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Failed to setup launchHostClient for runtime com.apple.CoreSimulator.SimRuntime.iOS-15-5: Error Domain=NSPOSIXErrorDomain Code=53 "Software caused connection abort" UserInfo={NSLocalizedFailureReason=XPC error talking to SimLaunchHostService: <dictionary: 0x1f9c49680> { count = 1, transaction: 0, voucher = 0x0, contents =
+		"XPCErrorDescription" => <string: 0x1f9c497c8> { length = 18, contents = "Connection invalid" }
+	}}
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Could not kickstart simdiskimaged; SimDiskImageManager services will not be available: Error Domain=NSPOSIXErrorDomain Code=53 "Software caused connection abort" UserInfo={NSLocalizedDescription=Error returned in reply from CoreSimulatorService: Connection invalid}
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Could not get list of trusted mount directories: Error Domain=com.apple.CoreSimulator.SimError Code=410 "The service used to manage runtime disk images (simdiskimaged) crashed or is not responding" UserInfo={NSLocalizedDescription=The service used to manage runtime disk images (simdiskimaged) crashed or is not responding}
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: simdiskimaged returned error (invalid), marking disconnected.
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: simdiskimaged returned error (invalid), marking disconnected.
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Unable to deliver request ({
+	    request = "notification_subscription";
+	    "set_path" = "/Users/yanyige/Library/Developer/CoreSimulator/Devices";
+	}) because we are not connected to CoreSimulatorService.
+Feb 25 18:54:42 yygMac2 com.apple.dt.xcodebuild[50659] <Error>: Unable to deliver request ({
+	    request = "notification_subscription";
+	    "set_path" = "/Users/yanyige/Library/Developer/CoreSimulator/Devices";
+	}) because we are not connected to CoreSimulatorService.

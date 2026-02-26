@@ -103,10 +103,17 @@ public struct VideoStats: Hashable {
 public struct PlayStream {
     public let url: URL
     public let backupURLs: [URL]
+    public let audioURL: URL?
+    public let audioBackupURLs: [URL]
+    public let codecId: Int?
 
-    public init(url: URL, backupURLs: [URL]) {
+    public init(url: URL, backupURLs: [URL], audioURL: URL? = nil,
+                audioBackupURLs: [URL] = [], codecId: Int? = nil) {
         self.url = url
         self.backupURLs = backupURLs
+        self.audioURL = audioURL
+        self.audioBackupURLs = audioBackupURLs
+        self.codecId = codecId
     }
 }
 

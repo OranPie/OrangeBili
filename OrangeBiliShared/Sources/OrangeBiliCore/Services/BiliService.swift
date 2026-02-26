@@ -2,15 +2,22 @@ import Foundation
 
 public protocol BiliServiceProtocol {
     func fetchPopular(page: Int, size: Int) async throws -> [BiliVideo]
+    func fetchRecommendFeed(page: Int) async throws -> [BiliVideo]
     func searchVideos(keyword: String, page: Int, order: String) async throws -> [BiliVideo]
     func searchUsers(keyword: String, page: Int) async throws -> [UserSearchResult]
     func searchArticles(keyword: String, page: Int) async throws -> [ArticleSearchResult]
     func fetchVideoDetail(bvid: String) async throws -> VideoDetail
-    func fetchPlayURL(bvid: String, cid: Int, quality: Int) async throws -> PlayStream
+    func fetchPlayURL(bvid: String, cid: Int, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream
     func fetchComments(aid: Int, page: Int) async throws -> [CommentItem]
     func fetchUploader(mid: Int, page: Int) async throws -> (UploaderProfile, [BiliVideo])
-    func fetchUploaderVideos(mid: Int, page: Int) async throws -> [BiliVideo]
+    func fetchUploaderVideos(mid: Int, page: Int, order: String) async throws -> [BiliVideo]
     func fetchUploaderArticles(mid: Int, page: Int) async throws -> [UploaderArticle]
+}
+
+extension BiliServiceProtocol {
+    func fetchPlayURL(bvid: String, cid: Int, quality: Int) async throws -> PlayStream {
+        try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: .auto)
+    }
 }
 
 struct BiliService: BiliServiceProtocol {
@@ -23,6 +30,25 @@ struct BiliService: BiliServiceProtocol {
     func fetchPopular(page: Int, size: Int) async throws -> [BiliVideo] {
         let response = try await client.request(.popular(page: page, size: size), as: PopularResponse.self)
         return response.list.map { item in
+            BiliVideo(
+                bvid: item.bvid,
+                aid: item.aid.value,
+                title: item.title.cleanHTMLTags(),
+                author: item.owner.name,
+                mid: item.owner.mid.value,
+                coverURL: URL.biliImageURL(from: item.pic),
+                viewCount: item.stat.view.value,
+                danmakuCount: item.stat.danmaku.value,
+                durationText: item.duration.value.durationString,
+                publishedAt: item.publishedAt,
+                description: item.desc
+            )
+        }
+    }
+
+    func fetchRecommendFeed(page: Int) async throws -> [BiliVideo] {
+        let response = try await client.request(.recommendFeed(page: page), as: RecommendResponse.self)
+        return response.item.map { item in
             BiliVideo(
                 bvid: item.bvid,
                 aid: item.aid.value,
@@ -114,8 +140,50 @@ struct BiliService: BiliServiceProtocol {
         )
     }
 
-    func fetchPlayURL(bvid: String, cid: Int, quality: Int = 32) async throws -> PlayStream {
+    func fetchPlayURL(bvid: String, cid: Int, quality: Int = 32, preferredCodec: PreferredCodec = .auto) async throws -> PlayStream {
         let response = try await client.request(.playURLWbi(bvid: bvid, cid: cid, quality: quality), as: PlayURLResponse.self)
+
+        // Try DASH first
+        if let dash = response.dash, let videos = dash.video, !videos.isEmpty {
+            // Filter by quality ≤ requested, sort by quality desc then bandwidth desc
+            let candidates = videos
+                .filter { $0.id <= quality }
+                .sorted { ($0.id, $0.bandwidth ?? 0) > ($1.id, $1.bandwidth ?? 0) }
+
+            // Pick by codec preference
+            let targetCodecId: Int? = {
+                switch preferredCodec {
+                case .avc: return 7
+                case .hevc: return 12
+                case .auto: return nil
+                }
+            }()
+
+            let picked: PlayURLResponse.DASHData.Stream?
+            if let targetCodecId {
+                picked = candidates.first(where: { $0.codecid == targetCodecId }) ?? candidates.first
+            } else {
+                // Auto: prefer AVC (7) for maximum compatibility
+                picked = candidates.first(where: { $0.codecid == 7 }) ?? candidates.first
+            }
+
+            if let video = picked, let videoURL = URL(string: video.baseUrl) {
+                // Pick best audio
+                let bestAudio = dash.audio?
+                    .sorted { ($0.bandwidth ?? 0) > ($1.bandwidth ?? 0) }
+                    .first
+
+                return PlayStream(
+                    url: videoURL,
+                    backupURLs: (video.backupUrl ?? []).compactMap(URL.init(string:)),
+                    audioURL: bestAudio.flatMap { URL(string: $0.baseUrl) },
+                    audioBackupURLs: (bestAudio?.backupUrl ?? []).compactMap(URL.init(string:)),
+                    codecId: video.codecid
+                )
+            }
+        }
+
+        // Fallback to durl
         guard let first = response.durl.first, let primaryURL = URL(string: first.url) else {
             throw BiliError.noStream
         }
@@ -145,7 +213,7 @@ struct BiliService: BiliServiceProtocol {
 
     func fetchUploader(mid: Int, page: Int) async throws -> (UploaderProfile, [BiliVideo]) {
         let uploader = try await client.request(.uploader(mid: mid), as: UploaderResponse.self)
-        let videos = try await client.request(.uploaderVideos(mid: mid, page: page), as: UploaderVideosResponse.self)
+        let videos = try await client.request(.uploaderVideos(mid: mid, page: page, order: "pubdate"), as: UploaderVideosResponse.self)
         let relation = try? await client.request(.uploaderRelation(mid: mid), as: UploaderRelationResponse.self)
         let upStat = try? await client.request(.uploaderUpStat(mid: mid), as: UploaderUpStatResponse.self)
 
@@ -178,9 +246,9 @@ struct BiliService: BiliServiceProtocol {
         return (profile, mappedVideos)
     }
 
-    func fetchUploaderVideos(mid: Int, page: Int) async throws -> [BiliVideo] {
+    func fetchUploaderVideos(mid: Int, page: Int, order: String) async throws -> [BiliVideo] {
         let uploader = try await client.request(.uploader(mid: mid), as: UploaderResponse.self)
-        let videos = try await client.request(.uploaderVideos(mid: mid, page: page), as: UploaderVideosResponse.self)
+        let videos = try await client.request(.uploaderVideos(mid: mid, page: page, order: order), as: UploaderVideosResponse.self)
         return (videos.list?.vlist ?? []).map { item in
             BiliVideo(
                 bvid: item.bvid,
@@ -281,6 +349,17 @@ private struct PopularResponse: Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         list = (try? c.decodeIfPresent([PopularVideoDTO].self, forKey: .list)) ?? []
+    }
+}
+
+private struct RecommendResponse: Decodable {
+    let item: [PopularVideoDTO]
+
+    private enum CodingKeys: String, CodingKey { case item }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        item = (try? c.decodeIfPresent([PopularVideoDTO].self, forKey: .item)) ?? []
     }
 }
 
@@ -570,12 +649,39 @@ private struct PlayURLResponse: Decodable {
         }
     }
 
+    struct DASHData: Decodable {
+        struct Stream: Decodable {
+            let id: Int
+            let codecid: Int?
+            let baseUrl: String
+            let backupUrl: [String]?
+            let bandwidth: Int?
+
+            private enum CodingKeys: String, CodingKey {
+                case id, codecid, baseUrl = "base_url", backupUrl = "backup_url", bandwidth
+            }
+
+            init(from decoder: Decoder) throws {
+                let c = try decoder.container(keyedBy: CodingKeys.self)
+                id = (try? c.decodeIfPresent(Int.self, forKey: .id)) ?? 0
+                codecid = try? c.decodeIfPresent(Int.self, forKey: .codecid)
+                baseUrl = c.decodeString(forKey: .baseUrl)
+                backupUrl = try? c.decodeIfPresent([String].self, forKey: .backupUrl)
+                bandwidth = try? c.decodeIfPresent(Int.self, forKey: .bandwidth)
+            }
+        }
+        let video: [Stream]?
+        let audio: [Stream]?
+    }
+
+    let dash: DASHData?
     let durl: [DURL]
 
-    private enum CodingKeys: String, CodingKey { case durl }
+    private enum CodingKeys: String, CodingKey { case dash, durl }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        dash = try? c.decodeIfPresent(DASHData.self, forKey: .dash)
         durl = (try? c.decodeIfPresent([DURL].self, forKey: .durl)) ?? []
     }
 }

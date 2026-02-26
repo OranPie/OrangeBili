@@ -29,16 +29,27 @@ final class CompanionBridge: NSObject, CompanionBridgeProtocol {
             return CompanionAuthState(isLoggedIn: false, username: nil)
         }
 
-        return await withCheckedContinuation { continuation in
-            session.sendMessage(["command": "requestAuthState"], replyHandler: { payload in
-                let state = CompanionAuthState(
-                    isLoggedIn: payload["isLoggedIn"] as? Bool ?? false,
-                    username: payload["username"] as? String
-                )
-                continuation.resume(returning: state)
-            }, errorHandler: { _ in
-                continuation.resume(returning: CompanionAuthState(isLoggedIn: false, username: nil))
-            })
+        return await withTaskGroup(of: CompanionAuthState.self) { group in
+            group.addTask {
+                await withCheckedContinuation { continuation in
+                    session.sendMessage(["command": "requestAuthState"], replyHandler: { payload in
+                        let state = CompanionAuthState(
+                            isLoggedIn: payload["isLoggedIn"] as? Bool ?? false,
+                            username: payload["username"] as? String
+                        )
+                        continuation.resume(returning: state)
+                    }, errorHandler: { _ in
+                        continuation.resume(returning: CompanionAuthState(isLoggedIn: false, username: nil))
+                    })
+                }
+            }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                return CompanionAuthState(isLoggedIn: false, username: nil)
+            }
+            let result = await group.next()!
+            group.cancelAll()
+            return result
         }
     }
 
@@ -105,4 +116,11 @@ extension CompanionBridge: WCSessionDelegate {
             DebugLogStore.shared.log(category: "companion", message: "flush context fail: \(error.localizedDescription)")
         }
     }
+
+    #if os(iOS)
+    func sessionDidBecomeInactive(_ session: WCSession) {}
+    func sessionDidDeactivate(_ session: WCSession) {
+        session.activate()
+    }
+    #endif
 }

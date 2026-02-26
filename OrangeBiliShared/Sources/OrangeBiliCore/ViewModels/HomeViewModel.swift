@@ -71,7 +71,11 @@ public final class HomeViewModel: ObservableObject {
             if let keyword = selectedCategory.keyword {
                 fetched = try await service.searchVideos(keyword: keyword, page: page, order: "")
             } else {
-                fetched = try await service.fetchPopular(page: page, size: 12)
+                do {
+                    fetched = try await service.fetchRecommendFeed(page: page)
+                } catch {
+                    fetched = try await service.fetchPopular(page: page, size: 12)
+                }
             }
 
             errorMessage = nil

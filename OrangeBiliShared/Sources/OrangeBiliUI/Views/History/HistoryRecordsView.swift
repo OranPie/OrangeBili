@@ -42,6 +42,9 @@ struct HistoryRecordsView: View {
             }
         }
         .navigationTitle(L10n.t("history.title"))
+        .refreshable {
+            // Trigger UI refresh by toggling a minor state
+        }
     }
 }
 

@@ -1,18 +1,19 @@
 import SwiftUI
 import OrangeBiliCore
-#if canImport(AVKit)
-import AVKit
+#if canImport(AVFoundation)
+import AVFoundation
 #endif
 
 struct VideoPlayerView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var historyStore: HistoryStore
     @EnvironmentObject private var historySyncer: HistorySyncer
     @EnvironmentObject private var render: RenderSettings
     @StateObject private var viewModel: PlayerViewModel
     @StateObject private var danmakuViewModel = DanmakuViewModel()
-    @State private var controlsVisible = true
     @State private var resumeSeconds: Int?
     @State private var showResumePrompt = false
+    @State private var lastDanmakuLoadDuration = 0
 
     init(video: BiliVideo, cid: Int, localFileURL: URL? = nil) {
         _viewModel = StateObject(wrappedValue: PlayerViewModel(video: video, cid: cid, localFileURL: localFileURL))
@@ -42,28 +43,68 @@ struct VideoPlayerView: View {
                     }
                 }
             } else {
-                playerContent
+                playerBackend
             }
         }
         .navigationTitle(L10n.t("player.title"))
+        #if !os(tvOS)
+        .overlay(alignment: .topLeading) {
+            if render.showVideoDebugInfo, let info = viewModel.videoFormatInfo {
+                formatInfoBadge(info)
+            }
+        }
+        #endif
         .overlay(alignment: .center) {
             if showResumePrompt, let resumeSeconds {
                 resumeOverlay(seconds: resumeSeconds)
             }
         }
         .task {
+            viewModel.preferredQuality = render.preferredQuality
+            viewModel.preferredCodec = render.preferredCodec
             await viewModel.load()
             if render.danmakuEnabled {
-                await danmakuViewModel.load(cid: viewModel.cid)
+                await danmakuViewModel.load(
+                    cid: viewModel.cid,
+                    aid: viewModel.video.aid,
+                    durationSeconds: viewModel.totalDurationSeconds,
+                    source: render.danmakuSourceEnum
+                )
+                lastDanmakuLoadDuration = viewModel.totalDurationSeconds
             }
             await checkResume()
         }
-        .onChange(of: render.danmakuEnabled) { _, enabled in
+        .onChange(of: render.danmakuEnabled) { enabled in
             if enabled {
-                Task { await danmakuViewModel.load(cid: viewModel.cid) }
+                Task {
+                    await danmakuViewModel.load(
+                        cid: viewModel.cid,
+                        aid: viewModel.video.aid,
+                        durationSeconds: viewModel.totalDurationSeconds,
+                        source: render.danmakuSourceEnum
+                    )
+                    lastDanmakuLoadDuration = viewModel.totalDurationSeconds
+                }
             } else {
                 danmakuViewModel.reset()
             }
+        }
+        .onChange(of: viewModel.totalDurationSeconds) { duration in
+            guard render.danmakuEnabled else { return }
+            guard duration > 0 else { return }
+            guard duration != lastDanmakuLoadDuration else { return }
+            Task {
+                await danmakuViewModel.load(
+                    cid: viewModel.cid,
+                    aid: viewModel.video.aid,
+                    durationSeconds: duration,
+                    source: render.danmakuSourceEnum
+                )
+                lastDanmakuLoadDuration = duration
+            }
+        }
+        .onChange(of: viewModel.didFinishPlaying) { finished in
+            if finished { dismiss() }
         }
         .onDisappear {
             historyStore.savePlayback(video: viewModel.video, progressSeconds: viewModel.progressSeconds)
@@ -74,49 +115,30 @@ struct VideoPlayerView: View {
         }
     }
 
+    // MARK: - Player backend selection
+
     @ViewBuilder
-    private var playerContent: some View {
-        #if canImport(AVKit)
+    private var playerBackend: some View {
+        #if os(watchOS)
         if let player = viewModel.player {
-            ZStack(alignment: .bottom) {
-                VideoPlayer(player: player)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            controlsVisible.toggle()
-                        }
-                    }
-
-                if render.danmakuEnabled {
-                    DanmakuOverlayView(
-                        viewModel: danmakuViewModel,
-                        currentTime: Double(viewModel.progressSeconds)
-                    )
-                }
-
-                if controlsVisible {
-                    controlsPanel
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                } else {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            controlsVisible = true
-                        }
-                    } label: {
-                        Image(systemName: "chevron.up.circle.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.9))
-                            .padding(4)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.bottom, 6)
-                }
+            if render.watchPlayerVendor == .ffmpegMinimal {
+                SoftDecodePlayerView(
+                    player: player,
+                    headers: viewModel.playbackRequestHeaders,
+                    danmakuViewModel: danmakuViewModel,
+                    playerViewModel: viewModel
+                )
+                .ignoresSafeArea()
+            } else {
+                SystemPlayerView(viewModel: viewModel, danmakuViewModel: danmakuViewModel)
             }
         } else {
             Text(L10n.t("player.initFailed"))
                 .font(.caption)
                 .foregroundStyle(.white)
         }
+        #elseif canImport(AVKit)
+        SystemPlayerView(viewModel: viewModel, danmakuViewModel: danmakuViewModel)
         #else
         Text(L10n.t("player.unsupported"))
             .font(.caption)
@@ -124,99 +146,7 @@ struct VideoPlayerView: View {
         #endif
     }
 
-    private var controlsPanel: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 8) {
-                Button {
-                    viewModel.togglePlayback()
-                } label: {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                }
-
-                Spacer()
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        controlsVisible = false
-                    }
-                } label: {
-                    Image(systemName: "chevron.down.circle")
-                }
-            }
-            .buttonStyle(.plain)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(.white)
-
-            HStack {
-                Text(timeText(viewModel.progressSeconds))
-                Spacer()
-                Text(timeText(max(viewModel.totalDurationSeconds, 0)))
-            }
-            .font(.system(size: 9, weight: .medium))
-            .foregroundStyle(.white.opacity(0.92))
-
-            HStack(spacing: 10) {
-                Button {
-                    viewModel.skip(by: -10)
-                } label: {
-                    Image(systemName: "gobackward.10")
-                }
-
-                Button {
-                    viewModel.cyclePlaybackRate()
-                } label: {
-                    Text(String(format: "%.2gx", viewModel.playbackRate))
-                        .font(.system(size: 9, weight: .semibold))
-                        .frame(minWidth: 34)
-                }
-
-                Button {
-                    render.danmakuEnabled.toggle()
-                } label: {
-                    Image(systemName: render.danmakuEnabled ? "text.bubble.fill" : "text.bubble")
-                }
-
-                Button {
-                    viewModel.skip(by: 10)
-                } label: {
-                    Image(systemName: "goforward.10")
-                }
-
-                Button {
-                    viewModel.switchSource()
-                } label: {
-                    Text(viewModel.sourceLabel)
-                        .font(.system(size: 8, weight: .semibold))
-                        .lineLimit(1)
-                        .frame(minWidth: 44)
-                }
-
-                Button {
-                    viewModel.toggleMute()
-                } label: {
-                    Image(systemName: viewModel.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                }
-
-                Button {
-                    viewModel.restart()
-                } label: {
-                    Image(systemName: "arrow.counterclockwise")
-                }
-            }
-            .buttonStyle(.plain)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(.white)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 8))
-        .padding(.horizontal, 4)
-        .padding(.bottom, 4)
-    }
-
-    private var isPlaying: Bool {
-        viewModel.player?.timeControlStatus == .playing
-    }
+    // MARK: - Helpers
 
     private func timeText(_ seconds: Int) -> String {
         let safe = max(seconds, 0)
@@ -228,6 +158,30 @@ struct VideoPlayerView: View {
         guard let saved = historyStore.progressSeconds(for: viewModel.video.bvid), saved > 5 else { return }
         resumeSeconds = saved
         showResumePrompt = true
+    }
+
+    @ViewBuilder
+    private func formatInfoBadge(_ info: VideoFormatInfo) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("\(info.codec) \(info.width)x\(info.height) \(info.bitsPerComponent)bit")
+            Text("pxfmt=\(info.pixelFormat)")
+            Text("TF=\(info.transferFunction.isEmpty ? "–" : info.transferFunction)")
+            Text("CP=\(info.colorPrimaries.isEmpty ? "–" : info.colorPrimaries)")
+            Text("M=\(info.yCbCrMatrix.isEmpty ? "–" : info.yCbCrMatrix)")
+            Text("HDR=\(info.isHDR ? "Y" : "N") HEVC_HW=\(info.hevcHWSupported ? "Y" : "N")")
+            Text(info.streamURL)
+                .lineLimit(2)
+            if viewModel.colorFixActive {
+                Text("CI_FIX=ON")
+                    .foregroundStyle(.green)
+            }
+        }
+        .font(.system(size: UIStyle.fontSize(7), design: .monospaced))
+        .foregroundStyle(.white.opacity(0.7))
+        .padding(6)
+        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
+        .padding(8)
+        .allowsHitTesting(false)
     }
 
     @ViewBuilder
@@ -256,5 +210,6 @@ struct VideoPlayerView: View {
         .padding(.vertical, 8)
         .background(.black.opacity(0.78), in: RoundedRectangle(cornerRadius: 10))
         .padding(12)
+        .transition(.scale.combined(with: .opacity))
     }
 }

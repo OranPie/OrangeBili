@@ -36,7 +36,8 @@ struct VideoDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         AsyncCachedImage(url: detail.coverURL) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(.gray.opacity(0.3))
+                                .fill(Theme.shimmerBase)
+                                .shimmer()
                         }
                         .aspectRatio(16 / 9, contentMode: .fit)
 #if os(tvOS)
@@ -48,11 +49,23 @@ struct VideoDetailView: View {
 
                         Text(detail.title)
                             .font(.system(size: 11.5 * render.textScale * platformScale, weight: .semibold))
-                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         HStack(spacing: 4) {
                             metaChip(label: L10n.t("detail.meta.up"), value: detail.owner.name, monospaced: false)
                             metaChip(label: L10n.t("detail.meta.bv"), value: detail.bvid, monospaced: true)
+                        }
+
+                        HStack(spacing: 6) {
+                            InlineStatChip(icon: "play.fill", text: Formatting.count(detail.stats.views))
+                            InlineStatChip(icon: "message", text: Formatting.count(detail.stats.danmaku))
+                            InlineStatChip(icon: "text.bubble", text: Formatting.count(detail.stats.replies))
+                        }
+
+                        HStack(spacing: 6) {
+                            InlineStatChip(icon: "star.fill", text: Formatting.count(detail.stats.favorites))
+                            InlineStatChip(icon: "centsign.circle", text: Formatting.count(detail.stats.coins))
+                            InlineStatChip(icon: "square.and.arrow.up", text: Formatting.count(detail.stats.shares))
                         }
 
                         if !detail.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -64,39 +77,20 @@ struct VideoDetailView: View {
                                 Text(detail.description)
                                     .font(.system(size: 9 * render.textScale * platformScale))
                                     .foregroundStyle(.secondary)
-                                    .lineLimit(min(render.detailDescriptionLines, 4))
                             }
                         }
                     }
-                }
-
-                Section {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 6) {
-                            InlineStatChip(icon: "play.fill", text: Formatting.count(detail.stats.views))
-                            InlineStatChip(icon: "message", text: Formatting.count(detail.stats.danmaku))
-                            InlineStatChip(icon: "text.bubble", text: Formatting.count(detail.stats.replies))
-                        }
-
-                        CompactDisclosure {
-                            Text(L10n.t("detail.stats.more"))
-                                .font(.system(size: 8.5 * render.textScale * platformScale))
-                                .foregroundStyle(.secondary)
-                        } content: {
-                            HStack(spacing: 6) {
-                                InlineStatChip(icon: "star.fill", text: Formatting.count(detail.stats.favorites))
-                                InlineStatChip(icon: "centsign.circle", text: Formatting.count(detail.stats.coins))
-                                InlineStatChip(icon: "square.and.arrow.up", text: Formatting.count(detail.stats.shares))
-                            }
-                        }
-                    }
-                } header: {
-                    Text(L10n.t("detail.stats"))
                 }
 
                 if !tags.isEmpty {
-                    Section(L10n.t("detail.tags")) {
-                        compactTagLine(tags)
+                    Section {
+                        CompactDisclosure {
+                            Text(L10n.t("detail.tags"))
+                                .font(.system(size: 9 * render.textScale * platformScale))
+                                .foregroundStyle(.secondary)
+                        } content: {
+                            compactTagStack(tags)
+                        }
                     }
                 }
 
@@ -256,11 +250,8 @@ struct VideoDetailView: View {
                     }
                 }
             } else if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                }
+                SkeletonDetailView()
+                    .listRowInsets(UIStyle.listRowInsets)
             } else {
                 EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
             }
@@ -305,12 +296,12 @@ struct VideoDetailView: View {
         }
         .padding(.horizontal, UIStyle.chipPadding.leading)
         .padding(.vertical, UIStyle.chipPadding.top)
-        .background(Color.gray.opacity(0.14), in: Capsule())
+        .background(Theme.cardBackground, in: Capsule())
     }
 
     private func startOfflineDownload(detail: VideoDetail) async {
         do {
-            let stream = try await BiliAPIBackend.shared.fetchPlayURL(bvid: detail.bvid, cid: detail.cid, quality: 32)
+            let stream = try await BiliAPIBackend.shared.fetchPlayURL(bvid: detail.bvid, cid: detail.cid, quality: 32, preferredCodec: .auto)
             let headers = [
                 "Referer": "https://www.bilibili.com",
                 "User-Agent": PlatformInfo.userAgent
@@ -348,7 +339,7 @@ struct VideoDetailView: View {
         .frame(maxWidth: .infinity, minHeight: 28)
         .padding(.horizontal, 4)
 #endif
-        .background(Color.gray.opacity(0.14), in: RoundedRectangle(cornerRadius: 7))
+        .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: 7))
     }
 
     private func localDownloadedItem(for bvid: String) -> DownloadStatusItem? {
@@ -394,22 +385,20 @@ struct VideoDetailView: View {
     }
 
     @ViewBuilder
-    private func compactTagLine(_ keywords: [String]) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 5) {
-                ForEach(keywords, id: \.self) { keyword in
-                    Button {
-                        destination = .tag(keyword)
-                    } label: {
-                        Text("#\(keyword)")
-                            .font(.system(size: 10 * render.textScale * UIStyle.platformScale * UIStyle.platformScale, weight: .semibold))
-                            .lineLimit(1)
-                            .padding(.horizontal, UIStyle.chipPadding.leading)
-                            .padding(.vertical, UIStyle.chipPadding.top)
-                            .background(Color.gray.opacity(0.15), in: Capsule())
-                    }
-                    .buttonStyle(.plain)
+    private func compactTagStack(_ keywords: [String]) -> some View {
+        TagFlowLayout(spacing: 5) {
+            ForEach(keywords, id: \.self) { keyword in
+                Button {
+                    destination = .tag(keyword)
+                } label: {
+                    Text("#\(keyword)")
+                        .font(.system(size: 11.5 * render.textScale * UIStyle.platformScale * UIStyle.platformScale, weight: .semibold))
+                        .lineLimit(1)
+                        .padding(.horizontal, UIStyle.chipPadding.leading)
+                        .padding(.vertical, UIStyle.chipPadding.top)
+                        .background(Theme.cardBackground, in: Capsule())
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -420,6 +409,45 @@ struct VideoDetailView: View {
         } catch {
             tags = []
         }
+    }
+}
+
+private struct TagFlowLayout: Layout {
+    var spacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(proposal: proposal, subviews: subviews).size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let arranged = arrange(proposal: proposal, subviews: subviews)
+        for (index, position) in arranged.positions.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+
+    private func arrange(proposal: ProposedViewSize, subviews: Subviews) -> (size: CGSize, positions: [CGPoint]) {
+        let maxWidth = proposal.width ?? .infinity
+        var positions: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var totalHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth, x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            positions.append(CGPoint(x: x, y: y))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+            totalHeight = y + rowHeight
+        }
+
+        return (CGSize(width: maxWidth, height: totalHeight), positions)
     }
 }
 

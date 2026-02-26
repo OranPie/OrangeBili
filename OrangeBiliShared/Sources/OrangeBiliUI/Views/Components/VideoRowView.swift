@@ -19,8 +19,8 @@ struct VideoRowView: View {
         HStack(spacing: 8 * cardScale) {
             AsyncCachedImage(url: video.coverURL) {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(.gray.opacity(0.24))
-                    .overlay(ProgressView().scaleEffect(0.7))
+                    .fill(Theme.shimmerBase)
+                    .shimmer()
             }
             .aspectRatio(16 / 9, contentMode: .fit)
             .frame(width: baseWidth * cardScale, height: baseHeight * cardScale)

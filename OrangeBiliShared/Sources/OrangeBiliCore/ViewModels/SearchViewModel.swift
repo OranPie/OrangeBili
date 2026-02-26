@@ -21,8 +21,9 @@ public final class SearchViewModel: ObservableObject {
     @Published public var errorMessage: String?
 
     private let service: BiliServiceProtocol
+    public let searchHistoryStore = SearchHistoryStore()
     private var page = 1
-    private var hasMore = true
+    public private(set) var hasMore = true
 
     public init(service: BiliServiceProtocol = BiliAPIBackend.shared) {
         self.service = service
@@ -41,6 +42,7 @@ public final class SearchViewModel: ObservableObject {
             clearResults()
         }
 
+        searchHistoryStore.add(trimmed)
         await loadMore()
     }
 

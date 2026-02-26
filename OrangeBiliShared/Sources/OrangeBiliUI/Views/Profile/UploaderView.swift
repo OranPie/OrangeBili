@@ -28,20 +28,20 @@ struct UploaderView: View {
                                             .font(.caption)
                                             .bold()
                                         Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
-                                            .font(.caption2)
+                                            .font(.system(size: UIStyle.fontSize(8)))
                                             .foregroundStyle(.secondary)
                                         Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
-                                            .font(.caption2)
+                                            .font(.system(size: UIStyle.fontSize(8)))
                                             .foregroundStyle(.secondary)
                                         Text(L10n.f("label.uid", uploader.id))
-                                            .font(.system(size: 9, design: .monospaced))
+                                            .font(.system(size: UIStyle.fontSize(7.5), design: .monospaced))
                                             .foregroundStyle(.secondary)
                                     }
                                 }
 
                                 if !uploader.signature.isEmpty {
                                     Text(uploader.signature)
-                                        .font(.caption2)
+                                        .font(.system(size: UIStyle.fontSize(8)))
                                         .foregroundStyle(.secondary)
                                         .lineLimit(3)
                                 }
@@ -84,11 +84,7 @@ struct UploaderView: View {
                                 }
                             }
                         } else if viewModel.isLoading {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
-                            }
+                            SkeletonUploaderView()
                         } else {
                             EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
                         }
@@ -112,20 +108,20 @@ struct UploaderView: View {
                                         .font(.caption)
                                         .bold()
                                     Text(L10n.f("uploader.likes", Formatting.count(uploader.likeCount)))
-                                        .font(.caption2)
+                                        .font(.system(size: UIStyle.fontSize(8)))
                                         .foregroundStyle(.secondary)
                                     Text(L10n.f("uploader.followingFans", Formatting.count(uploader.followingCount), Formatting.count(uploader.followerCount)))
-                                        .font(.caption2)
+                                        .font(.system(size: UIStyle.fontSize(8)))
                                         .foregroundStyle(.secondary)
                                     Text(L10n.f("label.uid", uploader.id))
-                                        .font(.system(size: 9, design: .monospaced))
+                                        .font(.system(size: UIStyle.fontSize(7.5), design: .monospaced))
                                         .foregroundStyle(.secondary)
                                 }
                             }
 
                             if !uploader.signature.isEmpty {
                                 Text(uploader.signature)
-                                    .font(.caption2)
+                                    .font(.system(size: UIStyle.fontSize(8)))
                                     .foregroundStyle(.secondary)
                                     .lineLimit(3)
                             }
@@ -171,11 +167,7 @@ struct UploaderView: View {
                             }
                         }
                     } else if viewModel.isLoading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
+                        SkeletonUploaderView()
                     } else {
                         EmptyStateView(viewModel.errorMessage ?? L10n.t("error.loadFailed"), systemImage: "exclamationmark.triangle")
                     }
@@ -200,11 +192,18 @@ struct UploaderView: View {
     }
 }
 
-private struct UploaderVideosView: View {
+struct UploaderVideosView: View {
     let mid: Int
     let uploaderName: String
 
     @StateObject private var viewModel: UploaderVideosViewModel
+    @State private var selectedOrder = "pubdate"
+
+    private let orders: [(id: String, label: String)] = [
+        ("pubdate", L10n.t("uploader.order.pubdate")),
+        ("click", L10n.t("uploader.order.click")),
+        ("stow", L10n.t("uploader.order.stow")),
+    ]
 
     init(mid: Int, uploaderName: String) {
         self.mid = mid
@@ -270,8 +269,24 @@ private struct UploaderVideosView: View {
             }
         }
         .navigationTitle(L10n.f("uploader.videos.title", uploaderName))
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Picker("", selection: $selectedOrder) {
+                    ForEach(orders, id: \.id) { order in
+                        Text(order.label).tag(order.id)
+                    }
+                }
+                .labelsHidden()
+                #if os(iOS) || os(macOS)
+                .pickerStyle(.menu)
+                #endif
+            }
+        }
         .task {
             await viewModel.loadInitialIfNeeded()
+        }
+        .onChange(of: selectedOrder) { newOrder in
+            Task { await viewModel.changeOrder(newOrder) }
         }
     }
 }
@@ -351,6 +366,7 @@ private final class UploaderVideosViewModel: ObservableObject {
     private let service: BiliServiceProtocol
     private var page = 1
     private var hasMore = true
+    private var order = "pubdate"
 
     init(mid: Int, service: BiliServiceProtocol = BiliAPIBackend.shared) {
         self.mid = mid
@@ -367,7 +383,7 @@ private final class UploaderVideosViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         do {
-            let fetched = try await service.fetchUploaderVideos(mid: mid, page: page)
+            let fetched = try await service.fetchUploaderVideos(mid: mid, page: page, order: order)
             hasMore = !fetched.isEmpty
             page += 1
             videos.append(contentsOf: fetched)
@@ -375,6 +391,16 @@ private final class UploaderVideosViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func changeOrder(_ newOrder: String) async {
+        guard newOrder != order else { return }
+        order = newOrder
+        page = 1
+        hasMore = true
+        videos = []
+        errorMessage = nil
+        await loadMore()
     }
 }
 
