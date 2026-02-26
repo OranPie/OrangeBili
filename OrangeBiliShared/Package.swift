@@ -3,13 +3,13 @@ import PackageDescription
 import Foundation
 
 let packageRoot = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
-let env = ProcessInfo.processInfo.environment
-let sdkName = (env["SDK_NAME"] ?? "").lowercased()
-let platformName = (env["PLATFORM_NAME"] ?? "").lowercased()
-let isWatchSimulator = sdkName.contains("simulator") || platformName.contains("simulator")
-let ffmpegPlatformDir = isWatchSimulator ? "platform-watchsimulator" : "platform-watchos"
-let ffmpegIncludePath = "\(packageRoot)/Vendor/FFmpeg/\(ffmpegPlatformDir)/include"
-let ffmpegLibPath = "\(packageRoot)/Vendor/FFmpeg/\(ffmpegPlatformDir)/lib"
+// SPM evaluates Package.swift in its own process without Xcode build settings,
+// so env-based simulator/device detection is unreliable. Hardcode the simulator
+// path here for development builds. For device (archive) builds, override
+// LIBRARY_SEARCH_PATHS and HEADER_SEARCH_PATHS in Xcode build settings to point
+// to Vendor/FFmpeg/platform-watchos/{lib,include}.
+let ffmpegIncludePath = "\(packageRoot)/Vendor/FFmpeg/platform-watchsimulator/include"
+let ffmpegLibPath = "\(packageRoot)/Vendor/FFmpeg/platform-watchsimulator/lib"
 
 let package = Package(
     name: "OrangeBiliShared",
