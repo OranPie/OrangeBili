@@ -47,7 +47,7 @@ public final class PlayerViewModel: ObservableObject {
     @Published public private(set) var didFinishPlaying: Bool = false
 
     public let video: BiliVideo
-    public let cid: Int
+    public let cid: Int64
     public let localFileURL: URL?
     public var preferredQuality: Int = 32
     public var preferredCodec: PreferredCodec = .auto
@@ -64,7 +64,7 @@ public final class PlayerViewModel: ObservableObject {
     private let ciContext = CIContext()
     #endif
 
-    public init(video: BiliVideo, cid: Int, localFileURL: URL? = nil, service: BiliServiceProtocol = BiliAPIBackend.shared) {
+    public init(video: BiliVideo, cid: Int64, localFileURL: URL? = nil, service: BiliServiceProtocol = BiliAPIBackend.shared) {
         self.video = video
         self.cid = cid
         self.localFileURL = localFileURL

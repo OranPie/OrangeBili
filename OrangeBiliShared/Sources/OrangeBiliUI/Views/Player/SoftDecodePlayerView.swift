@@ -12,6 +12,7 @@ public struct SoftDecodePlayerView: View {
     @EnvironmentObject private var render: RenderSettings
     private let sourceURL: URL?
     private let externalPlayer: AVPlayer?
+    private let externalPlayerID: ObjectIdentifier?
     private let requestHeaders: [String: String]
     private let danmakuViewModel: DanmakuViewModel?
     private let playerViewModel: PlayerViewModel?
@@ -45,6 +46,7 @@ public struct SoftDecodePlayerView: View {
     ) {
         self.sourceURL = url
         self.externalPlayer = nil
+        self.externalPlayerID = nil
         self.requestHeaders = headers
         self.danmakuViewModel = danmakuViewModel
         self.playerViewModel = playerViewModel
@@ -58,6 +60,7 @@ public struct SoftDecodePlayerView: View {
     ) {
         self.sourceURL = nil
         self.externalPlayer = player
+        self.externalPlayerID = ObjectIdentifier(player)
         self.requestHeaders = headers
         self.danmakuViewModel = danmakuViewModel
         self.playerViewModel = playerViewModel
@@ -132,14 +135,13 @@ public struct SoftDecodePlayerView: View {
             startDecodeLoop()
             play()
         }
+        .onChange(of: externalPlayerID) { _ in
+            rebindExternalPlayerIfNeeded()
+        }
         .onDisappear {
             hideTask?.cancel()
-            decodeTimer?.invalidate()
-            decodeTimer = nil
-            if let observer = timeObserver, let player {
-                player.removeTimeObserver(observer)
-                timeObserver = nil
-            }
+            stopDecodeLoop()
+            detachTimeObserver()
             if ownsPlayer { player?.pause() }
             closeDecoder()
         }
@@ -186,7 +188,10 @@ public struct SoftDecodePlayerView: View {
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
                             guard let player else { return }
-                            isSeeking = true
+                            if !isSeeking {
+                                isSeeking = true
+                                pauseForManualSeek()
+                            }
                             let p = min(max(value.location.x / max(width, 1), 0), 1)
                             progress = p
                             let target = CMTime(seconds: p * max(duration, 0), preferredTimescale: 600)
@@ -196,7 +201,7 @@ public struct SoftDecodePlayerView: View {
                         }
                         .onEnded { _ in
                             isSeeking = false
-                            scheduleAutoHide()
+                            showControls = true
                         }
                 )
             }
@@ -310,8 +315,7 @@ public struct SoftDecodePlayerView: View {
         guard let player else { return }
         if isPlaying {
             player.pause()
-            decodeTimer?.invalidate()
-            decodeTimer = nil
+            stopDecodeLoop()
             showControls = true
             hideTask?.cancel()
         } else {
@@ -323,12 +327,12 @@ public struct SoftDecodePlayerView: View {
 
     private func seekBy(seconds: Double) {
         guard let player else { return }
+        pauseForManualSeek()
         let base = player.currentTime().seconds
         let target = max(0, min(base + seconds, max(duration, 0)))
         player.seek(to: CMTime(seconds: target, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
         renderOnePoCFrame(at: target)
         showControls = true
-        scheduleAutoHide()
     }
 
     private var isPlaying: Bool {
@@ -346,6 +350,15 @@ public struct SoftDecodePlayerView: View {
     private func toggleMute() {
         guard let player else { return }
         player.isMuted.toggle()
+    }
+
+    private func pauseForManualSeek() {
+        guard let player else { return }
+        if player.timeControlStatus == .playing {
+            player.pause()
+        }
+        stopDecodeLoop()
+        hideTask?.cancel()
     }
 
     private func scheduleAutoHide() {
@@ -370,6 +383,18 @@ public struct SoftDecodePlayerView: View {
         if decodeTimer != nil { return }
         decodeTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 24.0, repeats: true) { _ in
             renderOnePoCFrame()
+        }
+    }
+
+    private func stopDecodeLoop() {
+        decodeTimer?.invalidate()
+        decodeTimer = nil
+    }
+
+    private func detachTimeObserver() {
+        if let observer = timeObserver, let player {
+            player.removeTimeObserver(observer)
+            timeObserver = nil
         }
     }
 
@@ -500,6 +525,31 @@ public struct SoftDecodePlayerView: View {
         self.decoder = nil
         isDecoding = false
         print("[SoftDecodePlayer] decoder closed")
+    }
+
+    private func rebindExternalPlayerIfNeeded() {
+        guard let externalPlayer else { return }
+        guard player !== externalPlayer else { return }
+
+        // Source switch may replace AVPlayer instance; ensure we stop old decode/audio and follow the new player.
+        stopDecodeLoop()
+        detachTimeObserver()
+        player?.pause()
+        closeDecoder()
+
+        player = externalPlayer
+        ownsPlayer = false
+        frame = nil
+        decodeMissCount = 0
+
+        updateVideoAspectIfNeeded()
+        openDecoderIfNeeded()
+        attachTimeObserverIfNeeded()
+        renderOnePoCFrame()
+        if externalPlayer.timeControlStatus == .playing {
+            startDecodeLoop()
+        }
+        print("[SoftDecodePlayer] rebound to new external player")
     }
 
     private func updateVideoAspectIfNeeded() {

@@ -67,6 +67,7 @@
 "comment.detail.title" = "Comment Detail";
 
 "comments.title" = "Comments";
+"comments.thread.more" = "View all %d replies";
 
 "detail.comments" = "Comments";
 "detail.description" = "Description";

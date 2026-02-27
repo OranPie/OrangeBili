@@ -67,6 +67,7 @@
 "comment.detail.title" = "评论详情";
 
 "comments.title" = "评论";
+"comments.thread.more" = "查看全部 %d 条回复";
 
 "detail.comments" = "评论";
 "detail.description" = "简介";

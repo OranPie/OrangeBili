@@ -7,15 +7,15 @@ public protocol BiliServiceProtocol {
     func searchUsers(keyword: String, page: Int) async throws -> [UserSearchResult]
     func searchArticles(keyword: String, page: Int) async throws -> [ArticleSearchResult]
     func fetchVideoDetail(bvid: String) async throws -> VideoDetail
-    func fetchPlayURL(bvid: String, cid: Int, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream
-    func fetchComments(aid: Int, page: Int) async throws -> [CommentItem]
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream
+    func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem]
     func fetchUploader(mid: Int, page: Int) async throws -> (UploaderProfile, [BiliVideo])
     func fetchUploaderVideos(mid: Int, page: Int, order: String) async throws -> [BiliVideo]
     func fetchUploaderArticles(mid: Int, page: Int) async throws -> [UploaderArticle]
 }
 
 extension BiliServiceProtocol {
-    func fetchPlayURL(bvid: String, cid: Int, quality: Int) async throws -> PlayStream {
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int) async throws -> PlayStream {
         try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: .auto)
     }
 }
@@ -32,7 +32,7 @@ struct BiliService: BiliServiceProtocol {
         return response.list.map { item in
             BiliVideo(
                 bvid: item.bvid,
-                aid: item.aid.value,
+                aid: item.aid.value64,
                 title: item.title.cleanHTMLTags(),
                 author: item.owner.name,
                 mid: item.owner.mid.value,
@@ -51,7 +51,7 @@ struct BiliService: BiliServiceProtocol {
         return response.item.map { item in
             BiliVideo(
                 bvid: item.bvid,
-                aid: item.aid.value,
+                aid: item.aid.value64,
                 title: item.title.cleanHTMLTags(),
                 author: item.owner.name,
                 mid: item.owner.mid.value,
@@ -70,7 +70,7 @@ struct BiliService: BiliServiceProtocol {
         return response.result.map { item in
             BiliVideo(
                 bvid: item.bvid,
-                aid: item.aid.value,
+                aid: item.aid.value64,
                 title: item.title.cleanHTMLTags(),
                 author: item.author,
                 mid: item.mid?.value,
@@ -114,8 +114,8 @@ struct BiliService: BiliServiceProtocol {
         let detail = try await client.request(.detailWbi(bvid: bvid), as: VideoDetailResponse.self)
         return VideoDetail(
             bvid: detail.bvid,
-            aid: detail.aid.value,
-            cid: detail.cid.value,
+            aid: detail.aid.value64,
+            cid: detail.cid.value64,
             title: detail.title,
             description: detail.desc,
             coverURL: URL.biliImageURL(from: detail.pic),
@@ -140,15 +140,21 @@ struct BiliService: BiliServiceProtocol {
         )
     }
 
-    func fetchPlayURL(bvid: String, cid: Int, quality: Int = 32, preferredCodec: PreferredCodec = .auto) async throws -> PlayStream {
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int = 32, preferredCodec: PreferredCodec = .auto) async throws -> PlayStream {
         let response = try await client.request(.playURLWbi(bvid: bvid, cid: cid, quality: quality), as: PlayURLResponse.self)
 
         // Try DASH first
         if let dash = response.dash, let videos = dash.video, !videos.isEmpty {
-            // Filter by quality ≤ requested, sort by quality desc then bandwidth desc
-            let candidates = videos
-                .filter { $0.id <= quality }
+            let exact = videos
+                .filter { $0.id == quality }
+                .sorted { ($0.bandwidth ?? 0) > ($1.bandwidth ?? 0) }
+            let lower = videos
+                .filter { $0.id < quality }
                 .sorted { ($0.id, $0.bandwidth ?? 0) > ($1.id, $1.bandwidth ?? 0) }
+            let higher = videos
+                .filter { $0.id > quality }
+                .sorted { ($0.id, $0.bandwidth ?? 0) < ($1.id, $1.bandwidth ?? 0) }
+            let candidates = exact + lower + higher
 
             // Pick by codec preference
             let targetCodecId: Int? = {
@@ -168,6 +174,10 @@ struct BiliService: BiliServiceProtocol {
             }
 
             if let video = picked, let videoURL = URL(string: video.baseUrl) {
+                DebugLogStore.shared.log(
+                    category: "player.playurl",
+                    message: "pick q=\(quality) id=\(video.id) codec=\(video.codecid) bw=\(video.bandwidth ?? 0) size=\(video.width ?? 0)x\(video.height ?? 0) dashCount=\(videos.count)"
+                )
                 // Pick best audio
                 let bestAudio = dash.audio?
                     .sorted { ($0.bandwidth ?? 0) > ($1.bandwidth ?? 0) }
@@ -194,7 +204,7 @@ struct BiliService: BiliServiceProtocol {
         )
     }
 
-    func fetchComments(aid: Int, page: Int) async throws -> [CommentItem] {
+    func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem] {
         let response = try await client.request(.comments(aid: aid, page: page), as: CommentResponse.self)
         return (response.replies ?? []).map { reply in
             CommentItem(
@@ -230,7 +240,7 @@ struct BiliService: BiliServiceProtocol {
         let mappedVideos = (videos.list?.vlist ?? []).map { item in
             BiliVideo(
                 bvid: item.bvid,
-                aid: item.aid.value,
+                aid: item.aid.value64,
                 title: item.title,
                 author: uploader.name,
                 mid: uploader.mid.value,
@@ -252,7 +262,7 @@ struct BiliService: BiliServiceProtocol {
         return (videos.list?.vlist ?? []).map { item in
             BiliVideo(
                 bvid: item.bvid,
-                aid: item.aid.value,
+                aid: item.aid.value64,
                 title: item.title,
                 author: uploader.name,
                 mid: uploader.mid.value,
@@ -283,32 +293,48 @@ struct BiliService: BiliServiceProtocol {
 
 private struct LossyInt: Decodable {
     let value: Int
+    /// Full 64-bit value — use for fields like cid/aid that can exceed Int32.max on watchOS arm64_32.
+    let value64: Int64
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let intValue = try? container.decode(Int.self) {
             value = intValue
+            value64 = Int64(intValue)
         } else if let int64Value = try? container.decode(Int64.self) {
             value = Int(exactly: int64Value) ?? (int64Value > 0 ? Int.max : Int.min)
+            value64 = int64Value
         } else if let doubleValue = try? container.decode(Double.self) {
             if !doubleValue.isFinite {
                 value = 0
+                value64 = 0
             } else if doubleValue >= Double(Int.max) {
                 value = Int.max
+                value64 = Int64(doubleValue)
             } else if doubleValue <= Double(Int.min) {
                 value = Int.min
+                value64 = Int64(doubleValue)
             } else {
                 value = Int(doubleValue)
+                value64 = Int64(doubleValue)
             }
         } else if let stringValue = try? container.decode(String.self) {
             value = stringValue.boundedIntValue ?? 0
+            value64 = stringValue.boundedInt64Value ?? 0
         } else {
             value = 0
+            value64 = 0
         }
     }
 
     init(_ value: Int) {
         self.value = value
+        self.value64 = Int64(value)
+    }
+
+    init(int64 value: Int64) {
+        self.value = Int(exactly: value) ?? (value > 0 ? Int.max : Int.min)
+        self.value64 = value
     }
 }
 
@@ -326,6 +352,16 @@ private extension String {
             if parsedDouble >= Double(Int.max) { return Int.max }
             if parsedDouble <= Double(Int.min) { return Int.min }
             return Int(parsedDouble)
+        }
+        return nil
+    }
+
+    var boundedInt64Value: Int64? {
+        let digits = replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
+        guard !digits.isEmpty else { return nil }
+        if let parsed = Int64(digits) { return parsed }
+        if let parsedDouble = Double(digits), parsedDouble.isFinite {
+            return Int64(parsedDouble)
         }
         return nil
     }
@@ -656,9 +692,11 @@ private struct PlayURLResponse: Decodable {
             let baseUrl: String
             let backupUrl: [String]?
             let bandwidth: Int?
+            let width: Int?
+            let height: Int?
 
             private enum CodingKeys: String, CodingKey {
-                case id, codecid, baseUrl = "base_url", backupUrl = "backup_url", bandwidth
+                case id, codecid, baseUrl = "base_url", backupUrl = "backup_url", bandwidth, width, height
             }
 
             init(from decoder: Decoder) throws {
@@ -668,6 +706,8 @@ private struct PlayURLResponse: Decodable {
                 baseUrl = c.decodeString(forKey: .baseUrl)
                 backupUrl = try? c.decodeIfPresent([String].self, forKey: .backupUrl)
                 bandwidth = try? c.decodeIfPresent(Int.self, forKey: .bandwidth)
+                width = try? c.decodeIfPresent(Int.self, forKey: .width)
+                height = try? c.decodeIfPresent(Int.self, forKey: .height)
             }
         }
         let video: [Stream]?

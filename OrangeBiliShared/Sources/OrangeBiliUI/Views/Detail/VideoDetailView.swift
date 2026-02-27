@@ -3,7 +3,7 @@ import OrangeBiliCore
 
 struct VideoDetailView: View {
     private enum Destination: Hashable, Identifiable {
-        case comments(Int)
+        case comments(Int64)
         case uploader(Int)
         case tag(String)
 
@@ -206,14 +206,14 @@ struct VideoDetailView: View {
                     if apiBackend.isLoggedIn {
                         HStack(spacing: 6) {
                             Button {
-                                Task { await toggleLike(aid: detail.aid) }
+                                Task { await toggleLike(aid: detail.aid, bvid: detail.bvid) }
                             } label: {
                                 compactActionTile(title: liked ? L10n.t("action.unlike") : L10n.t("action.like"), systemImage: liked ? "hand.thumbsup.slash.fill" : "hand.thumbsup.fill")
                             }
                             .buttonStyle(.plain)
 
                             Button {
-                                Task { await sendCoin(aid: detail.aid) }
+                                Task { await sendCoin(aid: detail.aid, bvid: detail.bvid) }
                             } label: {
                                 compactActionTile(title: L10n.t("action.coin"), systemImage: "centsign.circle.fill")
                             }
@@ -364,10 +364,10 @@ struct VideoDetailView: View {
         return "\(bytes)B"
     }
 
-    private func toggleLike(aid: Int) async {
+    private func toggleLike(aid: Int64, bvid: String) async {
         do {
             let target = !liked
-            try await apiBackend.likeVideo(aid: aid, liked: target)
+            try await apiBackend.likeVideo(aid: aid, bvid: bvid, liked: target)
             liked = target
             actionStatus = target ? L10n.t("action.like.success") : L10n.t("action.like.cancel")
         } catch {
@@ -375,9 +375,9 @@ struct VideoDetailView: View {
         }
     }
 
-    private func sendCoin(aid: Int) async {
+    private func sendCoin(aid: Int64, bvid: String) async {
         do {
-            try await apiBackend.coinVideo(aid: aid, count: 1, alsoLike: false)
+            try await apiBackend.coinVideo(aid: aid, bvid: bvid, count: 1, alsoLike: false)
             actionStatus = L10n.t("action.coin.success")
         } catch {
             actionStatus = L10n.f("action.coin.fail", error.localizedDescription)
@@ -403,7 +403,7 @@ struct VideoDetailView: View {
         }
     }
 
-    private func loadTags(aid: Int) async {
+    private func loadTags(aid: Int64) async {
         do {
             tags = try await apiBackend.fetchVideoTags(aid: aid)
         } catch {
@@ -452,7 +452,7 @@ private struct TagFlowLayout: Layout {
 }
 
 private extension BiliVideo {
-    func with(cid: Int) -> BiliVideo {
+    func with(cid: Int64) -> BiliVideo {
         BiliVideo(
             bvid: bvid,
             aid: aid,

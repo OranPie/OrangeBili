@@ -75,11 +75,11 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         try await service.fetchVideoDetail(bvid: bvid)
     }
 
-    public func fetchPlayURL(bvid: String, cid: Int, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream {
+    public func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream {
         try await service.fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: preferredCodec)
     }
 
-    public func fetchComments(aid: Int, page: Int) async throws -> [CommentItem] {
+    public func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem] {
         try await service.fetchComments(aid: aid, page: page)
     }
 
@@ -152,7 +152,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         return (envelope.data?.medias ?? []).map {
             BiliVideo(
                 bvid: $0.bvid,
-                aid: $0.id.asInt,
+                aid: $0.id.asInt64,
                 title: $0.title,
                 author: $0.upper?.name ?? L10n.t("favorites.cloud.defaultAuthor"),
                 mid: $0.upper?.mid.asInt,
@@ -166,28 +166,36 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         }
     }
 
-    public func likeVideo(aid: Int, liked: Bool) async throws {
+    public func likeVideo(aid: Int64, bvid: String? = nil, liked: Bool) async throws {
         let csrf = try await requireCSRFToken()
-        let body = [
+        var body = [
             "aid": String(aid),
             "like": liked ? "1" : "2",
             "csrf": csrf
         ]
+        if let bvid, !bvid.isEmpty {
+            body["bvid"] = bvid
+        }
         _ = try await postAuthed(path: "/x/web-interface/archive/like", body: body)
     }
 
-    public func coinVideo(aid: Int, count: Int = 1, alsoLike: Bool = false) async throws {
+    public func coinVideo(aid: Int64, bvid: String? = nil, count: Int = 1, alsoLike: Bool = false) async throws {
         let csrf = try await requireCSRFToken()
-        let body = [
+        var body = [
             "aid": String(aid),
             "multiply": String(min(2, max(1, count))),
             "select_like": alsoLike ? "1" : "0",
+            // Endpoint has accepted both names across clients.
+            "like": alsoLike ? "1" : "0",
             "csrf": csrf
         ]
+        if let bvid, !bvid.isEmpty {
+            body["bvid"] = bvid
+        }
         _ = try await postAuthed(path: "/x/web-interface/coin/add", body: body)
     }
 
-    public func likeComment(aid: Int, rpid: Int, liked: Bool) async throws {
+    public func likeComment(aid: Int64, rpid: Int, liked: Bool) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -199,7 +207,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/action", body: body)
     }
 
-    public func replyComment(aid: Int, rootRpid: Int, parentRpid: Int, message: String) async throws {
+    public func replyComment(aid: Int64, rootRpid: Int, parentRpid: Int, message: String) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -212,7 +220,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/add", body: body)
     }
 
-    public func deleteComment(aid: Int, rpid: Int) async throws {
+    public func deleteComment(aid: Int64, rpid: Int) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -223,7 +231,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/del", body: body)
     }
 
-    public func fetchCommentReplies(aid: Int, rootRpid: Int, page: Int) async throws -> [CommentItem] {
+    public func fetchCommentReplies(aid: Int64, rootRpid: Int, page: Int) async throws -> [CommentItem] {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.bilibili.com"
@@ -261,7 +269,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         }
     }
 
-    public func fetchVideoTags(aid: Int) async throws -> [String] {
+    public func fetchVideoTags(aid: Int64) async throws -> [String] {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.bilibili.com"
@@ -599,15 +607,22 @@ private struct FollowingEnvelope: Decodable {
 
 private struct IntString: Decodable {
     let asInt: Int
+    let asInt64: Int64
 
     init(from decoder: Decoder) throws {
         let c = try decoder.singleValueContainer()
         if let int = try? c.decode(Int.self) {
             asInt = int
+            asInt64 = Int64(int)
+        } else if let int64 = try? c.decode(Int64.self) {
+            asInt = Int(exactly: int64) ?? (int64 > 0 ? Int.max : Int.min)
+            asInt64 = int64
         } else if let str = try? c.decode(String.self) {
-            asInt = Int(str) ?? 0
+            asInt64 = Int64(str) ?? 0
+            asInt = Int(exactly: asInt64) ?? (asInt64 > 0 ? Int.max : Int.min)
         } else {
             asInt = 0
+            asInt64 = 0
         }
     }
 }

@@ -77,7 +77,7 @@ public final class DanmakuViewModel: ObservableObject {
         errorMessage = nil
     }
 
-    public func load(cid: Int, aid: Int = 0, durationSeconds: Int = 0, source: DanmakuSource = .protobuf) async {
+    public func load(cid: Int64, aid: Int64 = 0, durationSeconds: Int = 0, source: DanmakuSource = .protobuf) async {
         guard cid > 0 else {
             DebugLogStore.shared.log(category: "danmaku.vm", message: "skip load: cid=0")
             return

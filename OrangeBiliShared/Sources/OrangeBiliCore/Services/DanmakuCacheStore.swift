@@ -2,12 +2,12 @@ import Foundation
 
 public struct DanmakuCacheEntry: Identifiable, Hashable, Sendable {
     public let id: String
-    public let cid: Int
+    public let cid: Int64
     public let source: DanmakuSource
     public let fileSize: Int
     public let updatedAt: Date
 
-    public init(id: String, cid: Int, source: DanmakuSource, fileSize: Int, updatedAt: Date) {
+    public init(id: String, cid: Int64, source: DanmakuSource, fileSize: Int, updatedAt: Date) {
         self.id = id
         self.cid = cid
         self.source = source
@@ -31,7 +31,7 @@ public actor DanmakuCacheStore {
 
     // MARK: - Source-aware API
 
-    public func load(for cid: Int, source: DanmakuSource) -> Data? {
+    public func load(for cid: Int64, source: DanmakuSource) -> Data? {
         let url = fileURL(for: cid, source: source)
         guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
               let modified = attrs[.modificationDate] as? Date
@@ -42,29 +42,29 @@ public actor DanmakuCacheStore {
         return try? Data(contentsOf: url)
     }
 
-    public func save(_ data: Data, for cid: Int, source: DanmakuSource) {
+    public func save(_ data: Data, for cid: Int64, source: DanmakuSource) {
         let url = fileURL(for: cid, source: source)
         try? data.write(to: url, options: [.atomic])
     }
 
     // MARK: - Legacy compat
 
-    public func loadXML(for cid: Int) -> Data? {
+    public func loadXML(for cid: Int64) -> Data? {
         load(for: cid, source: .xml)
     }
 
-    public func saveXML(_ data: Data, for cid: Int) {
+    public func saveXML(_ data: Data, for cid: Int64) {
         save(data, for: cid, source: .xml)
     }
 
-    public func clear(for cid: Int) {
+    public func clear(for cid: Int64) {
         for source in DanmakuSource.allCases {
             let url = fileURL(for: cid, source: source)
             try? FileManager.default.removeItem(at: url)
         }
     }
 
-    public func clear(for cid: Int, source: DanmakuSource) {
+    public func clear(for cid: Int64, source: DanmakuSource) {
         let url = fileURL(for: cid, source: source)
         try? FileManager.default.removeItem(at: url)
     }
@@ -88,7 +88,7 @@ public actor DanmakuCacheStore {
             let name = url.lastPathComponent
             guard name.hasPrefix("dm_") else { return nil }
             let stem = url.deletingPathExtension().lastPathComponent
-            guard let cid = Int(stem.replacingOccurrences(of: "dm_", with: "")) else { return nil }
+            guard let cid = Int64(stem.replacingOccurrences(of: "dm_", with: "")) else { return nil }
             let ext = url.pathExtension.lowercased()
             let source: DanmakuSource = (ext == "xml") ? .xml : .protobuf
             let rv = try? url.resourceValues(forKeys: keys)
@@ -107,7 +107,7 @@ public actor DanmakuCacheStore {
         listEntries().reduce(0) { $0 + $1.fileSize }
     }
 
-    private func fileURL(for cid: Int, source: DanmakuSource) -> URL {
+    private func fileURL(for cid: Int64, source: DanmakuSource) -> URL {
         let ext = source == .xml ? "xml" : "pb"
         return folderURL.appendingPathComponent("dm_\(cid).\(ext)")
     }

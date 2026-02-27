@@ -15,7 +15,7 @@ struct VideoPlayerView: View {
     @State private var showResumePrompt = false
     @State private var lastDanmakuLoadDuration = 0
 
-    init(video: BiliVideo, cid: Int, localFileURL: URL? = nil) {
+    init(video: BiliVideo, cid: Int64, localFileURL: URL? = nil) {
         _viewModel = StateObject(wrappedValue: PlayerViewModel(video: video, cid: cid, localFileURL: localFileURL))
     }
 
@@ -128,6 +128,7 @@ struct VideoPlayerView: View {
                     danmakuViewModel: danmakuViewModel,
                     playerViewModel: viewModel
                 )
+                .id(ObjectIdentifier(player))
                 .ignoresSafeArea()
             } else {
                 SystemPlayerView(viewModel: viewModel, danmakuViewModel: danmakuViewModel)
@@ -186,22 +187,33 @@ struct VideoPlayerView: View {
 
     @ViewBuilder
     private func resumeOverlay(seconds: Int) -> some View {
+        #if os(watchOS)
+        let titleFont: Font = .system(size: 11, weight: .semibold)
+        let subtitleFont: Font = .system(size: 8)
+        let buttonFont: Font = .system(size: 10, weight: .medium)
+        #else
+        let titleFont: Font = .caption
+        let subtitleFont: Font = .system(size: 9)
+        let buttonFont: Font = .body
+        #endif
         VStack(spacing: 6) {
             Text(L10n.t("player.resume.title"))
-                .font(.caption)
+                .font(titleFont)
                 .foregroundStyle(.white)
             Text(L10n.f("player.resume.subtitle", timeText(seconds)))
-                .font(.system(size: 9))
+                .font(subtitleFont)
                 .foregroundStyle(.white.opacity(0.85))
             HStack(spacing: 8) {
                 Button(L10n.t("player.resume.restart")) {
                     viewModel.seek(to: 0)
                     showResumePrompt = false
                 }
+                .font(buttonFont)
                 Button(L10n.t("player.resume.continue")) {
                     viewModel.seek(to: Double(seconds))
                     showResumePrompt = false
                 }
+                .font(buttonFont)
             }
             .buttonStyle(.bordered)
             .tint(.white.opacity(0.9))

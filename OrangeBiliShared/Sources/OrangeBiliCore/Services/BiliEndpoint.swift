@@ -11,10 +11,10 @@ enum BiliEndpoint {
     case searchArticlesLegacy(keyword: String, page: Int)
     case detailWbi(bvid: String)
     case detail(bvid: String)
-    case playURLWbi(bvid: String, cid: Int, quality: Int)
-    case playURL(bvid: String, cid: Int, quality: Int)
-    case comments(aid: Int, page: Int)
-    case commentsLegacy(aid: Int, page: Int)
+    case playURLWbi(bvid: String, cid: Int64, quality: Int)
+    case playURL(bvid: String, cid: Int64, quality: Int)
+    case comments(aid: Int64, page: Int)
+    case commentsLegacy(aid: Int64, page: Int)
     case uploader(mid: Int)
     case uploaderLegacy(mid: Int)
     case uploaderRelation(mid: Int)
@@ -261,7 +261,10 @@ enum BiliEndpoint {
                 "fnval": "4048",
                 "fnver": "0",
                 "fourk": "1",
-                "platform": "html5"
+                "gaia_source": "pre-load",
+                "isGaiaAvoided": "true",
+                "from_client": "BROWSER",
+                "web_location": "1315873"
             ]
         case let .playURL(bvid, cid, quality):
             return [
@@ -271,7 +274,10 @@ enum BiliEndpoint {
                 "fnval": "4048",
                 "fnver": "0",
                 "fourk": "1",
-                "platform": "html5"
+                "gaia_source": "pre-load",
+                "isGaiaAvoided": "true",
+                "from_client": "BROWSER",
+                "web_location": "1315873"
             ]
         case let .comments(aid, page):
             return [

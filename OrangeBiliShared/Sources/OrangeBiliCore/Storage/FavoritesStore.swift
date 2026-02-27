@@ -4,7 +4,7 @@ import Combine
 public struct FavoriteRecord: Identifiable, Codable, Hashable {
     public let id: String
     public let bvid: String
-    public let aid: Int
+    public let aid: Int64
     public let title: String
     public let author: String
     public let mid: Int?
@@ -12,7 +12,7 @@ public struct FavoriteRecord: Identifiable, Codable, Hashable {
     public let durationText: String
     public let savedAt: Date
 
-    public init(bvid: String, aid: Int, title: String, author: String, mid: Int?, coverURL: URL?, durationText: String, savedAt: Date = Date()) {
+    public init(bvid: String, aid: Int64, title: String, author: String, mid: Int?, coverURL: URL?, durationText: String, savedAt: Date = Date()) {
         id = bvid
         self.bvid = bvid
         self.aid = aid

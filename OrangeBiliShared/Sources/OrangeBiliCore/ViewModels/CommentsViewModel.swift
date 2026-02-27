@@ -7,18 +7,26 @@ public final class CommentsViewModel: ObservableObject {
     @Published public var isLoading = false
     @Published public var errorMessage: String?
 
-    private let aid: Int
+    private let aid: Int64
     private let service: BiliServiceProtocol
     private var page = 1
     private var hasMore = true
 
-    public init(aid: Int, service: BiliServiceProtocol = BiliAPIBackend.shared) {
+    public init(aid: Int64, service: BiliServiceProtocol = BiliAPIBackend.shared) {
         self.aid = aid
         self.service = service
     }
 
     public func loadInitialIfNeeded() async {
         guard comments.isEmpty else { return }
+        await loadMore()
+    }
+
+    public func reload() async {
+        comments = []
+        page = 1
+        hasMore = true
+        errorMessage = nil
         await loadMore()
     }
 

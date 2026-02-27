@@ -3,8 +3,8 @@ import Foundation
 public struct BiliVideo: Identifiable, Hashable {
     public let id: String
     public let bvid: String
-    public let aid: Int
-    public let cid: Int?
+    public let aid: Int64
+    public let cid: Int64?
     public let title: String
     public let author: String
     public let mid: Int?
@@ -18,8 +18,8 @@ public struct BiliVideo: Identifiable, Hashable {
 
     public init(
         bvid: String,
-        aid: Int,
-        cid: Int? = nil,
+        aid: Int64,
+        cid: Int64? = nil,
         title: String,
         author: String,
         mid: Int? = nil,
@@ -50,8 +50,8 @@ public struct BiliVideo: Identifiable, Hashable {
 
 public struct VideoDetail: Hashable {
     public let bvid: String
-    public let aid: Int
-    public let cid: Int
+    public let aid: Int64
+    public let cid: Int64
     public let title: String
     public let description: String
     public let coverURL: URL?
@@ -61,8 +61,8 @@ public struct VideoDetail: Hashable {
 
     public init(
         bvid: String,
-        aid: Int,
-        cid: Int,
+        aid: Int64,
+        cid: Int64,
         title: String,
         description: String,
         coverURL: URL?,
@@ -119,7 +119,7 @@ public struct PlayStream {
 
 public struct CommentItem: Identifiable, Hashable {
     public let id: Int
-    public let oid: Int
+    public let oid: Int64
     public let mid: Int?
     public let username: String
     public let avatarURL: URL?
@@ -130,7 +130,7 @@ public struct CommentItem: Identifiable, Hashable {
 
     public init(
         id: Int,
-        oid: Int,
+        oid: Int64,
         mid: Int?,
         username: String,
         avatarURL: URL?,

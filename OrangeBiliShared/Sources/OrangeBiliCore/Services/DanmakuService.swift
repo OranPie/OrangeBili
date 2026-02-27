@@ -8,7 +8,7 @@ public final class DanmakuService {
     private let pbParser = ProtobufDanmakuParser()
 
     /// Fetch danmaku with source routing and automatic fallback.
-    public func fetchDanmaku(cid: Int, aid: Int = 0, source: DanmakuSource = .protobuf, durationSeconds: Int = 0) async throws -> [DanmakuItem] {
+    public func fetchDanmaku(cid: Int64, aid: Int64 = 0, source: DanmakuSource = .protobuf, durationSeconds: Int = 0) async throws -> [DanmakuItem] {
         if source == .protobuf {
             do {
                 return try await fetchProtobuf(cid: cid, aid: aid, durationSeconds: durationSeconds)
@@ -22,7 +22,7 @@ public final class DanmakuService {
 
     // MARK: - Protobuf (segmented)
 
-    private func fetchProtobuf(cid: Int, aid: Int, durationSeconds: Int) async throws -> [DanmakuItem] {
+    private func fetchProtobuf(cid: Int64, aid: Int64, durationSeconds: Int) async throws -> [DanmakuItem] {
         let resolvedDuration = await resolveDurationSeconds(cid: cid, aid: aid, fallback: durationSeconds)
         let segmentCount = max(1, resolvedDuration / 360 + 1)
 
@@ -101,7 +101,7 @@ public final class DanmakuService {
 
     // MARK: - XML (legacy)
 
-    private func fetchXML(cid: Int) async throws -> [DanmakuItem] {
+    private func fetchXML(cid: Int64) async throws -> [DanmakuItem] {
         if let cached = await DanmakuCacheStore.shared.load(for: cid, source: .xml) {
             return xmlParser.parse(data: cached)
         }
@@ -178,7 +178,7 @@ public final class DanmakuService {
 
     // MARK: - Duration Resolve (avoid loading only segment 1 when runtime duration is still 0)
 
-    private func resolveDurationSeconds(cid: Int, aid: Int, fallback: Int) async -> Int {
+    private func resolveDurationSeconds(cid: Int64, aid: Int64, fallback: Int) async -> Int {
         // Prefer authoritative page duration when aid/cid are available.
         if aid > 0 {
             do {
@@ -208,7 +208,7 @@ public final class DanmakuService {
         return shortVideo && itemsCount > 4000
     }
 
-    private func fetchDurationSecondsFromView(aid: Int, cid: Int) async throws -> Int? {
+    private func fetchDurationSecondsFromView(aid: Int64, cid: Int64) async throws -> Int? {
         guard let url = URL(string: "https://api.bilibili.com/x/web-interface/view?aid=\(aid)") else {
             throw BiliError.invalidURL
         }
@@ -228,7 +228,7 @@ public final class DanmakuService {
     }
 
     private struct ViewPage: Decodable {
-        let cid: Int
+        let cid: Int64
         let duration: Int
     }
 }
