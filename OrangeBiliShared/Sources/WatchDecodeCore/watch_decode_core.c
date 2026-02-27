@@ -7,6 +7,7 @@
 #include <libswscale/swscale.h>
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,10 +29,49 @@ struct wdc_decoder {
 
     double last_time_seconds;
     int has_last_time;
+    double stream_start_seconds;
+    int has_stream_start;
+    int last_error_code;
+    char last_error_message[160];
 };
 typedef struct wdc_decoder wdc_decoder;
 
+wdc_frame *wdc_decoder_decode_until(
+    wdc_decoder_ref decoder_ref,
+    double time_seconds,
+    int output_width,
+    int output_height
+);
+
 static int g_network_inited = 0;
+
+static void wdc_set_error(wdc_decoder *decoder, int code, const char *message) {
+    if (!decoder) return;
+    decoder->last_error_code = code;
+    if (!message || !message[0]) {
+        decoder->last_error_message[0] = '\0';
+        return;
+    }
+    snprintf(decoder->last_error_message, sizeof(decoder->last_error_message), "%s", message);
+}
+
+static void wdc_set_error_ret(wdc_decoder *decoder, int code, const char *prefix) {
+    if (!decoder) return;
+    decoder->last_error_code = code;
+    char errbuf[96] = {0};
+    av_strerror(code, errbuf, sizeof(errbuf));
+    if (prefix && prefix[0]) {
+        snprintf(
+            decoder->last_error_message,
+            sizeof(decoder->last_error_message),
+            "%s: %s",
+            prefix,
+            errbuf
+        );
+    } else {
+        snprintf(decoder->last_error_message, sizeof(decoder->last_error_message), "%s", errbuf);
+    }
+}
 
 static wdc_frame *wdc_alloc_frame(int width, int height) {
     if (width <= 0 || height <= 0) return NULL;
@@ -69,6 +109,15 @@ static int wdc_seek_to_time(wdc_decoder *decoder, double time_seconds) {
 
     avcodec_flush_buffers(decoder->codec);
     return 0;
+}
+
+static double wdc_normalized_frame_time(wdc_decoder *decoder, int64_t pts, AVRational time_base) {
+    double frame_time = pts * av_q2d(time_base);
+    if (decoder && decoder->has_stream_start) {
+        frame_time -= decoder->stream_start_seconds;
+    }
+    if (!isfinite(frame_time) || frame_time < 0) return 0;
+    return frame_time;
 }
 
 static int wdc_ensure_sws(
@@ -117,6 +166,60 @@ static int wdc_ensure_sws(
     return 0;
 }
 
+static wdc_frame *wdc_make_output_frame(
+    wdc_decoder *decoder,
+    AVFrame *src_frame,
+    int output_width,
+    int output_height
+) {
+    if (!decoder || !src_frame) return NULL;
+    if (wdc_ensure_sws(
+            decoder,
+            decoder->codec->pix_fmt,
+            decoder->codec->width,
+            decoder->codec->height,
+            output_width,
+            output_height
+        ) < 0) {
+        wdc_set_error(decoder, -1, "sws init failed");
+        return NULL;
+    }
+
+    wdc_frame *out = wdc_alloc_frame(output_width, output_height);
+    if (!out) {
+        wdc_set_error(decoder, -1, "alloc frame failed");
+        return NULL;
+    }
+
+    uint8_t *dst_data[4] = {0};
+    int dst_linesize[4] = {0};
+    int ok = av_image_fill_arrays(
+        dst_data,
+        dst_linesize,
+        out->rgba,
+        AV_PIX_FMT_RGBA,
+        out->width,
+        out->height,
+        1
+    );
+    if (ok < 0) {
+        wdc_set_error_ret(decoder, ok, "fill arrays failed");
+        wdc_free_frame(out);
+        return NULL;
+    }
+
+    sws_scale(
+        decoder->sws,
+        (const uint8_t *const *)src_frame->data,
+        src_frame->linesize,
+        0,
+        decoder->codec->height,
+        dst_data,
+        dst_linesize
+    );
+    return out;
+}
+
 wdc_decoder_ref wdc_decoder_open_with_options(
     const char *url_utf8,
     const char *user_agent_utf8,
@@ -132,6 +235,7 @@ wdc_decoder_ref wdc_decoder_open_with_options(
 
     wdc_decoder *decoder = (wdc_decoder *)calloc(1, sizeof(wdc_decoder));
     if (!decoder) return NULL;
+    wdc_set_error(decoder, 0, "");
 
     AVDictionary *opts = NULL;
     if (user_agent_utf8 && user_agent_utf8[0]) {
@@ -177,6 +281,16 @@ wdc_decoder_ref wdc_decoder_open_with_options(
     }
 
     decoder->video_stream = decoder->format->streams[decoder->video_stream_index];
+    if (decoder->video_stream->start_time != AV_NOPTS_VALUE) {
+        decoder->stream_start_seconds = decoder->video_stream->start_time * av_q2d(decoder->video_stream->time_base);
+        decoder->has_stream_start = 1;
+    } else if (decoder->format->start_time != AV_NOPTS_VALUE) {
+        decoder->stream_start_seconds = decoder->format->start_time / (double)AV_TIME_BASE;
+        decoder->has_stream_start = 1;
+    } else {
+        decoder->stream_start_seconds = 0;
+        decoder->has_stream_start = 0;
+    }
     AVCodecParameters *params = decoder->video_stream->codecpar;
     const AVCodec *codec = avcodec_find_decoder(params->codec_id);
     if (!codec) {
@@ -219,35 +333,133 @@ wdc_decoder_ref wdc_decoder_open(const char *url_utf8) {
     return wdc_decoder_open_with_options(url_utf8, NULL, NULL, NULL);
 }
 
+wdc_decoder_ref wdc_decoder_open_with_headers(
+    const char *url_utf8,
+    const char *headers_blob_utf8
+) {
+    if (!url_utf8 || !url_utf8[0]) return NULL;
+
+    if (!g_network_inited) {
+        avformat_network_init();
+        g_network_inited = 1;
+    }
+
+    wdc_decoder *decoder = (wdc_decoder *)calloc(1, sizeof(wdc_decoder));
+    if (!decoder) return NULL;
+    wdc_set_error(decoder, 0, "");
+
+    AVDictionary *opts = NULL;
+    if (headers_blob_utf8 && headers_blob_utf8[0]) {
+        av_dict_set(&opts, "headers", headers_blob_utf8, 0);
+    }
+    av_dict_set(&opts, "reconnect", "1", 0);
+    av_dict_set(&opts, "reconnect_streamed", "1", 0);
+    av_dict_set(&opts, "reconnect_on_http_error", "4xx,5xx", 0);
+    av_dict_set(&opts, "reconnect_delay_max", "2", 0);
+    av_dict_set(&opts, "rw_timeout", "5000000", 0);
+    av_dict_set(&opts, "http_persistent", "0", 0);
+
+    if (avformat_open_input(&decoder->format, url_utf8, NULL, &opts) < 0) {
+        av_dict_free(&opts);
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+    av_dict_free(&opts);
+
+    if (avformat_find_stream_info(decoder->format, NULL) < 0) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->video_stream_index = av_find_best_stream(
+        decoder->format,
+        AVMEDIA_TYPE_VIDEO,
+        -1,
+        -1,
+        NULL,
+        0
+    );
+    if (decoder->video_stream_index < 0) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->video_stream = decoder->format->streams[decoder->video_stream_index];
+    if (decoder->video_stream->start_time != AV_NOPTS_VALUE) {
+        decoder->stream_start_seconds = decoder->video_stream->start_time * av_q2d(decoder->video_stream->time_base);
+        decoder->has_stream_start = 1;
+    } else if (decoder->format->start_time != AV_NOPTS_VALUE) {
+        decoder->stream_start_seconds = decoder->format->start_time / (double)AV_TIME_BASE;
+        decoder->has_stream_start = 1;
+    } else {
+        decoder->stream_start_seconds = 0;
+        decoder->has_stream_start = 0;
+    }
+
+    AVCodecParameters *params = decoder->video_stream->codecpar;
+    const AVCodec *codec = avcodec_find_decoder(params->codec_id);
+    if (!codec) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->codec = avcodec_alloc_context3(codec);
+    if (!decoder->codec) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    if (avcodec_parameters_to_context(decoder->codec, params) < 0) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->codec->thread_count = 1;
+
+    if (avcodec_open2(decoder->codec, codec, NULL) < 0) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->packet = av_packet_alloc();
+    decoder->frame = av_frame_alloc();
+    if (!decoder->packet || !decoder->frame) {
+        wdc_decoder_close(decoder);
+        return NULL;
+    }
+
+    decoder->last_time_seconds = 0;
+    decoder->has_last_time = 0;
+    return (wdc_decoder_ref)decoder;
+}
+
 wdc_frame *wdc_decoder_decode_at_time(
     wdc_decoder_ref decoder_ref,
     double time_seconds,
     int output_width,
     int output_height
 ) {
+    return wdc_decoder_decode_until(decoder_ref, time_seconds, output_width, output_height);
+}
+
+wdc_frame *wdc_decoder_decode_next(
+    wdc_decoder_ref decoder_ref,
+    int output_width,
+    int output_height
+) {
     wdc_decoder *decoder = (wdc_decoder *)decoder_ref;
     if (!decoder || !decoder->codec || !decoder->video_stream) return NULL;
     if (output_width <= 0 || output_height <= 0) return NULL;
-    if (!isfinite(time_seconds) || time_seconds < 0) time_seconds = 0;
-
-    const double seek_gap_seconds = 1.5;
-    if (!decoder->has_last_time ||
-        time_seconds + 0.2 < decoder->last_time_seconds ||
-        time_seconds - decoder->last_time_seconds > seek_gap_seconds) {
-        if (wdc_seek_to_time(decoder, time_seconds) < 0) {
-            return NULL;
-        }
-    }
-
-    const AVRational time_base = decoder->video_stream->time_base;
-    const double epsilon = 0.004;
+    wdc_set_error(decoder, 0, "");
 
     for (;;) {
         int read_ret = av_read_frame(decoder->format, decoder->packet);
         if (read_ret < 0) {
             if (read_ret == AVERROR_EOF) {
-                decoder->has_last_time = 1;
-                decoder->last_time_seconds = time_seconds;
+                wdc_set_error_ret(decoder, read_ret, "read frame");
+            }
+            if (read_ret != AVERROR_EOF) {
+                wdc_set_error_ret(decoder, read_ret, "read frame");
             }
             return NULL;
         }
@@ -260,6 +472,7 @@ wdc_frame *wdc_decoder_decode_at_time(
         int send_ret = avcodec_send_packet(decoder->codec, decoder->packet);
         av_packet_unref(decoder->packet);
         if (send_ret < 0) {
+            wdc_set_error_ret(decoder, send_ret, "send packet");
             continue;
         }
 
@@ -269,6 +482,7 @@ wdc_frame *wdc_decoder_decode_at_time(
                 break;
             }
             if (recv_ret < 0) {
+                wdc_set_error_ret(decoder, recv_ret, "receive frame");
                 break;
             }
 
@@ -279,63 +493,75 @@ wdc_frame *wdc_decoder_decode_at_time(
                 continue;
             }
 
-            double frame_time = pts * av_q2d(time_base);
-            if (frame_time + epsilon < time_seconds) {
-                av_frame_unref(decoder->frame);
-                continue;
-            }
-
-            if (wdc_ensure_sws(
-                    decoder,
-                    decoder->codec->pix_fmt,
-                    decoder->codec->width,
-                    decoder->codec->height,
-                    output_width,
-                    output_height
-                ) < 0) {
-                av_frame_unref(decoder->frame);
-                return NULL;
-            }
-
-            wdc_frame *out = wdc_alloc_frame(output_width, output_height);
-            if (!out) {
-                av_frame_unref(decoder->frame);
-                return NULL;
-            }
-
-            uint8_t *dst_data[4] = {0};
-            int dst_linesize[4] = {0};
-            int ok = av_image_fill_arrays(
-                dst_data,
-                dst_linesize,
-                out->rgba,
-                AV_PIX_FMT_RGBA,
-                out->width,
-                out->height,
-                1
-            );
-            if (ok < 0) {
-                wdc_free_frame(out);
-                av_frame_unref(decoder->frame);
-                return NULL;
-            }
-
-            sws_scale(
-                decoder->sws,
-                (const uint8_t *const *)decoder->frame->data,
-                decoder->frame->linesize,
-                0,
-                decoder->codec->height,
-                dst_data,
-                dst_linesize
-            );
-
+            double frame_time = wdc_normalized_frame_time(decoder, pts, decoder->video_stream->time_base);
+            wdc_frame *out = wdc_make_output_frame(decoder, decoder->frame, output_width, output_height);
             av_frame_unref(decoder->frame);
+            if (!out) return NULL;
             decoder->has_last_time = 1;
             decoder->last_time_seconds = frame_time;
             return out;
         }
     }
+}
+
+wdc_frame *wdc_decoder_decode_until(
+    wdc_decoder_ref decoder_ref,
+    double time_seconds,
+    int output_width,
+    int output_height
+) {
+    wdc_decoder *decoder = (wdc_decoder *)decoder_ref;
+    if (!decoder || !decoder->codec || !decoder->video_stream) return NULL;
+    if (output_width <= 0 || output_height <= 0) return NULL;
+    if (!isfinite(time_seconds) || time_seconds < 0) time_seconds = 0;
+    wdc_set_error(decoder, 0, "");
+
+    const double seek_gap_seconds = 2.0;
+    if (!decoder->has_last_time ||
+        time_seconds + 0.2 < decoder->last_time_seconds ||
+        time_seconds - decoder->last_time_seconds > seek_gap_seconds) {
+        int seek_ret = wdc_seek_to_time(decoder, time_seconds);
+        if (seek_ret < 0) {
+            wdc_set_error_ret(decoder, seek_ret, "seek");
+            return NULL;
+        }
+    }
+
+    const double epsilon = 0.004;
+    for (;;) {
+        wdc_frame *out = wdc_decoder_decode_next(decoder, output_width, output_height);
+        if (!out) return NULL;
+        if (decoder->last_time_seconds + epsilon >= time_seconds) {
+            return out;
+        }
+        wdc_free_frame(out);
+    }
+}
+
+int wdc_decoder_seek_seconds(wdc_decoder_ref decoder_ref, double time_seconds) {
+    wdc_decoder *decoder = (wdc_decoder *)decoder_ref;
+    if (!decoder) return -1;
+    int ret = wdc_seek_to_time(decoder, time_seconds);
+    if (ret < 0) {
+        wdc_set_error_ret(decoder, ret, "seek");
+    } else {
+        decoder->has_last_time = 0;
+        decoder->last_time_seconds = 0;
+        wdc_set_error(decoder, 0, "");
+    }
+    return ret;
+}
+
+int wdc_decoder_get_last_error_code(wdc_decoder_ref decoder_ref) {
+    wdc_decoder *decoder = (wdc_decoder *)decoder_ref;
+    if (!decoder) return -1;
+    return decoder->last_error_code;
+}
+
+const char *wdc_decoder_get_last_error_message(wdc_decoder_ref decoder_ref) {
+    wdc_decoder *decoder = (wdc_decoder *)decoder_ref;
+    if (!decoder) return "";
+    return decoder->last_error_message;
 }
 
 void wdc_decoder_close(wdc_decoder_ref decoder_ref) {

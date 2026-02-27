@@ -310,6 +310,7 @@ struct VideoDetailView: View {
             if let audioURL = stream.audioURL {
                 downloadManager.startDASHDownload(
                     bvid: detail.bvid,
+                    cid: detail.cid,
                     title: detail.title,
                     videoURL: stream.url,
                     audioURL: audioURL,
@@ -319,6 +320,7 @@ struct VideoDetailView: View {
             } else {
                 downloadManager.startDownload(
                     bvid: detail.bvid,
+                    cid: detail.cid,
                     title: detail.title,
                     url: stream.url,
                     headers: requestHeaders,

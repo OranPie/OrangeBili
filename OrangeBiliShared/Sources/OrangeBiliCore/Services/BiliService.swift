@@ -225,7 +225,8 @@ struct BiliService: BiliServiceProtocol {
                     backupURLs: (video.backupUrl ?? []).compactMap(URL.init(string:)),
                     audioURL: bestAudio.flatMap { URL(string: $0.baseUrl) },
                     audioBackupURLs: (bestAudio?.backupUrl ?? []).compactMap(URL.init(string:)),
-                    codecId: video.codecid
+                    codecId: video.codecid,
+                    streamKind: .dash
                 )
             }
 
@@ -244,7 +245,8 @@ struct BiliService: BiliServiceProtocol {
                     backupURLs: (fallback.backupUrl ?? []).compactMap(URL.init(string:)),
                     audioURL: bestAudio.flatMap { URL(string: $0.baseUrl) },
                     audioBackupURLs: (bestAudio?.backupUrl ?? []).compactMap(URL.init(string:)),
-                    codecId: fallback.codecid
+                    codecId: fallback.codecid,
+                    streamKind: .dash
                 )
             }
         }
@@ -256,7 +258,8 @@ struct BiliService: BiliServiceProtocol {
 
         return PlayStream(
             url: primaryURL,
-            backupURLs: (first.backupUrl ?? []).compactMap(URL.init(string:))
+            backupURLs: (first.backupUrl ?? []).compactMap(URL.init(string:)),
+            streamKind: .progressiveMP4
         )
     }
 
@@ -267,7 +270,8 @@ struct BiliService: BiliServiceProtocol {
         if let first = response.durl.first, let primaryURL = URL(string: first.url) {
             return PlayStream(
                 url: primaryURL,
-                backupURLs: (first.backupUrl ?? []).compactMap(URL.init(string:))
+                backupURLs: (first.backupUrl ?? []).compactMap(URL.init(string:)),
+                streamKind: .progressiveMP4
             )
         }
         DebugLogStore.shared.log(

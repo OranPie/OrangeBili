@@ -65,7 +65,8 @@ struct VideoPlayerView: View {
             // Native watch VideoPlayer can show green frames on some non-AVC streams.
             // Force AVC for that backend; keep user preference for FFmpeg backend.
             viewModel.preferredCodec = (render.watchPlayerVendor == .videoPlayer) ? .avc : render.preferredCodec
-            viewModel.preferredStreamFormat = render.preferredStreamFormat
+            // FFmpeg backend prefers progressive MP4 for streaming stability on watchOS.
+            viewModel.preferredStreamFormat = (render.watchPlayerVendor == .ffmpegMinimal) ? .mp4 : render.preferredStreamFormat
             #else
             viewModel.preferredCodec = render.preferredCodec
             viewModel.preferredStreamFormat = render.preferredStreamFormat

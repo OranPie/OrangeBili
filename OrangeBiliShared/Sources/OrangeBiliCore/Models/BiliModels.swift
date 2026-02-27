@@ -101,19 +101,28 @@ public struct VideoStats: Hashable {
 }
 
 public struct PlayStream {
+    public enum StreamKind: String, Hashable {
+        case progressiveMP4
+        case dash
+        case localFile
+    }
+
     public let url: URL
     public let backupURLs: [URL]
     public let audioURL: URL?
     public let audioBackupURLs: [URL]
     public let codecId: Int?
+    public let streamKind: StreamKind
 
     public init(url: URL, backupURLs: [URL], audioURL: URL? = nil,
-                audioBackupURLs: [URL] = [], codecId: Int? = nil) {
+                audioBackupURLs: [URL] = [], codecId: Int? = nil,
+                streamKind: StreamKind = .progressiveMP4) {
         self.url = url
         self.backupURLs = backupURLs
         self.audioURL = audioURL
         self.audioBackupURLs = audioBackupURLs
         self.codecId = codecId
+        self.streamKind = streamKind
     }
 }
 

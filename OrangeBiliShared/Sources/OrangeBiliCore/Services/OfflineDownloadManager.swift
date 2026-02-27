@@ -12,6 +12,7 @@ public struct DownloadStatusItem: Identifiable, Hashable {
 
     public let id: UUID
     public let bvid: String
+    public let cid: Int64?
     public let title: String
     public var state: State
     public var progress: Double
@@ -29,6 +30,7 @@ public struct DownloadStatusItem: Identifiable, Hashable {
 
     public init(
         bvid: String,
+        cid: Int64? = nil,
         title: String,
         coverURL: URL?,
         sourceURL: URL? = nil,
@@ -37,6 +39,7 @@ public struct DownloadStatusItem: Identifiable, Hashable {
     ) {
         id = UUID()
         self.bvid = bvid
+        self.cid = cid
         self.title = title
         self.coverURL = coverURL
         self.sourceURL = sourceURL
@@ -72,12 +75,12 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         super.init()
     }
 
-    public func startDownload(bvid: String, title: String, url: URL, headers: [String: String], coverURL: URL?) {
+    public func startDownload(bvid: String, cid: Int64? = nil, title: String, url: URL, headers: [String: String], coverURL: URL?) {
         if items.contains(where: { $0.bvid == bvid && ($0.state == .queued || $0.state == .downloading) }) {
             return
         }
 
-        let item = DownloadStatusItem(bvid: bvid, title: title, coverURL: coverURL, sourceURL: url, requestHeaders: headers)
+        let item = DownloadStatusItem(bvid: bvid, cid: cid, title: title, coverURL: coverURL, sourceURL: url, requestHeaders: headers)
         items.insert(item, at: 0)
 
         var request = URLRequest(url: url)
@@ -97,6 +100,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
 
     public func startDASHDownload(
         bvid: String,
+        cid: Int64? = nil,
         title: String,
         videoURL: URL,
         audioURL: URL,
@@ -109,6 +113,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
 
         let item = DownloadStatusItem(
             bvid: bvid,
+            cid: cid,
             title: title,
             coverURL: coverURL,
             sourceURL: videoURL,
@@ -137,11 +142,12 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         let coverURL = item.coverURL
         let bvid = item.bvid
         let title = item.title
+        let cid = item.cid
         remove(itemID: itemID)
         if let audioURL {
-            startDASHDownload(bvid: bvid, title: title, videoURL: videoURL, audioURL: audioURL, headers: headers, coverURL: coverURL)
+            startDASHDownload(bvid: bvid, cid: cid, title: title, videoURL: videoURL, audioURL: audioURL, headers: headers, coverURL: coverURL)
         } else {
-            startDownload(bvid: bvid, title: title, url: videoURL, headers: headers, coverURL: coverURL)
+            startDownload(bvid: bvid, cid: cid, title: title, url: videoURL, headers: headers, coverURL: coverURL)
         }
     }
 

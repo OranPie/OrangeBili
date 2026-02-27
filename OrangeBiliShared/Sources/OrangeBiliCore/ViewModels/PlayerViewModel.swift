@@ -44,6 +44,7 @@ public final class PlayerViewModel: ObservableObject {
     @Published public var videoFormatInfo: VideoFormatInfo?
     @Published public private(set) var playbackRequestHeaders: [String: String] = [:]
     @Published public private(set) var currentVideoStreamURL: URL?
+    @Published public private(set) var currentStreamKind: PlayStream.StreamKind = .progressiveMP4
     @Published public var loopPlayback: Bool = false
     @Published public private(set) var didFinishPlaying: Bool = false
 
@@ -58,6 +59,7 @@ public final class PlayerViewModel: ObservableObject {
     private var observer: Any?
     private var continuousObserver: Any?
     private var streamURLs: [URL] = []
+    private var streamKinds: [URL: PlayStream.StreamKind] = [:]
     private var streamHeaders: [String: String] = [:]
     private var currentStreamIndex = 0
     private var dashAudioURL: URL?
@@ -84,6 +86,7 @@ public final class PlayerViewModel: ObservableObject {
                 let videoAsset = AVURLAsset(url: dash.videoURL)
                 inspectAsset = videoAsset
                 currentVideoStreamURL = dash.videoURL
+                currentStreamKind = .localFile
                 if let audioURL = dash.audioURL {
                     let audioAsset = AVURLAsset(url: audioURL)
                     if let merged = Self.makeDASHCompositionItem(videoAsset: videoAsset, audioAsset: audioAsset) {
@@ -98,6 +101,7 @@ public final class PlayerViewModel: ObservableObject {
                 let asset = AVURLAsset(url: localFileURL)
                 inspectAsset = asset
                 currentVideoStreamURL = localFileURL
+                currentStreamKind = .localFile
                 player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
             }
             player.isMuted = isMuted
@@ -234,6 +238,7 @@ public final class PlayerViewModel: ObservableObject {
     private func collectPlayableURLs() async throws -> [URL] {
         var urls: [URL] = []
         var seen = Set<String>()
+        streamKinds = [:]
         // Try preferred quality first, then fallbacks
         var qualities = [preferredQuality]
         for q in [16, 32] where !qualities.contains(q) {
@@ -250,6 +255,7 @@ public final class PlayerViewModel: ObservableObject {
                     let key = url.absoluteString
                     if !seen.contains(key) {
                         urls.append(url)
+                        streamKinds[url] = stream.streamKind
                         seen.insert(key)
                     }
                 }
@@ -272,6 +278,7 @@ public final class PlayerViewModel: ObservableObject {
         }
         player?.pause()
         currentVideoStreamURL = url
+        currentStreamKind = streamKinds[url] ?? .progressiveMP4
 
         let videoAsset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
 

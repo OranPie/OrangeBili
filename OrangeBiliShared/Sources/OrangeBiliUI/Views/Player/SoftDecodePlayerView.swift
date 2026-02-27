@@ -317,7 +317,8 @@ public struct SoftDecodePlayerView: View {
 
     private func play() {
         guard let player else { return }
-        player.play()
+        let targetRate = playerViewModel?.playbackRate ?? 1.0
+        player.playImmediately(atRate: targetRate)
         startDecodeLoop()
         scheduleAutoHide()
     }
@@ -330,7 +331,8 @@ public struct SoftDecodePlayerView: View {
             showControls = true
             hideTask?.cancel()
         } else {
-            player.play()
+            let targetRate = playerViewModel?.playbackRate ?? 1.0
+            player.playImmediately(atRate: targetRate)
             startDecodeLoop()
             scheduleAutoHide()
         }
@@ -369,6 +371,9 @@ public struct SoftDecodePlayerView: View {
         guard let player else { return }
         if player.timeControlStatus == .playing {
             player.pause()
+        }
+        if let decoder {
+            _ = wdc_decoder_seek_seconds(decoder, player.currentTime().seconds)
         }
         stopDecodeLoop()
         hideTask?.cancel()
@@ -431,18 +436,29 @@ public struct SoftDecodePlayerView: View {
         let (pixelWidth, pixelHeight) = decodeTargetSize()
         isDecoding = true
         decodeQueue.async {
-            let raw = wdc_decoder_decode_at_time(
-                decoder,
-                t,
-                Int32(pixelWidth),
-                Int32(pixelHeight)
-            )
+            let raw: UnsafeMutablePointer<wdc_frame>?
+            if requestedTime == nil {
+                raw = wdc_decoder_decode_next(
+                    decoder,
+                    Int32(pixelWidth),
+                    Int32(pixelHeight)
+                )
+            } else {
+                raw = wdc_decoder_decode_until(
+                    decoder,
+                    t,
+                    Int32(pixelWidth),
+                    Int32(pixelHeight)
+                )
+            }
 
             guard let raw else {
                 DispatchQueue.main.async {
                     decodeMissCount += 1
                     if decodeMissCount == 1 || decodeMissCount % 30 == 0 {
-                        print("[SoftDecodePlayer] decode miss t=\(String(format: "%.2f", t)) miss=\(decodeMissCount)")
+                        let errCode = wdc_decoder_get_last_error_code(decoder)
+                        let errMsg = String(cString: wdc_decoder_get_last_error_message(decoder))
+                        print("[SoftDecodePlayer] decode miss t=\(String(format: "%.2f", t)) miss=\(decodeMissCount) err=\(errCode) \(errMsg)")
                     }
                     if decodeMissCount >= 120 {
                         print("[SoftDecodePlayer] decoder stalled, reopening...")
@@ -527,13 +543,10 @@ public struct SoftDecodePlayerView: View {
         let referer = requestHeaders["Referer"] ?? requestHeaders["referer"] ?? "https://www.bilibili.com/"
         let cookie = requestHeaders["Cookie"] ?? requestHeaders["cookie"] ?? ""
         print("[SoftDecodePlayer] open decoder headers ua=\(!ua.isEmpty) referer=\(!referer.isEmpty) cookie=\(!cookie.isEmpty)")
+        let headersBlob = "User-Agent: \(ua)\r\nReferer: \(referer)\r\nCookie: \(cookie)\r\n"
         decoder = input.withCString { cUrl in
-            ua.withCString { cUA in
-                referer.withCString { cRef in
-                    cookie.withCString { cCookie in
-                        wdc_decoder_open_with_options(cUrl, cUA, cRef, cCookie)
-                    }
-                }
+            headersBlob.withCString { cHeaders in
+                wdc_decoder_open_with_headers(cUrl, cHeaders)
             }
         }
         if decoder == nil {

@@ -108,7 +108,7 @@ struct OfflineVideoManageView: View {
         #if os(watchOS)
         VStack(spacing: 5) {
             NavigationLink(L10n.t("offline.play")) {
-                VideoPlayerView(video: offlineVideo(for: item), cid: 0, localFileURL: item.localFileURL)
+                VideoPlayerView(video: offlineVideo(for: item), cid: item.cid ?? 0, localFileURL: item.localFileURL)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.mini)
@@ -133,7 +133,7 @@ struct OfflineVideoManageView: View {
         #else
         HStack(spacing: 8) {
             NavigationLink(L10n.t("offline.play")) {
-                VideoPlayerView(video: offlineVideo(for: item), cid: 0, localFileURL: item.localFileURL)
+                VideoPlayerView(video: offlineVideo(for: item), cid: item.cid ?? 0, localFileURL: item.localFileURL)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
@@ -170,7 +170,7 @@ struct OfflineVideoManageView: View {
         BiliVideo(
             bvid: item.bvid,
             aid: 0,
-            cid: nil,
+            cid: item.cid,
             title: item.title,
             author: L10n.t("offline.author"),
             mid: nil,
