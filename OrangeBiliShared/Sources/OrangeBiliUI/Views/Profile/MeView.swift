@@ -2,7 +2,6 @@ import SwiftUI
 import OrangeBiliCore
 
 struct MeView: View {
-    @EnvironmentObject private var render: RenderSettings
     @EnvironmentObject private var apiBackend: BiliAPIBackend
     @EnvironmentObject private var historyStore: HistoryStore
     @EnvironmentObject private var favoritesStore: FavoritesStore
@@ -26,25 +25,51 @@ struct MeView: View {
                         NavigationLink {
                             FollowingListView()
                         } label: {
-                            Label(L10n.t("me.account.following"), systemImage: "person.2")
+                            SummaryCard(
+                                L10n.t("me.account.following"),
+                                subtitle: L10n.t("me.account.following.subtitle"),
+                                systemImage: "person.2"
+                            )
                         }
 
                         NavigationLink {
-                            UploaderVisitHistoryView()
+                            FriendsListView()
                         } label: {
-                            Label(L10n.t("me.account.friends"), systemImage: "person.2.circle")
+                            SummaryCard(
+                                L10n.t("me.account.friends"),
+                                subtitle: L10n.t("me.account.friends.subtitle"),
+                                systemImage: "person.2.circle"
+                            )
                         }
 
                         NavigationLink {
                             UploaderVideosView(mid: mid, uploaderName: profile?.name ?? "")
                         } label: {
-                            Label(L10n.t("me.account.submissions"), systemImage: "play.rectangle")
+                            SummaryCard(
+                                L10n.t("me.account.submissions"),
+                                subtitle: L10n.t("me.account.submissions.subtitle"),
+                                systemImage: "play.rectangle"
+                            )
                         }
 
                         NavigationLink {
-                            DynamicsPlaceholderView()
+                            DynamicsView(scope: .mine)
                         } label: {
-                            Label(L10n.t("me.account.dynamics"), systemImage: "bolt.horizontal")
+                            SummaryCard(
+                                L10n.t("me.account.dynamics"),
+                                subtitle: L10n.t("me.account.dynamics.subtitle"),
+                                systemImage: "bolt.horizontal"
+                            )
+                        }
+
+                        NavigationLink {
+                            DynamicsView(scope: .following)
+                        } label: {
+                            SummaryCard(
+                                L10n.t("dynamic.scope.following"),
+                                subtitle: L10n.t("me.account.dynamics.subtitle"),
+                                systemImage: "person.3"
+                            )
                         }
                     }
                 }
@@ -55,19 +80,44 @@ struct MeView: View {
                 NavigationLink {
                     HistoryRecordsView()
                 } label: {
-                    Label(L10n.t("me.account.history"), systemImage: "clock")
+                    SummaryCard(
+                        L10n.t("me.account.history"),
+                        subtitle: L10n.t("tools.history.subtitle"),
+                        systemImage: "clock",
+                        trailing: "\(historyStore.records.count)"
+                    )
                 }
 
                 NavigationLink {
                     CloudFavoritesView()
                 } label: {
-                    Label(L10n.t("me.account.cloudFavorites"), systemImage: "icloud.and.arrow.down")
+                    SummaryCard(
+                        L10n.t("me.account.cloudFavorites"),
+                        subtitle: L10n.t("tools.favorites.cloud.subtitle"),
+                        systemImage: "icloud.and.arrow.down",
+                        trailing: "\(favoritesStore.records.count)"
+                    )
                 }
 
                 NavigationLink {
-                    OfflineDownloadsHubView()
+                    UploaderVisitHistoryView()
                 } label: {
-                    Label(L10n.t("me.account.downloads"), systemImage: "arrow.down.circle")
+                    SummaryCard(
+                        L10n.t("me.account.visitHistory"),
+                        subtitle: L10n.t("me.account.visitHistory.subtitle"),
+                        systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                    )
+                }
+
+                NavigationLink {
+                    DownloadsCenterView()
+                } label: {
+                    SummaryCard(
+                        L10n.t("downloads.center.title"),
+                        subtitle: L10n.t("me.account.downloads.subtitle"),
+                        systemImage: "arrow.down.circle",
+                        trailing: "\(downloadManager.items.count)"
+                    )
                 }
             }
 
@@ -75,7 +125,10 @@ struct MeView: View {
             if apiBackend.isLoggedIn {
                 Section {
                     Button(L10n.t("me.account.logout"), role: .destructive) {
-                        Task { await apiBackend.clearLoginSession() }
+                        Task {
+                            await apiBackend.clearLoginSession()
+                            ToastManager.shared.show(L10n.t("login.status.cleared"), icon: "person.slash", style: .info)
+                        }
                     }
                 }
             }
@@ -153,78 +206,5 @@ struct MeView: View {
         if let (p, _) = try? await apiBackend.fetchMyUploader() {
             profile = p
         }
-    }
-}
-
-// MARK: - Downloads Hub (combines active + completed)
-
-private struct OfflineDownloadsHubView: View {
-    @EnvironmentObject private var downloadManager: OfflineDownloadManager
-
-    var body: some View {
-        List {
-            if !activeDownloads.isEmpty {
-                Section(L10n.t("tools.downloads.active")) {
-                    ForEach(activeDownloads) { item in
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(item.title)
-                                .font(.caption2)
-                                .lineLimit(2)
-                            Text(item.bvid)
-                                .font(.system(size: UIStyle.fontSize(8), design: .monospaced))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
-                }
-            }
-
-            Section(L10n.t("tools.downloads.completed")) {
-                if completedDownloads.isEmpty {
-                    EmptyStateView(L10n.t("downloads.completed.empty"), systemImage: "checkmark.circle")
-                } else {
-                    ForEach(completedDownloads) { item in
-                        NavigationLink {
-                            OfflineVideoManageView(itemID: item.id)
-                        } label: {
-                            HStack(spacing: 8) {
-                                AsyncCachedImage(url: item.localCoverURL ?? item.coverURL) {
-                                    RoundedRectangle(cornerRadius: 6).fill(.gray.opacity(0.24))
-                                }
-                                .frame(width: 60, height: 34)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(item.title).font(.caption2).lineLimit(2)
-                                    Text(item.bvid)
-                                        .font(.system(size: UIStyle.fontSize(8), design: .monospaced))
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .listStyle(.plain)
-        .navigationTitle(L10n.t("me.account.downloads"))
-    }
-
-    private var activeDownloads: [DownloadStatusItem] {
-        downloadManager.items.filter { $0.state != .completed }
-    }
-
-    private var completedDownloads: [DownloadStatusItem] {
-        downloadManager.items.filter { $0.state == .completed && $0.localFileURL != nil }
-    }
-}
-
-// MARK: - Dynamics Placeholder
-
-private struct DynamicsPlaceholderView: View {
-    var body: some View {
-        EmptyStateView(L10n.t("me.account.dynamics"), systemImage: "bolt.horizontal")
-            .navigationTitle(L10n.t("me.account.dynamics"))
     }
 }

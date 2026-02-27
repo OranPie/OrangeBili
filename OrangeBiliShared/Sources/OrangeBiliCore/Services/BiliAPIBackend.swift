@@ -75,8 +75,12 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         try await service.fetchVideoDetail(bvid: bvid)
     }
 
-    public func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream {
-        try await service.fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: preferredCodec)
+    public func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec, streamFormat: PreferredStreamFormat = .auto) async throws -> PlayStream {
+        try await service.fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: preferredCodec, streamFormat: streamFormat)
+    }
+
+    public func fetchOfflineDownloadStream(bvid: String, cid: Int64, quality: Int = 32) async throws -> PlayStream {
+        try await service.fetchOfflineDownloadStream(bvid: bvid, cid: cid, quality: quality)
     }
 
     public func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem] {
@@ -93,6 +97,48 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
 
     public func fetchUploaderArticles(mid: Int, page: Int) async throws -> [UploaderArticle] {
         try await service.fetchUploaderArticles(mid: mid, page: page)
+    }
+
+    public func fetchUploaderTopVideo(mid: Int) async throws -> BiliVideo? {
+        try await service.fetchUploaderTopVideo(mid: mid)
+    }
+
+    public func fetchUploaderMasterpieces(mid: Int, page: Int = 1) async throws -> [BiliVideo] {
+        try await service.fetchUploaderMasterpieces(mid: mid, page: page)
+    }
+
+    public func fetchUploaderRelationState(mid: Int) async throws -> UploaderRelationState {
+        try await service.fetchUploaderRelationState(mid: mid)
+    }
+
+    public func followUploader(mid: Int) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "fid": String(mid),
+            "act": "1",
+            "re_src": "11",
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(path: "/x/relation/modify", body: body)
+    }
+
+    public func unfollowUploader(mid: Int) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "fid": String(mid),
+            "act": "2",
+            "re_src": "11",
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(path: "/x/relation/modify", body: body)
+    }
+
+    public func fetchDynamics(scope: DynamicsScope, offset: String? = nil) async throws -> DynamicsPage {
+        try await service.fetchDynamics(scope: scope, offset: offset)
+    }
+
+    public func fetchDynamicDetail(dynamicID: Int64) async throws -> DynamicItem {
+        try await service.fetchDynamicDetail(dynamicID: dynamicID)
     }
 
     public func fetchMyUploader() async throws -> (UploaderProfile, [BiliVideo]) {
@@ -195,7 +241,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/web-interface/coin/add", body: body)
     }
 
-    public func likeComment(aid: Int64, rpid: Int, liked: Bool) async throws {
+    public func likeComment(aid: Int64, rpid: Int64, liked: Bool) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -207,7 +253,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/action", body: body)
     }
 
-    public func replyComment(aid: Int64, rootRpid: Int, parentRpid: Int, message: String) async throws {
+    public func replyComment(aid: Int64, rootRpid: Int64, parentRpid: Int64, message: String) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -220,7 +266,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/add", body: body)
     }
 
-    public func deleteComment(aid: Int64, rpid: Int) async throws {
+    public func deleteComment(aid: Int64, rpid: Int64) async throws {
         let csrf = try await requireCSRFToken()
         let body = [
             "type": "1",
@@ -231,7 +277,7 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         _ = try await postAuthed(path: "/x/v2/reply/del", body: body)
     }
 
-    public func fetchCommentReplies(aid: Int64, rootRpid: Int, page: Int) async throws -> [CommentItem] {
+    public func fetchCommentReplies(aid: Int64, rootRpid: Int64, page: Int) async throws -> [CommentItem] {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.bilibili.com"
@@ -256,9 +302,9 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
         }
         return (wrapped.data?.replies ?? []).map { dto in
             CommentItem(
-                id: dto.rpid.asInt,
+                id: dto.rpid.asInt64,
                 oid: aid,
-                mid: dto.member?.mid.asInt,
+                mid: dto.member?.mid.asInt64,
                 username: dto.member?.uname ?? L10n.t("label.user"),
                 avatarURL: normalizedImageURL(dto.member?.avatar ?? ""),
                 message: dto.content?.message ?? "",
@@ -315,13 +361,161 @@ public final class BiliAPIBackend: ObservableObject, BiliServiceProtocol {
                 name: $0.uname,
                 avatarURL: normalizedImageURL($0.face),
                 sign: $0.sign ?? "",
-                fans: $0.fans.asInt
+                fans: $0.fans?.asInt ?? 0
+            )
+        }
+    }
+
+    public func likeDynamic(dynamicID: Int64, isLike: Bool) async throws {
+        let csrf = try await requireCSRFToken()
+        guard let uid = await authStore.loggedInMid() else {
+            throw BiliError.unauthorized
+        }
+        let body = [
+            "dynamic_id": String(dynamicID),
+            "up": isLike ? "1" : "2",
+            "uid": String(uid),
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.vc.bilibili.com", path: "/dynamic_like/v1/dynamic_like/thumb", body: body)
+    }
+
+    public func repostDynamic(dynamicID: Int64, text: String) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "dynamic_id": String(dynamicID),
+            "content": text,
+            "extension": #"{"emoji_type":1}"#,
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.vc.bilibili.com", path: "/dynamic_repost/v1/dynamic_repost/repost", body: body)
+    }
+
+    public func fetchDynamicComments(resource: DynamicCommentResource, page: Int, order: Int = 2) async throws -> [CommentItem] {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.bilibili.com"
+        components.path = "/x/v2/reply"
+        components.queryItems = [
+            URLQueryItem(name: "type", value: String(resource.type)),
+            URLQueryItem(name: "oid", value: String(resource.oid)),
+            URLQueryItem(name: "pn", value: String(page)),
+            URLQueryItem(name: "ps", value: "20"),
+            URLQueryItem(name: "sort", value: String(order))
+        ]
+        guard let url = components.url else { throw BiliError.invalidURL }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 20
+        request.setValue(PlatformInfo.userAgent, forHTTPHeaderField: "User-Agent")
+        request.setValue("https://www.bilibili.com", forHTTPHeaderField: "Referer")
+        if let cookie = await authStore.cookieHeader(for: .detail(bvid: "BV1xx411c7mD")) {
+            request.setValue(cookie, forHTTPHeaderField: "Cookie")
+        }
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let wrapped = try JSONDecoder().decode(DynamicCommentEnvelope.self, from: data)
+        guard wrapped.code == 0 else {
+            throw BiliError.apiError(code: wrapped.code, message: wrapped.message)
+        }
+        return (wrapped.data?.replies ?? []).map { dto in
+            CommentItem(
+                id: dto.rpid.asInt64,
+                oid: resource.oid,
+                mid: dto.member?.mid.asInt64,
+                username: dto.member?.uname ?? L10n.t("label.user"),
+                avatarURL: normalizedImageURL(dto.member?.avatar ?? ""),
+                message: dto.content?.message ?? "",
+                likeCount: dto.like.asInt,
+                timestamp: Date(timeIntervalSince1970: TimeInterval(dto.ctime.asInt)),
+                replyCount: dto.rcount.asInt
+            )
+        }
+    }
+
+    public func replyDynamicComment(resource: DynamicCommentResource, rootRpid: Int64, parentRpid: Int64, message: String) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "type": String(resource.type),
+            "oid": String(resource.oid),
+            "root": String(rootRpid),
+            "parent": String(parentRpid),
+            "message": message,
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.bilibili.com", path: "/x/v2/reply/add", body: body)
+    }
+
+    public func sendDynamicComment(resource: DynamicCommentResource, message: String) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "type": String(resource.type),
+            "oid": String(resource.oid),
+            "message": message,
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.bilibili.com", path: "/x/v2/reply/add", body: body)
+    }
+
+    public func likeDynamicComment(resource: DynamicCommentResource, rpid: Int64, liked: Bool) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "type": String(resource.type),
+            "oid": String(resource.oid),
+            "rpid": String(rpid),
+            "action": liked ? "1" : "0",
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.bilibili.com", path: "/x/v2/reply/action", body: body)
+    }
+
+    public func deleteDynamicComment(resource: DynamicCommentResource, rpid: Int64) async throws {
+        let csrf = try await requireCSRFToken()
+        let body = [
+            "type": String(resource.type),
+            "oid": String(resource.oid),
+            "rpid": String(rpid),
+            "csrf": csrf
+        ]
+        _ = try await postAuthed(host: "api.bilibili.com", path: "/x/v2/reply/del", body: body)
+    }
+
+    public func fetchMyFriends(page: Int, pageSize: Int = 20) async throws -> [FollowingUser] {
+        guard let mid = await authStore.loggedInMid() else {
+            throw BiliError.unauthorized
+        }
+        let request = try await makeAuthedRequest(
+            host: "api.bilibili.com",
+            path: "/x/relation/friends",
+            method: "GET",
+            query: [
+                "vmid": String(mid),
+                "pn": String(page),
+                "ps": String(pageSize)
+            ]
+        )
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let envelope = try JSONDecoder().decode(FollowingEnvelope.self, from: data)
+        guard envelope.code == 0 else {
+            throw BiliError.apiError(code: envelope.code, message: envelope.message)
+        }
+        return (envelope.data?.list ?? []).map {
+            FollowingUser(
+                id: $0.mid.asInt,
+                name: $0.uname,
+                avatarURL: normalizedImageURL($0.face),
+                sign: $0.sign ?? "",
+                fans: $0.fans?.asInt ?? 0
             )
         }
     }
 
     private func postAuthed(path: String, body: [String: String]) async throws -> SimpleEnvelope {
-        let request = try await makeAuthedRequest(host: "api.bilibili.com", path: path, method: "POST", query: [:], body: body)
+        try await postAuthed(host: "api.bilibili.com", path: path, body: body)
+    }
+
+    private func postAuthed(host: String, path: String, body: [String: String]) async throws -> SimpleEnvelope {
+        let request = try await makeAuthedRequest(host: host, path: path, method: "POST", query: [:], body: body)
         let (data, _) = try await URLSession.shared.data(for: request)
         let envelope = try JSONDecoder().decode(SimpleEnvelope.self, from: data)
         guard envelope.code == 0 else {
@@ -437,6 +631,8 @@ private struct CommentReplyEnvelope: Decodable {
         data = try? c.decodeIfPresent(DataBody.self, forKey: .data)
     }
 }
+
+private typealias DynamicCommentEnvelope = CommentReplyEnvelope
 
 private struct VideoTagEnvelope: Decodable {
     struct Item: Decodable {
@@ -583,7 +779,7 @@ private struct FollowingEnvelope: Decodable {
         let uname: String
         let face: String
         let sign: String?
-        let fans: IntString
+        let fans: IntString?
     }
 
     let code: Int

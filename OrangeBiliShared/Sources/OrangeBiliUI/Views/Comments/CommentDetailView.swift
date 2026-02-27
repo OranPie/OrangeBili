@@ -13,16 +13,26 @@ struct CommentDetailView: View {
     @State private var page = 1
     @State private var hasMore = true
     @State private var replyText = ""
-    @State private var replyTargetRpid: Int?
-    @State private var statusText: String?
+    @State private var replyTargetRpid: Int64?
     @State private var liked = false
 
     var body: some View {
         List {
             Section(L10n.t("comment.detail.original")) {
-                NavigationLink {
-                    UploaderView(mid: comment.mid ?? 0)
-                } label: {
+                if let mid = comment.mid, let uploaderMid = Int(exactly: mid), uploaderMid > 0 {
+                    NavigationLink {
+                        UploaderView(mid: uploaderMid)
+                    } label: {
+                        HStack {
+                            Text(comment.username)
+                                .font(.system(size: 11 * render.commentTextScale, weight: .bold))
+                            Spacer()
+                            Text(Formatting.time(comment.timestamp))
+                                .font(.system(size: 9 * render.commentTextScale))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } else {
                     HStack {
                         Text(comment.username)
                             .font(.system(size: 11 * render.commentTextScale, weight: .bold))
@@ -32,7 +42,6 @@ struct CommentDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .disabled(comment.mid == nil)
                 Text(comment.message)
                     .font(.system(size: 11 * render.commentTextScale))
                 HStack(spacing: 8) {
@@ -47,11 +56,6 @@ struct CommentDetailView: View {
                         }
                     }
                 }
-                if let statusText {
-                    Text(statusText)
-                        .font(.system(size: 8 * render.commentTextScale))
-                        .foregroundStyle(.secondary)
-                }
             }
 
             Section(L10n.t("comment.detail.replies")) {
@@ -64,11 +68,15 @@ struct CommentDetailView: View {
                 ForEach(replies) { reply in
                     VStack(alignment: .leading, spacing: 3) {
                         HStack {
-                            NavigationLink(reply.username) {
-                                UploaderView(mid: reply.mid ?? 0)
+                            if let mid = reply.mid, let uploaderMid = Int(exactly: mid), uploaderMid > 0 {
+                                NavigationLink(reply.username) {
+                                    UploaderView(mid: uploaderMid)
+                                }
+                                .font(.system(size: 10 * render.commentTextScale, weight: .semibold))
+                            } else {
+                                Text(reply.username)
+                                    .font(.system(size: 10 * render.commentTextScale, weight: .semibold))
                             }
-                            .font(.system(size: 10 * render.commentTextScale, weight: .semibold))
-                            .disabled(reply.mid == nil)
                             Spacer()
                             Text(Formatting.time(reply.timestamp))
                                 .font(.system(size: 8 * render.commentTextScale))
@@ -104,6 +112,9 @@ struct CommentDetailView: View {
                         .foregroundStyle(.secondary)
                 }
                 TextField(L10n.t("comment.detail.placeholder"), text: $replyText)
+                    .font(.system(size: 9.5 * render.commentTextScale))
+                    .lineLimit(1)
+                    .frame(height: 26)
                 Button(L10n.t("action.send")) {
                     Task { await sendReply() }
                 }
@@ -131,7 +142,9 @@ struct CommentDetailView: View {
     }
 
     private var canDelete: Bool {
-        apiBackend.loggedInMid != nil && apiBackend.loggedInMid == comment.mid
+        guard let loggedInMid = apiBackend.loggedInMid else { return false }
+        guard let commentMid = comment.mid else { return false }
+        return Int64(loggedInMid) == commentMid
     }
 
     private func loadMore() async {
@@ -154,9 +167,17 @@ struct CommentDetailView: View {
             let target = !liked
             try await apiBackend.likeComment(aid: comment.oid, rpid: comment.id, liked: target)
             liked = target
-            statusText = target ? L10n.t("action.like.success") : L10n.t("action.like.cancel")
+            ToastManager.shared.show(
+                target ? L10n.t("action.like.success") : L10n.t("action.like.cancel"),
+                icon: target ? "hand.thumbsup.fill" : "hand.thumbsup",
+                style: .success
+            )
         } catch {
-            statusText = L10n.f("action.like.fail", error.localizedDescription)
+            ToastManager.shared.show(
+                L10n.f("action.like.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
         }
     }
 
@@ -168,22 +189,38 @@ struct CommentDetailView: View {
             try await apiBackend.replyComment(aid: comment.oid, rootRpid: comment.id, parentRpid: parent, message: text)
             replyText = ""
             replyTargetRpid = nil
-            statusText = L10n.t("comment.detail.reply.success")
+            ToastManager.shared.show(
+                L10n.t("comment.detail.reply.success"),
+                icon: "checkmark.circle",
+                style: .success
+            )
             replies = []
             page = 1
             hasMore = true
             await loadMore()
         } catch {
-            statusText = L10n.f("comment.detail.reply.fail", error.localizedDescription)
+            ToastManager.shared.show(
+                L10n.f("comment.detail.reply.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
         }
     }
 
     private func deleteComment() async {
         do {
             try await apiBackend.deleteComment(aid: comment.oid, rpid: comment.id)
-            statusText = L10n.t("comment.detail.delete.success")
+            ToastManager.shared.show(
+                L10n.t("comment.detail.delete.success"),
+                icon: "trash",
+                style: .success
+            )
         } catch {
-            statusText = L10n.f("comment.detail.delete.fail", error.localizedDescription)
+            ToastManager.shared.show(
+                L10n.f("comment.detail.delete.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
         }
     }
 }

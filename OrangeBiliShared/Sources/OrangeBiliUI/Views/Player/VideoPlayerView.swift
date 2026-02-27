@@ -61,7 +61,15 @@ struct VideoPlayerView: View {
         }
         .task {
             viewModel.preferredQuality = render.preferredQuality
+            #if os(watchOS)
+            // Native watch VideoPlayer can show green frames on some non-AVC streams.
+            // Force AVC for that backend; keep user preference for FFmpeg backend.
+            viewModel.preferredCodec = (render.watchPlayerVendor == .videoPlayer) ? .avc : render.preferredCodec
+            viewModel.preferredStreamFormat = render.preferredStreamFormat
+            #else
             viewModel.preferredCodec = render.preferredCodec
+            viewModel.preferredStreamFormat = render.preferredStreamFormat
+            #endif
             await viewModel.load()
             if render.danmakuEnabled {
                 await danmakuViewModel.load(
@@ -107,7 +115,14 @@ struct VideoPlayerView: View {
             if finished { dismiss() }
         }
         .onDisappear {
-            historyStore.savePlayback(video: viewModel.video, progressSeconds: viewModel.progressSeconds)
+            let progressToSave: Int = {
+                let duration = max(viewModel.totalDurationSeconds, 0)
+                let progress = max(viewModel.progressSeconds, 0)
+                guard duration > 0 else { return progress }
+                let remaining = Double(duration) - max(viewModel.currentTime, 0)
+                return remaining < 1.0 ? 0 : progress
+            }()
+            historyStore.savePlayback(video: viewModel.video, progressSeconds: progressToSave)
             Task {
                 await historySyncer.syncHistory(records: historyStore.records)
             }
@@ -124,6 +139,7 @@ struct VideoPlayerView: View {
             if render.watchPlayerVendor == .ffmpegMinimal {
                 SoftDecodePlayerView(
                     player: player,
+                    decodeURL: viewModel.currentVideoStreamURL,
                     headers: viewModel.playbackRequestHeaders,
                     danmakuViewModel: danmakuViewModel,
                     playerViewModel: viewModel

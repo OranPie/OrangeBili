@@ -6,7 +6,6 @@ struct QRLoginExperimentalView: View {
 
     @State private var qrcodeKey = ""
     @State private var qrcodeImageURL: URL?
-    @State private var statusText = L10n.t("login.qr.hint")
     @State private var isLoading = false
     @State private var pollTask: Task<Void, Never>?
 
@@ -17,9 +16,6 @@ struct QRLoginExperimentalView: View {
             Section(L10n.t("login.status")) {
                 Text(apiBackend.isLoggedIn ? L10n.t("login.status.loggedIn") : L10n.t("login.status.loggedOut"))
                     .font(.caption2)
-                Text(statusText)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
             }
 
             Section(L10n.t("login.qr.section")) {
@@ -71,14 +67,15 @@ struct QRLoginExperimentalView: View {
                 .disabled(isLoading)
 
                 Button(L10n.t("login.qr.stop")) {
-                    stopPolling(status: L10n.t("login.qr.stopped"))
+                    stopPolling()
+                    ToastManager.shared.show(L10n.t("login.qr.stopped"), icon: "stop.circle", style: .info)
                 }
                 .disabled(pollTask == nil)
 
                 Button(L10n.t("me.account.logout"), role: .destructive) {
                     Task {
                         await apiBackend.clearLoginSession()
-                        statusText = L10n.t("login.status.cleared")
+                        ToastManager.shared.show(L10n.t("login.status.cleared"), icon: "person.slash", style: .info)
                     }
                 }
             }
@@ -98,11 +95,11 @@ struct QRLoginExperimentalView: View {
             let result = try await qrService.generate()
             qrcodeKey = result.qrcodeKey
             qrcodeImageURL = makeQRCodeURL(from: result.url)
-            statusText = L10n.t("login.qr.scan")
+            ToastManager.shared.show(L10n.t("login.qr.scan"), icon: "qrcode", style: .info)
             DebugLogStore.shared.log(category: "login", message: "qrcode generated")
             startPolling()
         } catch {
-            statusText = L10n.f("login.qr.generate.fail", error.localizedDescription)
+            ToastManager.shared.show(L10n.f("login.qr.generate.fail", error.localizedDescription), icon: "xmark.circle", style: .error)
             DebugLogStore.shared.log(category: "login", message: "qrcode generate fail: \(error.localizedDescription)")
         }
     }
@@ -117,11 +114,12 @@ struct QRLoginExperimentalView: View {
                     let result = try await qrService.poll(qrcodeKey: qrcodeKey)
                     switch result {
                     case .waiting:
-                        statusText = L10n.t("login.qr.waiting")
+                        break
                     case .scanned:
-                        statusText = L10n.t("login.qr.scanned")
+                        ToastManager.shared.show(L10n.t("login.qr.scanned"), icon: "iphone.and.arrow.forward", style: .info)
                     case .expired:
-                        stopPolling(status: L10n.t("login.qr.expired"))
+                        stopPolling()
+                        ToastManager.shared.show(L10n.t("login.qr.expired"), icon: "clock.badge.exclamationmark", style: .warning)
                         DebugLogStore.shared.log(category: "login", message: "qrcode expired")
                         return
                     case let .success(session):
@@ -132,12 +130,14 @@ struct QRLoginExperimentalView: View {
                             buvid3: session.buvid3,
                             buvid4: session.buvid4
                         )
-                        stopPolling(status: L10n.t("login.qr.success"))
+                        stopPolling()
+                        ToastManager.shared.show(L10n.t("login.qr.success"), icon: "checkmark.circle", style: .success)
                         DebugLogStore.shared.log(category: "login", message: "qrcode login success")
                         return
                     }
                 } catch {
-                    stopPolling(status: L10n.f("login.qr.poll.fail", error.localizedDescription))
+                    stopPolling()
+                    ToastManager.shared.show(L10n.f("login.qr.poll.fail", error.localizedDescription), icon: "xmark.circle", style: .error)
                     DebugLogStore.shared.log(category: "login", message: "qrcode poll fail: \(error.localizedDescription)")
                     return
                 }
@@ -147,10 +147,9 @@ struct QRLoginExperimentalView: View {
         }
     }
 
-    private func stopPolling(status: String) {
+    private func stopPolling() {
         pollTask?.cancel()
         pollTask = nil
-        statusText = status
     }
 
     private func makeQRCodeURL(from value: String) -> URL? {

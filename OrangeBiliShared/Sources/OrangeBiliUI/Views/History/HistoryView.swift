@@ -4,9 +4,7 @@ import OrangeBiliCore
 struct HistoryView: View {
     @EnvironmentObject private var historyStore: HistoryStore
     @EnvironmentObject private var favoritesStore: FavoritesStore
-    @EnvironmentObject private var downloadManager: OfflineDownloadManager
     @EnvironmentObject private var debugLogStore: DebugLogStore
-    @EnvironmentObject private var apiBackend: BiliAPIBackend
     @EnvironmentObject private var tabBarState: TabBarState
 
     @State private var cacheFiles = 0
@@ -35,30 +33,6 @@ struct HistoryView: View {
                     )
                 }
 
-                NavigationLink {
-                    HistoryRecordsView()
-                } label: {
-                    SummaryCard(
-                        L10n.t("tools.history"),
-                        subtitle: L10n.t("tools.history.subtitle"),
-                        systemImage: "clock",
-                        trailing: "\(historyStore.records.count)"
-                    )
-                }
-            }
-
-            Section {
-                if apiBackend.isLoggedIn {
-                    NavigationLink {
-                        CloudFavoritesView()
-                    } label: {
-                        SummaryCard(L10n.t("tools.favorites.cloud"), subtitle: L10n.t("tools.favorites.cloud.subtitle"), systemImage: "icloud.and.arrow.down")
-                    }
-                } else {
-                    EmptyStateView(L10n.t("tools.favorites.cloud.login"), systemImage: "person.crop.circle.badge.exclamationmark")
-                }
-            } header: {
-                Text(L10n.t("tools.cloud.section"))
             }
 
             Section {
@@ -105,27 +79,6 @@ struct HistoryView: View {
                 }
                 .font(.caption2)
 
-                NavigationLink {
-                    ActiveDownloadsView()
-                } label: {
-                    SummaryCard(
-                        L10n.t("tools.downloads.active"),
-                        subtitle: L10n.t("tools.downloads.active.subtitle"),
-                        systemImage: "arrow.down.circle",
-                        trailing: "\(activeDownloads.count)"
-                    )
-                }
-
-                NavigationLink {
-                    CompletedDownloadsView()
-                } label: {
-                    SummaryCard(
-                        L10n.t("tools.downloads.completed"),
-                        subtitle: L10n.t("tools.downloads.completed.subtitle"),
-                        systemImage: "checkmark.circle",
-                        trailing: "\(completedDownloads.count)"
-                    )
-                }
             } header: {
                 Text(L10n.t("tools.offline.section"))
             }
@@ -170,14 +123,6 @@ struct HistoryView: View {
         .task {
             await refreshCacheStats()
         }
-    }
-
-    private var activeDownloads: [DownloadStatusItem] {
-        downloadManager.items.filter { $0.state != .completed }
-    }
-
-    private var completedDownloads: [DownloadStatusItem] {
-        downloadManager.items.filter { $0.state == .completed && $0.localFileURL != nil }
     }
 
     private func refreshCacheStats() async {

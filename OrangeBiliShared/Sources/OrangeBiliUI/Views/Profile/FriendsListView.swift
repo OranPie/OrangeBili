@@ -1,7 +1,7 @@
 import SwiftUI
 import OrangeBiliCore
 
-struct FollowingListView: View {
+struct FriendsListView: View {
     @EnvironmentObject private var apiBackend: BiliAPIBackend
 
     @State private var users: [FollowingUser] = []
@@ -14,8 +14,6 @@ struct FollowingListView: View {
         List {
             if let errorMessage, users.isEmpty {
                 EmptyStateView(errorMessage, systemImage: "exclamationmark.triangle")
-            } else if !isLoading, users.isEmpty {
-                EmptyStateView(L10n.t("following.empty"), systemImage: "person.2.slash")
             }
 
             ForEach(users) { user in
@@ -62,7 +60,7 @@ struct FollowingListView: View {
             }
         }
         .listStyle(.plain)
-        .navigationTitle(L10n.t("following.title"))
+        .navigationTitle(L10n.t("friends.title"))
         .task {
             guard users.isEmpty else { return }
             await loadMore()
@@ -74,7 +72,7 @@ struct FollowingListView: View {
         isLoading = true
         defer { isLoading = false }
         do {
-            let fetched = try await apiBackend.fetchMyFollowings(page: page)
+            let fetched = try await apiBackend.fetchMyFriends(page: page)
             hasMore = !fetched.isEmpty
             page += 1
             users.append(contentsOf: fetched)

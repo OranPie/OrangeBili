@@ -12,6 +12,7 @@ struct OrangeBiliMacApp: App {
     @StateObject private var debugLogStore = DebugLogStore.shared
     @StateObject private var apiBackend = BiliAPIBackend.shared
     @StateObject private var historySyncer = HistorySyncer()
+    @StateObject private var toastManager = ToastManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct OrangeBiliMacApp: App {
                 .environmentObject(debugLogStore)
                 .environmentObject(apiBackend)
                 .environmentObject(historySyncer)
+                .environmentObject(toastManager)
                 .frame(minWidth: 900, minHeight: 600)
         }
         .defaultSize(width: 1100, height: 750)

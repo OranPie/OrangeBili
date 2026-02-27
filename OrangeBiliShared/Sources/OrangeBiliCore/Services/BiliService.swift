@@ -7,16 +7,40 @@ public protocol BiliServiceProtocol {
     func searchUsers(keyword: String, page: Int) async throws -> [UserSearchResult]
     func searchArticles(keyword: String, page: Int) async throws -> [ArticleSearchResult]
     func fetchVideoDetail(bvid: String) async throws -> VideoDetail
-    func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec, streamFormat: PreferredStreamFormat) async throws -> PlayStream
+    func fetchOfflineDownloadStream(bvid: String, cid: Int64, quality: Int) async throws -> PlayStream
     func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem]
     func fetchUploader(mid: Int, page: Int) async throws -> (UploaderProfile, [BiliVideo])
     func fetchUploaderVideos(mid: Int, page: Int, order: String) async throws -> [BiliVideo]
     func fetchUploaderArticles(mid: Int, page: Int) async throws -> [UploaderArticle]
+    func fetchUploaderTopVideo(mid: Int) async throws -> BiliVideo?
+    func fetchUploaderMasterpieces(mid: Int, page: Int) async throws -> [BiliVideo]
+    func fetchUploaderRelationState(mid: Int) async throws -> UploaderRelationState
+    func followUploader(mid: Int) async throws
+    func unfollowUploader(mid: Int) async throws
+    func fetchDynamics(scope: DynamicsScope, offset: String?) async throws -> DynamicsPage
+    func fetchDynamicDetail(dynamicID: Int64) async throws -> DynamicItem
 }
 
 extension BiliServiceProtocol {
     func fetchPlayURL(bvid: String, cid: Int64, quality: Int) async throws -> PlayStream {
-        try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: .auto)
+        try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: .auto, streamFormat: .auto)
+    }
+
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int, preferredCodec: PreferredCodec) async throws -> PlayStream {
+        try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: preferredCodec, streamFormat: .auto)
+    }
+
+    func fetchOfflineDownloadStream(bvid: String, cid: Int64, quality: Int) async throws -> PlayStream {
+        try await fetchPlayURL(bvid: bvid, cid: cid, quality: quality, preferredCodec: .avc, streamFormat: .mp4)
+    }
+
+    func followUploader(mid: Int) async throws {
+        throw BiliError.unauthorized
+    }
+
+    func unfollowUploader(mid: Int) async throws {
+        throw BiliError.unauthorized
     }
 }
 
@@ -140,8 +164,15 @@ struct BiliService: BiliServiceProtocol {
         )
     }
 
-    func fetchPlayURL(bvid: String, cid: Int64, quality: Int = 32, preferredCodec: PreferredCodec = .auto) async throws -> PlayStream {
-        let response = try await client.request(.playURLWbi(bvid: bvid, cid: cid, quality: quality), as: PlayURLResponse.self)
+    func fetchPlayURL(bvid: String, cid: Int64, quality: Int = 32, preferredCodec: PreferredCodec = .auto, streamFormat: PreferredStreamFormat = .auto) async throws -> PlayStream {
+        let useDash: Bool
+        switch streamFormat {
+        case .dash: useDash = true
+        case .mp4: useDash = false
+        case .auto: useDash = true
+        }
+
+        let response = try await client.request(.playURLWbi(bvid: bvid, cid: cid, quality: quality, dash: useDash), as: PlayURLResponse.self)
 
         // Try DASH first
         if let dash = response.dash, let videos = dash.video, !videos.isEmpty {
@@ -167,13 +198,19 @@ struct BiliService: BiliServiceProtocol {
 
             let picked: PlayURLResponse.DASHData.Stream?
             if let targetCodecId {
-                picked = candidates.first(where: { $0.codecid == targetCodecId }) ?? candidates.first
+                // Explicit preference, then fallback to known-supported codecs.
+                picked = candidates.first(where: { $0.codecid == targetCodecId })
+                    ?? candidates.first(where: { $0.codecid == 7 })
+                    ?? candidates.first(where: { $0.codecid == 12 })
+                    ?? candidates.first
             } else {
-                // Auto: prefer AVC (7) for maximum compatibility
-                picked = candidates.first(where: { $0.codecid == 7 }) ?? candidates.first
+                // Auto: prefer AVC, then HEVC, then any remaining stream.
+                picked = candidates.first(where: { $0.codecid == 7 })
+                    ?? candidates.first(where: { $0.codecid == 12 })
+                    ?? candidates.first
             }
 
-            if let video = picked, let videoURL = URL(string: video.baseUrl) {
+            if let video = picked, let videoURL = URL(string: video.baseUrl), !video.baseUrl.isEmpty {
                 DebugLogStore.shared.log(
                     category: "player.playurl",
                     message: "pick q=\(quality) id=\(video.id) codec=\(video.codecid) bw=\(video.bandwidth ?? 0) size=\(video.width ?? 0)x\(video.height ?? 0) dashCount=\(videos.count)"
@@ -191,6 +228,25 @@ struct BiliService: BiliServiceProtocol {
                     codecId: video.codecid
                 )
             }
+
+            if let fallback = candidates.first(where: { !$0.baseUrl.isEmpty && URL(string: $0.baseUrl) != nil }),
+               let videoURL = URL(string: fallback.baseUrl) {
+                DebugLogStore.shared.log(
+                    category: "player.playurl",
+                    message: "fallback pick q=\(quality) id=\(fallback.id) codec=\(fallback.codecid ?? -1) bw=\(fallback.bandwidth ?? 0) size=\(fallback.width ?? 0)x\(fallback.height ?? 0) dashCount=\(videos.count)"
+                )
+                let bestAudio = dash.audio?
+                    .sorted { ($0.bandwidth ?? 0) > ($1.bandwidth ?? 0) }
+                    .first
+
+                return PlayStream(
+                    url: videoURL,
+                    backupURLs: (fallback.backupUrl ?? []).compactMap(URL.init(string:)),
+                    audioURL: bestAudio.flatMap { URL(string: $0.baseUrl) },
+                    audioBackupURLs: (bestAudio?.backupUrl ?? []).compactMap(URL.init(string:)),
+                    codecId: fallback.codecid
+                )
+            }
         }
 
         // Fallback to durl
@@ -204,13 +260,37 @@ struct BiliService: BiliServiceProtocol {
         )
     }
 
+    func fetchOfflineDownloadStream(bvid: String, cid: Int64, quality: Int = 32) async throws -> PlayStream {
+        let response = try await client.request(.playURLDownloadWbi(bvid: bvid, cid: cid, quality: quality), as: PlayURLResponse.self)
+
+        // Prefer progressive downloadable stream first; DASH-only fragments can fail for local playback.
+        if let first = response.durl.first, let primaryURL = URL(string: first.url) {
+            return PlayStream(
+                url: primaryURL,
+                backupURLs: (first.backupUrl ?? []).compactMap(URL.init(string:))
+            )
+        }
+        DebugLogStore.shared.log(
+            category: "download",
+            message: "no progressive durl stream for bvid=\(bvid) cid=\(cid) q=\(quality)"
+        )
+        // Fallback to DASH package (video + audio) for offline packaging.
+        return try await fetchPlayURL(
+            bvid: bvid,
+            cid: cid,
+            quality: quality,
+            preferredCodec: .avc,
+            streamFormat: .dash
+        )
+    }
+
     func fetchComments(aid: Int64, page: Int) async throws -> [CommentItem] {
         let response = try await client.request(.comments(aid: aid, page: page), as: CommentResponse.self)
         return (response.replies ?? []).map { reply in
             CommentItem(
-                id: reply.rpid.value,
+                id: reply.rpid.value64,
                 oid: aid,
-                mid: reply.member?.mid.value,
+                mid: reply.member?.mid.value64,
                 username: reply.member?.uname ?? L10n.t("label.user"),
                 avatarURL: URL.biliImageURL(from: reply.member?.avatar ?? ""),
                 message: reply.content?.message ?? "",
@@ -289,6 +369,291 @@ struct BiliService: BiliServiceProtocol {
             )
         }
     }
+
+    func fetchUploaderTopVideo(mid: Int) async throws -> BiliVideo? {
+        let uploader = try await client.request(.uploader(mid: mid), as: UploaderResponse.self)
+        let top = try await client.request(.uploaderTopVideo(mid: mid), as: UploaderTopVideoResponse.self)
+        guard let video = top.video else { return nil }
+        return BiliVideo(
+            bvid: video.bvid,
+            aid: video.aid.value64,
+            title: video.title,
+            author: uploader.name,
+            mid: uploader.mid.value,
+            coverURL: URL.biliImageURL(from: video.pic),
+            viewCount: video.play?.value ?? 0,
+            danmakuCount: video.danmaku?.value ?? 0,
+            durationText: video.duration.value.durationString,
+            publishedAt: video.pubdate.value > 0 ? Date(timeIntervalSince1970: TimeInterval(video.pubdate.value)) : nil,
+            description: video.desc
+        )
+    }
+
+    func fetchUploaderMasterpieces(mid: Int, page: Int) async throws -> [BiliVideo] {
+        let uploader = try await client.request(.uploader(mid: mid), as: UploaderResponse.self)
+        let response = try await client.request(.uploaderMasterpiece(mid: mid, page: page), as: UploaderMasterpieceResponse.self)
+        return response.items.map { item in
+            BiliVideo(
+                bvid: item.bvid,
+                aid: item.aid.value64,
+                title: item.title,
+                author: uploader.name,
+                mid: uploader.mid.value,
+                coverURL: URL.biliImageURL(from: item.pic),
+                viewCount: item.play.value,
+                danmakuCount: item.danmaku.value,
+                durationText: item.durationText,
+                publishedAt: item.pubdate.value > 0 ? Date(timeIntervalSince1970: TimeInterval(item.pubdate.value)) : nil,
+                description: item.desc
+            )
+        }
+    }
+
+    func fetchUploaderRelationState(mid: Int) async throws -> UploaderRelationState {
+        let response = try await client.request(.uploaderAccRelation(mid: mid), as: UploaderAccRelationResponse.self)
+        let attr = response.beRelation.attribute.value
+        let isFollowing = (attr & 2) != 0
+        let isFollowedBy = (attr & 1) != 0
+        return UploaderRelationState(isFollowing: isFollowing, isFollowedBy: isFollowedBy, attribute: attr)
+    }
+
+    func fetchDynamics(scope: DynamicsScope, offset: String?) async throws -> DynamicsPage {
+        let endpoint: BiliEndpoint
+        switch scope {
+        case .following:
+            endpoint = .dynamicFeedAll(offset: offset)
+        case .mine:
+            guard let mid = await BiliAuthStore.shared.loggedInMid() else {
+                throw BiliError.unauthorized
+            }
+            endpoint = .dynamicFeedSpace(hostMid: mid, offset: offset)
+        case let .user(mid, _):
+            endpoint = .dynamicFeedSpace(hostMid: mid, offset: offset)
+        }
+
+        let response = try await client.request(endpoint, as: DynamicFeedResponse.self)
+        let items = response.items.compactMap(Self.mapDynamicItem)
+        let hasMore = response.hasMore.value == 1 || !(response.offset?.isEmpty ?? true)
+        return DynamicsPage(items: items, nextOffset: response.offset, hasMore: hasMore)
+    }
+
+    func fetchDynamicDetail(dynamicID: Int64) async throws -> DynamicItem {
+        let response = try await client.request(.dynamicDetail(dynamicID: dynamicID), as: DynamicDetailResponse.self)
+        guard let item = Self.mapDynamicItem(response.item) else {
+            throw BiliError.badResponse
+        }
+        return item
+    }
+
+    private static func mapDynamicItem(_ dto: DynamicFeedResponse.ItemDTO) -> DynamicItem? {
+        let id = dto.idStr?.value64 ?? dto.basic?.commentIDStr?.value64 ?? 0
+        guard id > 0 else { return nil }
+
+        let author = dto.modules?.author
+        let stat = dto.modules?.stat
+        let dynamic = dto.modules?.dynamic
+
+        let text = (dynamic?.desc?.richTextNodes?.map(\.text).joined() ?? "").decodeHTMLEntities()
+        var kind: DynamicKind = .text
+        var video: DynamicVideoPayload?
+        var opus: DynamicOpusPayload?
+
+        if let major = dynamic?.major {
+            switch major.type {
+            case "MAJOR_TYPE_ARCHIVE":
+                if let archive = major.archive {
+                    kind = .video
+                    video = DynamicVideoPayload(
+                        bvid: archive.bvid ?? "",
+                        aid: archive.aid?.value64 ?? 0,
+                        cid: archive.cid?.value64,
+                        title: archive.title ?? "",
+                        coverURL: URL.biliImageURL(from: archive.cover ?? "")
+                    )
+                }
+            case "MAJOR_TYPE_OPUS", "MAJOR_TYPE_DRAW":
+                kind = .opus
+                let pics = (major.opus?.pics ?? []).compactMap { URL.biliImageURL(from: $0.url) }
+                opus = DynamicOpusPayload(title: major.opus?.title ?? "", imageURLs: pics)
+            default:
+                kind = .unknown
+            }
+        } else if dto.orig != nil {
+            kind = .forward
+        }
+
+        let forwardPreview = dto.orig?.modules?.dynamic?.desc?.richTextNodes?.map(\.text).joined().decodeHTMLEntities()
+        let commentType = dto.basic?.commentType?.value ?? 17
+        let commentOID = dto.basic?.commentIDStr?.value64 ?? id
+
+        return DynamicItem(
+            id: id,
+            authorMid: author?.mid?.value ?? 0,
+            authorName: author?.name ?? L10n.t("label.uploader.unknown"),
+            authorAvatarURL: URL.biliImageURL(from: author?.face ?? ""),
+            publishedAt: author?.pubTs?.asDate,
+            text: text,
+            kind: kind,
+            video: video,
+            opus: opus,
+            forwardedTextPreview: forwardPreview,
+            stats: DynamicStat(
+                likeCount: stat?.like?.value ?? 0,
+                repostCount: stat?.forward?.value ?? 0,
+                commentCount: stat?.reply?.value ?? 0
+            ),
+            isLiked: (stat?.isLike?.value ?? 0) == 1,
+            commentResource: DynamicCommentResource(type: commentType, oid: commentOID)
+        )
+    }
+}
+
+private struct DynamicFeedResponse: Decodable {
+    struct ItemDTO: Decodable {
+        struct BasicDTO: Decodable {
+            let commentType: LossyInt?
+            let commentIDStr: LossyInt?
+
+            private enum CodingKeys: String, CodingKey {
+                case commentType
+                case commentIDStr = "comment_id_str"
+            }
+        }
+
+        struct ModulesDTO: Decodable {
+            struct AuthorDTO: Decodable {
+                let mid: LossyInt?
+                let name: String?
+                let face: String?
+                let pubTs: LossyInt?
+
+                private enum CodingKeys: String, CodingKey {
+                    case mid
+                    case name
+                    case face
+                    case pubTs = "pub_ts"
+                }
+            }
+
+            struct StatDTO: Decodable {
+                let like: LossyInt?
+                let reply: LossyInt?
+                let forward: LossyInt?
+                let isLike: LossyInt?
+            }
+
+            struct DynamicDTO: Decodable {
+                struct DescDTO: Decodable {
+                    struct RichTextNodeDTO: Decodable {
+                        let text: String
+                    }
+
+                    let richTextNodes: [RichTextNodeDTO]?
+
+                    private enum CodingKeys: String, CodingKey {
+                        case richTextNodes = "rich_text_nodes"
+                    }
+                }
+
+                struct MajorDTO: Decodable {
+                    struct ArchiveDTO: Decodable {
+                        let bvid: String?
+                        let aid: LossyInt?
+                        let cid: LossyInt?
+                        let title: String?
+                        let cover: String?
+                    }
+
+                    struct OpusDTO: Decodable {
+                        struct PicDTO: Decodable {
+                            let url: String
+                        }
+
+                        let title: String?
+                        let pics: [PicDTO]?
+                    }
+
+                    let type: String
+                    let archive: ArchiveDTO?
+                    let opus: OpusDTO?
+                }
+
+                let desc: DescDTO?
+                let major: MajorDTO?
+            }
+
+            let author: AuthorDTO?
+            let stat: StatDTO?
+            let dynamic: DynamicDTO?
+
+            private enum CodingKeys: String, CodingKey {
+                case author = "module_author"
+                case stat = "module_stat"
+                case dynamic = "module_dynamic"
+            }
+        }
+
+        struct OrigDTO: Decodable {
+            struct ModulesDTO: Decodable {
+                struct DynamicDTO: Decodable {
+                    struct DescDTO: Decodable {
+                        struct RichTextNodeDTO: Decodable {
+                            let text: String
+                        }
+
+                        let richTextNodes: [RichTextNodeDTO]?
+
+                        private enum CodingKeys: String, CodingKey {
+                            case richTextNodes = "rich_text_nodes"
+                        }
+                    }
+
+                    let desc: DescDTO?
+                }
+
+                let dynamic: DynamicDTO?
+
+                private enum CodingKeys: String, CodingKey {
+                    case dynamic = "module_dynamic"
+                }
+            }
+
+            let modules: ModulesDTO?
+        }
+
+        let idStr: LossyInt?
+        let basic: BasicDTO?
+        let modules: ModulesDTO?
+        let orig: OrigDTO?
+
+        private enum CodingKeys: String, CodingKey {
+            case idStr = "id_str"
+            case basic
+            case modules
+            case orig
+        }
+    }
+
+    let items: [ItemDTO]
+    let offset: String?
+    let hasMore: LossyInt
+
+    private enum CodingKeys: String, CodingKey {
+        case items
+        case offset
+        case hasMore = "has_more"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        items = (try? c.decode([ItemDTO].self, forKey: .items)) ?? []
+        offset = try? c.decodeIfPresent(String.self, forKey: .offset)
+        hasMore = c.decodeLossyInt(forKey: .hasMore)
+    }
+}
+
+private struct DynamicDetailResponse: Decodable {
+    let item: DynamicFeedResponse.ItemDTO
 }
 
 private struct LossyInt: Decodable {
@@ -338,6 +703,13 @@ private struct LossyInt: Decodable {
     }
 }
 
+private extension LossyInt {
+    var asDate: Date? {
+        guard value64 > 0 else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(value64))
+    }
+}
+
 private extension String {
     var boundedIntValue: Int? {
         let digits = replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
@@ -369,7 +741,7 @@ private extension String {
 
 private extension KeyedDecodingContainer {
     func decodeString(forKey key: Key, default defaultValue: String = "") -> String {
-        (try? decodeIfPresent(String.self, forKey: key)) ?? defaultValue
+        ((try? decodeIfPresent(String.self, forKey: key)) ?? defaultValue).decodeHTMLEntities()
     }
 
     func decodeLossyInt(forKey key: Key, default defaultValue: Int = 0) -> LossyInt {
@@ -676,12 +1048,17 @@ private struct PlayURLResponse: Decodable {
         let url: String
         let backupUrl: [String]?
 
-        private enum CodingKeys: String, CodingKey { case url, backupUrl }
+        private enum CodingKeys: String, CodingKey {
+            case url
+            case backupUrl
+            case backup_url
+        }
 
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             url = c.decodeString(forKey: .url)
-            backupUrl = try? c.decodeIfPresent([String].self, forKey: .backupUrl)
+            backupUrl = (try? c.decodeIfPresent([String].self, forKey: .backupUrl))
+                ?? (try? c.decodeIfPresent([String].self, forKey: .backup_url))
         }
     }
 
@@ -696,15 +1073,19 @@ private struct PlayURLResponse: Decodable {
             let height: Int?
 
             private enum CodingKeys: String, CodingKey {
-                case id, codecid, baseUrl = "base_url", backupUrl = "backup_url", bandwidth, width, height
+                case id, codecid
+                case base_url, baseUrl
+                case backup_url, backupUrl
+                case bandwidth, width, height
             }
 
             init(from decoder: Decoder) throws {
                 let c = try decoder.container(keyedBy: CodingKeys.self)
                 id = (try? c.decodeIfPresent(Int.self, forKey: .id)) ?? 0
                 codecid = try? c.decodeIfPresent(Int.self, forKey: .codecid)
-                baseUrl = c.decodeString(forKey: .baseUrl)
-                backupUrl = try? c.decodeIfPresent([String].self, forKey: .backupUrl)
+                baseUrl = c.decodeString(forKey: .base_url, default: c.decodeString(forKey: .baseUrl))
+                backupUrl = (try? c.decodeIfPresent([String].self, forKey: .backup_url))
+                    ?? (try? c.decodeIfPresent([String].self, forKey: .backupUrl))
                 bandwidth = try? c.decodeIfPresent(Int.self, forKey: .bandwidth)
                 width = try? c.decodeIfPresent(Int.self, forKey: .width)
                 height = try? c.decodeIfPresent(Int.self, forKey: .height)
@@ -834,6 +1215,92 @@ private struct UploaderUpStatResponse: Decodable {
             likes = archive.view
         } else {
             likes = LossyInt(0)
+        }
+    }
+}
+
+private struct UploaderAccRelationResponse: Decodable {
+    struct BeRelationDTO: Decodable {
+        let attribute: LossyInt
+    }
+
+    let beRelation: BeRelationDTO
+
+    private enum CodingKeys: String, CodingKey {
+        case beRelation = "be_relation"
+    }
+}
+
+private struct UploaderTopVideoResponse: Decodable {
+    struct VideoDTO: Decodable {
+        let aid: LossyInt
+        let bvid: String
+        let title: String
+        let pic: String
+        let desc: String
+        let duration: LossyInt
+        let pubdate: LossyInt
+        let stat: StatDTO?
+
+        struct StatDTO: Decodable {
+            let view: LossyInt?
+            let danmaku: LossyInt?
+        }
+
+        var play: LossyInt? { stat?.view }
+        var danmaku: LossyInt? { stat?.danmaku }
+    }
+
+    let video: VideoDTO?
+
+    private enum CodingKeys: String, CodingKey {
+        case aid, bvid, title, pic, desc, duration, pubdate, stat
+        case top
+    }
+
+    init(from decoder: Decoder) throws {
+        if let direct = try? VideoDTO(from: decoder) {
+            video = direct
+            return
+        }
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        if c.contains(.top), let nested = try? c.decode(VideoDTO.self, forKey: .top) {
+            video = nested
+        } else {
+            video = nil
+        }
+    }
+}
+
+private struct UploaderMasterpieceResponse: Decodable {
+    struct ItemDTO: Decodable {
+        let aid: LossyInt
+        let bvid: String
+        let title: String
+        let pic: String
+        let duration: LossyInt
+        let pubdate: LossyInt
+        let play: LossyInt
+        let danmaku: LossyInt
+        let desc: String
+
+        private enum CodingKeys: String, CodingKey {
+            case aid, bvid, title, pic, duration, pubdate, play, danmaku, desc
+        }
+
+        var durationText: String {
+            duration.value.durationString
+        }
+    }
+
+    let items: [ItemDTO]
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if let list = try? c.decode([ItemDTO].self) {
+            items = list
+        } else {
+            items = []
         }
     }
 }
@@ -975,8 +1442,20 @@ private struct UploaderArticlesResponse: Decodable {
 private extension String {
     func cleanHTMLTags() -> String {
         replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            .decodeHTMLEntities()
+    }
+
+    func decodeHTMLEntities() -> String {
+        self
             .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&#34;", with: "\"")
+            .replacingOccurrences(of: "&apos;", with: "'")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .replacingOccurrences(of: "&#x27;", with: "'")
             .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "&nbsp;", with: " ")
     }
 }
 

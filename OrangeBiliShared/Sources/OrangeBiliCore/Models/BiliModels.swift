@@ -118,9 +118,9 @@ public struct PlayStream {
 }
 
 public struct CommentItem: Identifiable, Hashable {
-    public let id: Int
+    public let id: Int64
     public let oid: Int64
-    public let mid: Int?
+    public let mid: Int64?
     public let username: String
     public let avatarURL: URL?
     public let message: String
@@ -129,9 +129,9 @@ public struct CommentItem: Identifiable, Hashable {
     public let replyCount: Int
 
     public init(
-        id: Int,
+        id: Int64,
         oid: Int64,
-        mid: Int?,
+        mid: Int64?,
         username: String,
         avatarURL: URL?,
         message: String,
@@ -176,6 +176,18 @@ public struct UploaderProfile: Identifiable, Hashable {
         self.followerCount = followerCount
         self.followingCount = followingCount
         self.likeCount = likeCount
+    }
+}
+
+public struct UploaderRelationState: Hashable, Sendable {
+    public let isFollowing: Bool
+    public let isFollowedBy: Bool
+    public let attribute: Int
+
+    public init(isFollowing: Bool, isFollowedBy: Bool, attribute: Int) {
+        self.isFollowing = isFollowing
+        self.isFollowedBy = isFollowedBy
+        self.attribute = attribute
     }
 }
 
@@ -254,6 +266,126 @@ public struct FollowingUser: Identifiable, Hashable {
         self.avatarURL = avatarURL
         self.sign = sign
         self.fans = fans
+    }
+}
+
+public enum DynamicsScope: Hashable, Sendable {
+    case following
+    case mine
+    case user(mid: Int, name: String?)
+}
+
+public enum DynamicKind: String, Hashable, Sendable {
+    case video
+    case opus
+    case forward
+    case text
+    case unknown
+}
+
+public struct DynamicCommentResource: Hashable, Sendable {
+    public let type: Int
+    public let oid: Int64
+
+    public init(type: Int, oid: Int64) {
+        self.type = type
+        self.oid = oid
+    }
+}
+
+public struct DynamicVideoPayload: Hashable, Sendable {
+    public let bvid: String
+    public let aid: Int64
+    public let cid: Int64?
+    public let title: String
+    public let coverURL: URL?
+
+    public init(bvid: String, aid: Int64, cid: Int64?, title: String, coverURL: URL?) {
+        self.bvid = bvid
+        self.aid = aid
+        self.cid = cid
+        self.title = title
+        self.coverURL = coverURL
+    }
+}
+
+public struct DynamicOpusPayload: Hashable, Sendable {
+    public let title: String
+    public let imageURLs: [URL]
+
+    public init(title: String, imageURLs: [URL]) {
+        self.title = title
+        self.imageURLs = imageURLs
+    }
+}
+
+public struct DynamicStat: Hashable, Sendable {
+    public let likeCount: Int
+    public let repostCount: Int
+    public let commentCount: Int
+
+    public init(likeCount: Int, repostCount: Int, commentCount: Int) {
+        self.likeCount = likeCount
+        self.repostCount = repostCount
+        self.commentCount = commentCount
+    }
+}
+
+public struct DynamicItem: Identifiable, Hashable, Sendable {
+    public let id: Int64
+    public let authorMid: Int
+    public let authorName: String
+    public let authorAvatarURL: URL?
+    public let publishedAt: Date?
+    public let text: String
+    public let kind: DynamicKind
+    public let video: DynamicVideoPayload?
+    public let opus: DynamicOpusPayload?
+    public let forwardedTextPreview: String?
+    public let stats: DynamicStat
+    public let isLiked: Bool
+    public let commentResource: DynamicCommentResource
+
+    public init(
+        id: Int64,
+        authorMid: Int,
+        authorName: String,
+        authorAvatarURL: URL?,
+        publishedAt: Date?,
+        text: String,
+        kind: DynamicKind,
+        video: DynamicVideoPayload?,
+        opus: DynamicOpusPayload?,
+        forwardedTextPreview: String?,
+        stats: DynamicStat,
+        isLiked: Bool,
+        commentResource: DynamicCommentResource
+    ) {
+        self.id = id
+        self.authorMid = authorMid
+        self.authorName = authorName
+        self.authorAvatarURL = authorAvatarURL
+        self.publishedAt = publishedAt
+        self.text = text
+        self.kind = kind
+        self.video = video
+        self.opus = opus
+        self.forwardedTextPreview = forwardedTextPreview
+        self.stats = stats
+        self.isLiked = isLiked
+        self.commentResource = commentResource
+    }
+}
+
+public struct DynamicsPage: Hashable, Sendable {
+    public let items: [DynamicItem]
+    public let nextOffset: String?
+    public let hasMore: Bool
+
+    public init(items: [DynamicItem], nextOffset: String?, hasMore: Bool) {
+        self.items = items
+        self.nextOffset = nextOffset
+        self.hasMore = hasMore
     }
 }
 

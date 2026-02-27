@@ -28,6 +28,8 @@
 "action.coin.success" = "Coin sent";
 "action.delete" = "Delete";
 "action.download" = "Download";
+"action.download.started" = "Download started";
+"action.download.fail" = "Download failed: %@";
 "action.favorite" = "Favorite";
 "action.like" = "Like";
 "action.like.cancel" = "Like removed";
@@ -65,6 +67,7 @@
 "comment.detail.replyRoot" = "Reply to author";
 "comment.detail.send" = "Send Reply";
 "comment.detail.title" = "Comment Detail";
+"comment.input.placeholder" = "Write a comment…";
 
 "comments.title" = "Comments";
 "comments.thread.more" = "View all %d replies";
@@ -115,13 +118,33 @@
 "downloads.active.empty" = "No download items";
 "downloads.active.status" = "%@ · %d%% · %@/s";
 "downloads.active.title" = "Download items";
+"downloads.center.title" = "Downloads";
 "downloads.completed.empty" = "No completed downloads";
 "downloads.completed.title" = "Completed Downloads";
+"downloads.issue.retry" = "Retry";
+"downloads.issues.empty" = "No failed downloads";
 "downloads.state.canceled" = "Canceled";
 "downloads.state.completed" = "Completed";
 "downloads.state.downloading" = "Downloading";
 "downloads.state.failed" = "Failed";
 "downloads.state.queued" = "Queued";
+"downloads.retry.unavailable" = "Retry unavailable";
+"downloads.remux.unsupported.watch" = "watchOS cannot remux fragmented .m4s offline yet";
+"downloads.tab.active" = "Active";
+"downloads.tab.completed" = "Completed";
+"downloads.tab.issues" = "Issues";
+"dynamic.login.required" = "Please log in first";
+"dynamic.repost" = "Repost";
+"dynamic.repost.placeholder" = "Say something…";
+"dynamic.scope.following" = "Following";
+"dynamic.scope.mine" = "Mine";
+"dynamic.scope.user" = "Dynamics";
+"dynamic.scope.user.title" = "%@ Dynamics";
+"dynamic.video.unavailable" = "Video is unavailable";
+"dynamic.load.failed" = "Failed to load dynamics: %@";
+"dynamic.like.failed" = "Failed to like: %@";
+"dynamic.repost.success" = "Reposted";
+"dynamic.repost.failed" = "Failed to repost: %@";
 
 "error.api" = "API error (%d): %@";
 "error.badResponse" = "Bad response";
@@ -139,6 +162,8 @@
 "favorites.local.title" = "Local Favorites";
 
 "following.title" = "Following";
+"following.empty" = "No followings yet";
+"friends.title" = "Friends";
 
 "history.author" = "History";
 "history.empty" = "No watch history";
@@ -196,10 +221,15 @@
 "me.account" = "Account";
 "me.account.cloudFavorites" = "Cloud favorites";
 "me.account.following" = "Following";
+"me.account.following.subtitle" = "Creators and channels";
 "me.account.friends" = "Friends";
+"me.account.friends.subtitle" = "Mutual follow list";
 "me.account.submissions" = "My videos";
+"me.account.submissions.subtitle" = "Uploaded content";
 "me.account.dynamics" = "Dynamics";
+"me.account.dynamics.subtitle" = "Latest account activities";
 "me.account.downloads" = "Downloads";
+"me.account.downloads.subtitle" = "Offline files and tasks";
 "me.account.history" = "History";
 "me.account.logout" = "Log out";
 "me.account.notLoggedIn" = "Not logged in";
@@ -207,6 +237,7 @@
 "me.account.profile" = "My profile";
 "me.account.qrLogin" = "Watch QR login";
 "me.account.visitHistory" = "Profile visits";
+"me.account.visitHistory.subtitle" = "Recently visited uploaders";
 "me.render" = "Render Settings";
 "me.render.subtitle" = "Text, cards, layout";
 "me.status.hint" = "Guest uses public APIs; login enables enhanced APIs.";
@@ -250,6 +281,10 @@
 "settings.codec.auto" = "Auto";
 "settings.codec.avc" = "H.264 (AVC)";
 "settings.codec.hevc" = "H.265 (HEVC)";
+"settings.streamFormat" = "Stream Format";
+"settings.streamFormat.auto" = "Auto (DASH)";
+"settings.streamFormat.dash" = "DASH";
+"settings.streamFormat.mp4" = "MP4";
 
 "settings.title" = "Settings";
 "settings.section.general" = "General";
@@ -294,6 +329,7 @@
 "tools.downloads.active.subtitle" = "In progress";
 "tools.downloads.completed" = "Completed downloads";
 "tools.downloads.completed.subtitle" = "Ready to play";
+"tools.downloads.subtitle.summary" = "Active %d · Completed %d · Issues %d";
 "tools.favorites.cloud" = "Cloud favorites";
 "tools.favorites.cloud.login" = "Log in to view cloud favorites";
 "tools.favorites.cloud.subtitle" = "Sync with account";
@@ -322,6 +358,18 @@
 "uploader.articles.title" = "%@ Articles";
 "uploader.content" = "Content";
 "uploader.followingFans" = "Following %@ · Fans %@";
+"uploader.follow.action" = "Follow";
+"uploader.following.action" = "Following";
+"uploader.follow.loginRequired" = "Please log in first";
+"uploader.follow.success.followed" = "Followed";
+"uploader.follow.success.unfollowed" = "Unfollowed";
+"uploader.follow.failed" = "Follow action failed: %@";
+"uploader.load.failed" = "Failed to load uploader: %@";
+"uploader.videos.load.failed" = "Failed to load videos: %@";
+"uploader.articles.load.failed" = "Failed to load articles: %@";
+"uploader.section.overview" = "Overview";
+"uploader.topVideo" = "Pinned Video";
+"uploader.masterpieces" = "Masterpieces";
 "uploader.latestArticles" = "Latest Articles";
 "uploader.latestVideos" = "Latest Videos";
 "uploader.likes" = "Likes %@";
@@ -330,7 +378,9 @@
 "uploader.order.stow" = "Most favorited";
 "uploader.title" = "Uploader";
 "uploader.videos" = "Videos";
+"uploader.dynamics" = "Dynamics";
 "uploader.videos.title" = "%@ Videos";
+"uploader.videos.empty" = "No uploaded videos";
 "uploader.visit.clear" = "Clear visit history";
 "uploader.visit.empty" = "No visit history";
 "uploader.visit.title" = "Profile Visits";

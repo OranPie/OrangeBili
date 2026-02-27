@@ -5,9 +5,19 @@ public enum PreferredCodec: String, CaseIterable, Codable {
     case auto, avc, hevc
 }
 
+public enum PreferredStreamFormat: String, CaseIterable, Codable {
+    case auto, dash, mp4
+}
+
 public enum WatchPlayerVendor: String, CaseIterable, Codable {
     case videoPlayer
     case ffmpegMinimal
+}
+
+public enum DownloadsTab: String, CaseIterable, Codable {
+    case completed
+    case active
+    case issues
 }
 
 @MainActor
@@ -170,6 +180,10 @@ public final class RenderSettings: ObservableObject {
         didSet { defaults.set(preferredCodecRaw, forKey: Keys.preferredCodecRaw) }
     }
 
+    @Published public var preferredStreamFormatRaw: String {
+        didSet { defaults.set(preferredStreamFormatRaw, forKey: Keys.preferredStreamFormatRaw) }
+    }
+
     @Published public var showVideoDebugInfo: Bool {
         didSet { defaults.set(showVideoDebugInfo, forKey: Keys.showVideoDebugInfo) }
     }
@@ -180,6 +194,22 @@ public final class RenderSettings: ObservableObject {
 
     @Published public var languageOverride: String {
         didSet { defaults.set(languageOverride, forKey: Keys.languageOverride) }
+    }
+
+    @Published public var toastEnabled: Bool {
+        didSet { defaults.set(toastEnabled, forKey: Keys.toastEnabled) }
+    }
+
+    @Published public var toastDuration: TimeInterval {
+        didSet {
+            if let clamped = clamp(toastDuration, min: 1.0, max: 10.0, for: Keys.toastDuration) {
+                toastDuration = clamped
+            }
+        }
+    }
+
+    @Published public var downloadsDefaultTabRaw: String {
+        didSet { defaults.set(downloadsDefaultTabRaw, forKey: Keys.downloadsDefaultTabRaw) }
     }
 
     private let defaults = UserDefaults.standard
@@ -213,9 +243,13 @@ public final class RenderSettings: ObservableObject {
         static let danmakuAdvancedOnly = "render.danmaku.advancedOnly"
         static let preferredQuality = "render.preferredQuality"
         static let preferredCodecRaw = "render.preferredCodec"
+        static let preferredStreamFormatRaw = "render.preferredStreamFormat"
         static let showVideoDebugInfo = "render.showVideoDebugInfo"
         static let watchPlayerVendorRaw = "render.watchPlayerVendor"
         static let languageOverride = "render.languageOverride"
+        static let toastEnabled = "render.toastEnabled"
+        static let toastDuration = "render.toastDuration"
+        static let downloadsDefaultTabRaw = "render.downloadsDefaultTab"
     }
 
     public init() {
@@ -247,9 +281,13 @@ public final class RenderSettings: ObservableObject {
         let savedAdvancedOnly = defaults.object(forKey: Keys.danmakuAdvancedOnly) as? Bool
         let savedPreferredQuality = defaults.object(forKey: Keys.preferredQuality) as? Int
         let savedPreferredCodec = defaults.object(forKey: Keys.preferredCodecRaw) as? String
+        let savedPreferredStreamFormat = defaults.object(forKey: Keys.preferredStreamFormatRaw) as? String
         let savedShowVideoDebugInfo = defaults.object(forKey: Keys.showVideoDebugInfo) as? Bool
         let savedWatchPlayerVendor = defaults.object(forKey: Keys.watchPlayerVendorRaw) as? String
         let savedLanguageOverride = defaults.object(forKey: Keys.languageOverride) as? String
+        let savedToastEnabled = defaults.object(forKey: Keys.toastEnabled) as? Bool
+        let savedToastDuration = defaults.object(forKey: Keys.toastDuration) as? TimeInterval
+        let savedDownloadsDefaultTab = defaults.object(forKey: Keys.downloadsDefaultTabRaw) as? String
 
         #if os(tvOS)
         let defaultTextScale = 1.05
@@ -299,10 +337,20 @@ public final class RenderSettings: ObservableObject {
         danmakuStrokeWidth = savedStrokeWidth ?? 0.5
         danmakuAdvancedOnly = savedAdvancedOnly ?? false
         preferredQuality = savedPreferredQuality ?? 32
+        #if os(watchOS)
+        preferredCodecRaw = savedPreferredCodec ?? PreferredCodec.avc.rawValue
+        watchPlayerVendorRaw = savedWatchPlayerVendor ?? WatchPlayerVendor.ffmpegMinimal.rawValue
+        preferredStreamFormatRaw = savedPreferredStreamFormat ?? PreferredStreamFormat.mp4.rawValue
+        #else
         preferredCodecRaw = savedPreferredCodec ?? PreferredCodec.auto.rawValue
-        showVideoDebugInfo = savedShowVideoDebugInfo ?? false
         watchPlayerVendorRaw = savedWatchPlayerVendor ?? WatchPlayerVendor.videoPlayer.rawValue
+        preferredStreamFormatRaw = savedPreferredStreamFormat ?? PreferredStreamFormat.auto.rawValue
+        #endif
+        showVideoDebugInfo = savedShowVideoDebugInfo ?? false
         languageOverride = savedLanguageOverride ?? "system"
+        toastEnabled = savedToastEnabled ?? true
+        toastDuration = savedToastDuration ?? 2.0
+        downloadsDefaultTabRaw = savedDownloadsDefaultTab ?? DownloadsTab.completed.rawValue
     }
     private func clamp<T: Comparable>(_ value: T, min lower: T, max upper: T, for key: String) -> T? {
         if isUpdating {
@@ -334,9 +382,19 @@ public extension RenderSettings {
         set { preferredCodecRaw = newValue.rawValue }
     }
 
+    var preferredStreamFormat: PreferredStreamFormat {
+        get { PreferredStreamFormat(rawValue: preferredStreamFormatRaw) ?? .auto }
+        set { preferredStreamFormatRaw = newValue.rawValue }
+    }
+
     var watchPlayerVendor: WatchPlayerVendor {
         get { WatchPlayerVendor(rawValue: watchPlayerVendorRaw) ?? .videoPlayer }
         set { watchPlayerVendorRaw = newValue.rawValue }
+    }
+
+    var downloadsDefaultTab: DownloadsTab {
+        get { DownloadsTab(rawValue: downloadsDefaultTabRaw) ?? .completed }
+        set { downloadsDefaultTabRaw = newValue.rawValue }
     }
 
     static let qualityOptions: [(id: Int, label: String)] = [

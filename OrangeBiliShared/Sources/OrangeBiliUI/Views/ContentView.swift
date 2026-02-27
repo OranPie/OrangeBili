@@ -30,10 +30,12 @@ public struct ContentView: View {
     @State private var selectedTab: Tab = .home
     @StateObject private var searchViewModel = SearchViewModel()
     @StateObject private var tabBarState = TabBarState()
+    @EnvironmentObject private var toastManager: ToastManager
 
     public init() {}
 
     public var body: some View {
+        ZStack(alignment: .top) {
         #if os(watchOS)
         NavigationStack {
             Group {
@@ -109,6 +111,9 @@ public struct ContentView: View {
             .tag(Tab.me)
         }
         #endif
+
+            ToastOverlayView()
+        }
     }
 
     #if os(watchOS)

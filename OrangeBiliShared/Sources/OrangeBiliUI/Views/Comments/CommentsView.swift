@@ -7,8 +7,10 @@ struct CommentsView: View {
     @EnvironmentObject private var apiBackend: BiliAPIBackend
 
     @State private var selectedComment: CommentItem?
-    @State private var previewReplies: [Int: [CommentItem]] = [:]
-    @State private var previewLoading = Set<Int>()
+    @State private var previewReplies: [Int64: [CommentItem]] = [:]
+    @State private var previewLoading = Set<Int64>()
+    @State private var likedComments = Set<Int64>()
+    @State private var likeCountOverrides: [Int64: Int] = [:]
 
     init(aid: Int64) {
         _viewModel = StateObject(wrappedValue: CommentsViewModel(aid: aid))
@@ -33,6 +35,9 @@ struct CommentsView: View {
                     previewReplies: previewReplies[comment.id] ?? [],
                     isPreviewLoading: previewLoading.contains(comment.id),
                     commentTextScale: render.commentTextScale,
+                    likeCount: likeCountOverrides[comment.id] ?? comment.likeCount,
+                    isLiked: likedComments.contains(comment.id),
+                    onToggleLike: { Task { await toggleLike(comment: comment) } },
                     onOpenThread: { selectedComment = comment }
                 )
                 .listRowInsets(UIStyle.listRowInsets)
@@ -67,12 +72,14 @@ struct CommentsView: View {
             await viewModel.reload()
             previewReplies = [:]
             previewLoading = []
+            likedComments = []
+            likeCountOverrides = [:]
         }
-        .sheet(item: $selectedComment) { comment in
-            CommentThreadSheet(comment: comment)
-                .environmentObject(apiBackend)
-                .environmentObject(render)
-        }
+        .commentThreadPresenter(
+            selectedComment: $selectedComment,
+            apiBackend: apiBackend,
+            render: render
+        )
     }
 
     private func prefetchPreviewIfNeeded(comment: CommentItem) async {
@@ -89,6 +96,55 @@ struct CommentsView: View {
             previewReplies[comment.id] = []
         }
     }
+
+    private func toggleLike(comment: CommentItem) async {
+        guard apiBackend.isLoggedIn else { return }
+        let id = comment.id
+        let oldLiked = likedComments.contains(id)
+        let oldCount = likeCountOverrides[id] ?? comment.likeCount
+        let targetLiked = !oldLiked
+
+        if targetLiked {
+            likedComments.insert(id)
+        } else {
+            likedComments.remove(id)
+        }
+        likeCountOverrides[id] = max(0, oldCount + (targetLiked ? 1 : -1))
+
+        do {
+            try await apiBackend.likeComment(aid: comment.oid, rpid: id, liked: targetLiked)
+        } catch {
+            if oldLiked {
+                likedComments.insert(id)
+            } else {
+                likedComments.remove(id)
+            }
+            likeCountOverrides[id] = oldCount
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func commentThreadPresenter(
+        selectedComment: Binding<CommentItem?>,
+        apiBackend: BiliAPIBackend,
+        render: RenderSettings
+    ) -> some View {
+#if os(macOS)
+        sheet(item: selectedComment) { comment in
+            CommentThreadSheet(comment: comment)
+                .environmentObject(apiBackend)
+                .environmentObject(render)
+        }
+#else
+        fullScreenCover(item: selectedComment) { comment in
+            CommentThreadSheet(comment: comment)
+                .environmentObject(apiBackend)
+                .environmentObject(render)
+        }
+#endif
+    }
 }
 
 private struct CommentCardView: View {
@@ -96,6 +152,9 @@ private struct CommentCardView: View {
     let previewReplies: [CommentItem]
     let isPreviewLoading: Bool
     let commentTextScale: Double
+    let likeCount: Int
+    let isLiked: Bool
+    let onToggleLike: () -> Void
     let onOpenThread: () -> Void
 
     var body: some View {
@@ -113,9 +172,9 @@ private struct CommentCardView: View {
 
     private var header: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            if let mid = comment.mid, mid > 0 {
+            if let mid = comment.mid, let uploaderMid = Int(exactly: mid), uploaderMid > 0 {
                 NavigationLink {
-                    UploaderView(mid: mid)
+                    UploaderView(mid: uploaderMid)
                 } label: {
                     Text(comment.username)
                         .font(.system(size: 11.5 * commentTextScale, weight: .semibold))
@@ -181,9 +240,17 @@ private struct CommentCardView: View {
 
     private var actionRow: some View {
         HStack(spacing: 10) {
-            Label(Formatting.count(comment.likeCount), systemImage: "hand.thumbsup")
+            Button {
+                onToggleLike()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
+                    Text(Formatting.count(likeCount))
+                }
                 .font(.system(size: 8.8 * commentTextScale))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(isLiked ? Theme.accent : .secondary)
+            }
+            .buttonStyle(.plain)
 
             Button {
                 onOpenThread()
@@ -223,11 +290,10 @@ private struct CommentThreadSheet: View {
 
     @EnvironmentObject private var apiBackend: BiliAPIBackend
     @EnvironmentObject private var render: RenderSettings
-    @Environment(\.dismiss) private var dismiss
 
     @StateObject private var viewModel = CommentThreadViewModel()
     @State private var replyText = ""
-    @State private var replyTargetRpid: Int?
+    @State private var replyTargetRpid: Int64?
     @FocusState private var inputFocused: Bool
 
     var body: some View {
@@ -239,6 +305,7 @@ private struct CommentThreadSheet: View {
             composer
         }
         .background(Color.black)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .task {
             await viewModel.prepareIfNeeded(comment: comment, backend: apiBackend)
         }
@@ -250,16 +317,9 @@ private struct CommentThreadSheet: View {
                 .font(.system(size: 11 * render.commentTextScale, weight: .semibold))
                 .lineLimit(1)
             Spacer()
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
     }
 
     private var content: some View {
@@ -268,8 +328,8 @@ private struct CommentThreadSheet: View {
                 threadRootCard
                 repliesSection
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
         }
     }
 
@@ -280,7 +340,16 @@ private struct CommentThreadSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
                 Text(Formatting.time(comment.timestamp))
-                Label(Formatting.count(comment.likeCount), systemImage: "hand.thumbsup")
+                Button {
+                    Task { await viewModel.toggleLike(aid: comment.oid, rpid: comment.id, baseLikeCount: comment.likeCount) }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: viewModel.isLiked(rpid: comment.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                        Text(Formatting.count(viewModel.likeCount(rpid: comment.id, baseLikeCount: comment.likeCount)))
+                    }
+                    .foregroundStyle(viewModel.isLiked(rpid: comment.id) ? Theme.accent : .secondary)
+                }
+                .buttonStyle(.plain)
                 Label(Formatting.count(comment.replyCount), systemImage: "arrowshape.turn.up.left")
             }
             .font(.system(size: 8.6 * render.commentTextScale))
@@ -316,14 +385,23 @@ private struct CommentThreadSheet: View {
                         .font(.system(size: 9.8 * render.commentTextScale))
                         .fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: 10) {
-                        Label(Formatting.count(reply.likeCount), systemImage: "hand.thumbsup")
+                        Button {
+                            Task { await viewModel.toggleLike(aid: reply.oid, rpid: reply.id, baseLikeCount: reply.likeCount) }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: viewModel.isLiked(rpid: reply.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                Text(Formatting.count(viewModel.likeCount(rpid: reply.id, baseLikeCount: reply.likeCount)))
+                            }
                             .font(.system(size: 8 * render.commentTextScale))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(viewModel.isLiked(rpid: reply.id) ? Theme.accent : .secondary)
+                        }
+                        .buttonStyle(.plain)
                         Button(L10n.t("comment.detail.reply")) {
                             replyTargetRpid = reply.id
                             inputFocused = true
                         }
                         .font(.system(size: 8.5 * render.commentTextScale))
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(UIStyle.cardPadding)
@@ -347,26 +425,32 @@ private struct CommentThreadSheet: View {
     }
 
     private var composer: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 4) {
             if let target = replyTargetRpid {
                 HStack {
                     Text(L10n.f("comment.detail.replyId", target))
-                        .font(.system(size: 8.5 * render.commentTextScale))
+                        .font(.system(size: 8.0 * render.commentTextScale))
                         .foregroundStyle(.secondary)
                     Spacer()
                     Button(L10n.t("comment.detail.reply.cancel")) {
                         replyTargetRpid = nil
                     }
-                    .font(.system(size: 8.5 * render.commentTextScale))
+                    .font(.system(size: 8.0 * render.commentTextScale))
+                    .buttonStyle(.plain)
                 }
             }
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 TextField(L10n.t("comment.detail.placeholder"), text: $replyText)
                     #if os(watchOS)
+                    .font(.system(size: 8.6 * render.commentTextScale))
+                    .lineLimit(1)
                     .textFieldStyle(.plain)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                    .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: 8))
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .frame(height: 24)
+                    .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: 7))
+                    #elseif os(tvOS)
+                    .textFieldStyle(.automatic)
                     #else
                     .textFieldStyle(.roundedBorder)
                     #endif
@@ -375,23 +459,24 @@ private struct CommentThreadSheet: View {
                     Task {
                         let parent = replyTargetRpid ?? comment.id
                         await viewModel.sendReply(message: replyText, parentRpid: parent)
-                        if viewModel.sendError == nil {
+                        if viewModel.lastSendSucceeded {
                             replyText = ""
                             replyTargetRpid = nil
                         }
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
+                .font(.system(size: 8.8 * render.commentTextScale, weight: .semibold))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(Theme.accent.opacity(0.92), in: RoundedRectangle(cornerRadius: 7))
+                .foregroundStyle(.white)
                 .disabled(!apiBackend.isLoggedIn || replyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isSending)
-            }
-            if let error = viewModel.sendError {
-                Text(error)
-                    .font(.system(size: 8.5 * render.commentTextScale))
-                    .foregroundStyle(.secondary)
+                .opacity((!apiBackend.isLoggedIn || replyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isSending) ? 0.5 : 1)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
     }
 }
 
@@ -402,7 +487,9 @@ private final class CommentThreadViewModel: ObservableObject {
     @Published private(set) var hasMore = true
     @Published private(set) var errorMessage: String?
     @Published private(set) var isSending = false
-    @Published var sendError: String?
+    @Published private(set) var lastSendSucceeded = false
+    @Published private var likedRpid = Set<Int64>()
+    @Published private var likeCountOverrides: [Int64: Int] = [:]
 
     private var backend: BiliAPIBackend?
     private var rootComment: CommentItem?
@@ -416,7 +503,9 @@ private final class CommentThreadViewModel: ObservableObject {
         hasMore = true
         replies = []
         errorMessage = nil
-        sendError = nil
+        lastSendSucceeded = false
+        likedRpid = []
+        likeCountOverrides = [:]
         await loadMore()
     }
 
@@ -436,21 +525,62 @@ private final class CommentThreadViewModel: ObservableObject {
         }
     }
 
-    func sendReply(message: String, parentRpid: Int) async {
+    func sendReply(message: String, parentRpid: Int64) async {
         guard let backend, let comment = rootComment else { return }
         let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
         isSending = true
+        lastSendSucceeded = false
         defer { isSending = false }
         do {
             try await backend.replyComment(aid: comment.oid, rootRpid: comment.id, parentRpid: parentRpid, message: text)
-            sendError = nil
+            lastSendSucceeded = true
             page = 1
             hasMore = true
             replies = []
             await loadMore()
         } catch {
-            sendError = L10n.f("comment.detail.reply.fail", error.localizedDescription)
+            lastSendSucceeded = false
+            ToastManager.shared.show(
+                L10n.f("comment.detail.reply.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
+        }
+    }
+
+    func isLiked(rpid: Int64) -> Bool {
+        likedRpid.contains(rpid)
+    }
+
+    func likeCount(rpid: Int64, baseLikeCount: Int) -> Int {
+        likeCountOverrides[rpid] ?? baseLikeCount
+    }
+
+    func toggleLike(aid: Int64, rpid: Int64, baseLikeCount: Int) async {
+        guard let backend else { return }
+        guard backend.isLoggedIn else { return }
+
+        let oldLiked = likedRpid.contains(rpid)
+        let oldCount = likeCountOverrides[rpid] ?? baseLikeCount
+        let targetLiked = !oldLiked
+
+        if targetLiked {
+            likedRpid.insert(rpid)
+        } else {
+            likedRpid.remove(rpid)
+        }
+        likeCountOverrides[rpid] = max(0, oldCount + (targetLiked ? 1 : -1))
+
+        do {
+            try await backend.likeComment(aid: aid, rpid: rpid, liked: targetLiked)
+        } catch {
+            if oldLiked {
+                likedRpid.insert(rpid)
+            } else {
+                likedRpid.remove(rpid)
+            }
+            likeCountOverrides[rpid] = oldCount
         }
     }
 }

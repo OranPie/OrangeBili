@@ -28,6 +28,8 @@
 "action.coin.success" = "投币成功";
 "action.delete" = "删除";
 "action.download" = "下载";
+"action.download.started" = "开始下载";
+"action.download.fail" = "下载失败: %@";
 "action.favorite" = "收藏";
 "action.like" = "点赞";
 "action.like.cancel" = "已取消点赞";
@@ -65,6 +67,7 @@
 "comment.detail.replyRoot" = "回复楼主";
 "comment.detail.send" = "发送回复";
 "comment.detail.title" = "评论详情";
+"comment.input.placeholder" = "写评论…";
 
 "comments.title" = "评论";
 "comments.thread.more" = "查看全部 %d 条回复";
@@ -115,13 +118,33 @@
 "downloads.active.empty" = "暂无下载项目";
 "downloads.active.status" = "%@ · %d%% · %@/s";
 "downloads.active.title" = "下载项目";
+"downloads.center.title" = "下载中心";
 "downloads.completed.empty" = "暂无已完成下载";
 "downloads.completed.title" = "离线管理";
+"downloads.issue.retry" = "重试";
+"downloads.issues.empty" = "暂无异常下载";
 "downloads.state.canceled" = "已取消";
 "downloads.state.completed" = "已完成";
 "downloads.state.downloading" = "下载中";
 "downloads.state.failed" = "失败";
 "downloads.state.queued" = "排队中";
+"downloads.retry.unavailable" = "无法重试";
+"downloads.remux.unsupported.watch" = "watchOS 暂不支持将 .m4s 离线重封装";
+"downloads.tab.active" = "进行中";
+"downloads.tab.completed" = "已完成";
+"downloads.tab.issues" = "异常";
+"dynamic.login.required" = "请先登录后再操作";
+"dynamic.repost" = "转发动态";
+"dynamic.repost.placeholder" = "说点什么…";
+"dynamic.scope.following" = "关注动态";
+"dynamic.scope.mine" = "我的动态";
+"dynamic.scope.user" = "用户动态";
+"dynamic.scope.user.title" = "%@ 的动态";
+"dynamic.video.unavailable" = "该动态视频不可用";
+"dynamic.load.failed" = "动态加载失败：%@";
+"dynamic.like.failed" = "点赞失败：%@";
+"dynamic.repost.success" = "转发成功";
+"dynamic.repost.failed" = "转发失败：%@";
 
 "error.api" = "接口错误(%d)：%@";
 "error.badResponse" = "服务响应异常";
@@ -139,6 +162,8 @@
 "favorites.local.title" = "本地收藏";
 
 "following.title" = "我的关注";
+"following.empty" = "暂无关注内容";
+"friends.title" = "我的好友";
 
 "history.author" = "历史记录";
 "history.empty" = "还没有播放记录";
@@ -196,10 +221,15 @@
 "me.account" = "账号";
 "me.account.cloudFavorites" = "云端收藏夹";
 "me.account.following" = "我的关注";
+"me.account.following.subtitle" = "已关注的创作者与频道";
 "me.account.friends" = "我的好友";
+"me.account.friends.subtitle" = "互相关注好友列表";
 "me.account.submissions" = "我的投稿";
+"me.account.submissions.subtitle" = "我的投稿内容";
 "me.account.dynamics" = "我的动态";
+"me.account.dynamics.subtitle" = "账号最近动态";
 "me.account.downloads" = "下载列表";
+"me.account.downloads.subtitle" = "离线文件与任务";
 "me.account.history" = "历史记录";
 "me.account.logout" = "退出登录";
 "me.account.notLoggedIn" = "未登录";
@@ -207,6 +237,7 @@
 "me.account.profile" = "我的主页";
 "me.account.qrLogin" = "Watch 扫码登录";
 "me.account.visitHistory" = "主页浏览历史";
+"me.account.visitHistory.subtitle" = "最近访问过的 UP 主";
 "me.render" = "渲染设置";
 "me.render.subtitle" = "字号与布局";
 "me.status.hint" = "未登录优先走非登录接口；登录后优先增强接口。";
@@ -250,6 +281,10 @@
 "settings.codec.auto" = "自动";
 "settings.codec.avc" = "H.264 (AVC)";
 "settings.codec.hevc" = "H.265 (HEVC)";
+"settings.streamFormat" = "视频流格式";
+"settings.streamFormat.auto" = "自动 (DASH)";
+"settings.streamFormat.dash" = "DASH";
+"settings.streamFormat.mp4" = "MP4";
 
 "settings.title" = "设置";
 "settings.section.general" = "通用";
@@ -294,6 +329,7 @@
 "tools.downloads.active.subtitle" = "进行中";
 "tools.downloads.completed" = "离线管理";
 "tools.downloads.completed.subtitle" = "已完成";
+"tools.downloads.subtitle.summary" = "进行中 %d · 已完成 %d · 异常 %d";
 "tools.favorites.cloud" = "云端收藏";
 "tools.favorites.cloud.login" = "请先在“我的”中登录后查看云端收藏";
 "tools.favorites.cloud.subtitle" = "账号同步";
@@ -322,6 +358,18 @@
 "uploader.articles.title" = "%@ 专栏";
 "uploader.content" = "内容";
 "uploader.followingFans" = "关注 %@ · 粉丝 %@";
+"uploader.follow.action" = "关注";
+"uploader.following.action" = "已关注";
+"uploader.follow.loginRequired" = "请先登录后再关注";
+"uploader.follow.success.followed" = "关注成功";
+"uploader.follow.success.unfollowed" = "已取消关注";
+"uploader.follow.failed" = "关注操作失败：%@";
+"uploader.load.failed" = "UP 主页加载失败：%@";
+"uploader.videos.load.failed" = "视频加载失败：%@";
+"uploader.articles.load.failed" = "专栏加载失败：%@";
+"uploader.section.overview" = "概览";
+"uploader.topVideo" = "置顶视频";
+"uploader.masterpieces" = "代表作";
 "uploader.latestArticles" = "最新专栏预览";
 "uploader.latestVideos" = "最新视频预览";
 "uploader.likes" = "获赞 %@";
@@ -330,7 +378,9 @@
 "uploader.order.stow" = "最多收藏";
 "uploader.title" = "UP 主";
 "uploader.videos" = "视频列表";
+"uploader.dynamics" = "动态";
 "uploader.videos.title" = "%@ 视频";
+"uploader.videos.empty" = "暂无投稿视频";
 "uploader.visit.clear" = "清空主页历史";
 "uploader.visit.empty" = "暂无主页浏览历史";
 "uploader.visit.title" = "主页浏览历史";

@@ -11,18 +11,26 @@ enum BiliEndpoint {
     case searchArticlesLegacy(keyword: String, page: Int)
     case detailWbi(bvid: String)
     case detail(bvid: String)
-    case playURLWbi(bvid: String, cid: Int64, quality: Int)
-    case playURL(bvid: String, cid: Int64, quality: Int)
+    case playURLWbi(bvid: String, cid: Int64, quality: Int, dash: Bool)
+    case playURL(bvid: String, cid: Int64, quality: Int, dash: Bool)
+    case playURLDownloadWbi(bvid: String, cid: Int64, quality: Int)
+    case playURLDownload(bvid: String, cid: Int64, quality: Int)
     case comments(aid: Int64, page: Int)
     case commentsLegacy(aid: Int64, page: Int)
     case uploader(mid: Int)
     case uploaderLegacy(mid: Int)
     case uploaderRelation(mid: Int)
     case uploaderUpStat(mid: Int)
+    case uploaderAccRelation(mid: Int)
+    case uploaderTopVideo(mid: Int)
+    case uploaderMasterpiece(mid: Int, page: Int)
     case uploaderVideos(mid: Int, page: Int, order: String)
     case uploaderVideosLegacy(mid: Int, page: Int, order: String)
     case uploaderArticles(mid: Int, page: Int)
     case uploaderArticlesLegacy(mid: Int, page: Int)
+    case dynamicFeedAll(offset: String?)
+    case dynamicFeedSpace(hostMid: Int, offset: String?)
+    case dynamicDetail(dynamicID: Int64)
 
     var legacyFallback: BiliEndpoint? {
         switch self {
@@ -34,8 +42,10 @@ enum BiliEndpoint {
             return .searchArticlesLegacy(keyword: keyword, page: page)
         case let .detailWbi(bvid):
             return .detail(bvid: bvid)
-        case let .playURLWbi(bvid, cid, quality):
-            return .playURL(bvid: bvid, cid: cid, quality: quality)
+        case let .playURLWbi(bvid, cid, quality, dash):
+            return .playURL(bvid: bvid, cid: cid, quality: quality, dash: dash)
+        case let .playURLDownloadWbi(bvid, cid, quality):
+            return .playURLDownload(bvid: bvid, cid: cid, quality: quality)
         case let .comments(aid, page):
             return .commentsLegacy(aid: aid, page: page)
         case let .uploader(mid):
@@ -68,10 +78,14 @@ enum BiliEndpoint {
             ordered = preferLoggedIn
                 ? [.detailWbi(bvid: bvid), .detail(bvid: bvid)]
                 : [.detail(bvid: bvid), .detailWbi(bvid: bvid)]
-        case let .playURLWbi(bvid, cid, quality), let .playURL(bvid, cid, quality):
+        case let .playURLWbi(bvid, cid, quality, dash), let .playURL(bvid, cid, quality, dash):
             ordered = preferLoggedIn
-                ? [.playURLWbi(bvid: bvid, cid: cid, quality: quality), .playURL(bvid: bvid, cid: cid, quality: quality)]
-                : [.playURL(bvid: bvid, cid: cid, quality: quality), .playURLWbi(bvid: bvid, cid: cid, quality: quality)]
+                ? [.playURLWbi(bvid: bvid, cid: cid, quality: quality, dash: dash), .playURL(bvid: bvid, cid: cid, quality: quality, dash: dash)]
+                : [.playURL(bvid: bvid, cid: cid, quality: quality, dash: dash), .playURLWbi(bvid: bvid, cid: cid, quality: quality, dash: dash)]
+        case let .playURLDownloadWbi(bvid, cid, quality), let .playURLDownload(bvid, cid, quality):
+            ordered = preferLoggedIn
+                ? [.playURLDownloadWbi(bvid: bvid, cid: cid, quality: quality), .playURLDownload(bvid: bvid, cid: cid, quality: quality)]
+                : [.playURLDownload(bvid: bvid, cid: cid, quality: quality), .playURLDownloadWbi(bvid: bvid, cid: cid, quality: quality)]
         case let .comments(aid, page), let .commentsLegacy(aid, page):
             ordered = preferLoggedIn
                 ? [.comments(aid: aid, page: page), .commentsLegacy(aid: aid, page: page)]
@@ -84,6 +98,12 @@ enum BiliEndpoint {
             ordered = [.uploaderRelation(mid: mid)]
         case let .uploaderUpStat(mid):
             ordered = [.uploaderUpStat(mid: mid)]
+        case let .uploaderAccRelation(mid):
+            ordered = [.uploaderAccRelation(mid: mid)]
+        case let .uploaderTopVideo(mid):
+            ordered = [.uploaderTopVideo(mid: mid)]
+        case let .uploaderMasterpiece(mid, page):
+            ordered = [.uploaderMasterpiece(mid: mid, page: page)]
         case let .uploaderVideos(mid, page, order), let .uploaderVideosLegacy(mid, page, order):
             ordered = preferLoggedIn
                 ? [.uploaderVideos(mid: mid, page: page, order: order), .uploaderVideosLegacy(mid: mid, page: page, order: order)]
@@ -92,6 +112,12 @@ enum BiliEndpoint {
             ordered = preferLoggedIn
                 ? [.uploaderArticles(mid: mid, page: page), .uploaderArticlesLegacy(mid: mid, page: page)]
                 : [.uploaderArticlesLegacy(mid: mid, page: page), .uploaderArticles(mid: mid, page: page)]
+        case let .dynamicFeedAll(offset):
+            ordered = [.dynamicFeedAll(offset: offset)]
+        case let .dynamicFeedSpace(hostMid, offset):
+            ordered = [.dynamicFeedSpace(hostMid: hostMid, offset: offset)]
+        case let .dynamicDetail(dynamicID):
+            ordered = [.dynamicDetail(dynamicID: dynamicID)]
         case let .popular(page, size):
             ordered = [.popular(page: page, size: size)]
         case let .recommendFeed(page):
@@ -111,7 +137,7 @@ enum BiliEndpoint {
 
     var requiresWbi: Bool {
         switch self {
-        case .search, .searchUsers, .searchArticles, .detailWbi, .playURLWbi, .comments, .uploader, .uploaderVideos, .uploaderArticles, .recommendFeed:
+        case .search, .searchUsers, .searchArticles, .detailWbi, .playURLWbi, .playURLDownloadWbi, .comments, .uploader, .uploaderAccRelation, .uploaderVideos, .uploaderArticles, .recommendFeed, .dynamicFeedAll, .dynamicFeedSpace, .dynamicDetail:
             return true
         default:
             return false
@@ -120,7 +146,7 @@ enum BiliEndpoint {
 
     var requiresBuvidCookie: Bool {
         switch self {
-        case .search, .searchUsers, .searchArticles, .uploader, .uploaderVideos, .uploaderArticles:
+        case .search, .searchUsers, .searchArticles, .uploader, .uploaderAccRelation, .uploaderVideos, .uploaderArticles:
             return true
         default:
             return false
@@ -139,7 +165,7 @@ enum BiliEndpoint {
             return .none
         case .recommendFeed:
             return .optional
-        case .search, .searchLegacy, .searchUsers, .searchUsersLegacy, .searchArticles, .searchArticlesLegacy, .detailWbi, .detail, .playURLWbi, .playURL, .uploader, .uploaderLegacy, .uploaderVideos, .uploaderVideosLegacy, .uploaderArticles, .uploaderArticlesLegacy:
+        case .search, .searchLegacy, .searchUsers, .searchUsersLegacy, .searchArticles, .searchArticlesLegacy, .detailWbi, .detail, .playURLWbi, .playURL, .playURLDownloadWbi, .playURLDownload, .uploader, .uploaderLegacy, .uploaderAccRelation, .uploaderTopVideo, .uploaderMasterpiece, .uploaderVideos, .uploaderVideosLegacy, .uploaderArticles, .uploaderArticlesLegacy, .dynamicFeedAll, .dynamicFeedSpace, .dynamicDetail:
             return .optional
         case .uploaderRelation, .uploaderUpStat:
             return .none
@@ -166,6 +192,10 @@ enum BiliEndpoint {
             return "/x/player/wbi/playurl"
         case .playURL:
             return "/x/player/playurl"
+        case .playURLDownloadWbi:
+            return "/x/player/wbi/playurl"
+        case .playURLDownload:
+            return "/x/player/playurl"
         case .comments:
             return "/x/v2/reply/wbi/main"
         case .commentsLegacy:
@@ -178,6 +208,12 @@ enum BiliEndpoint {
             return "/x/relation/stat"
         case .uploaderUpStat:
             return "/x/space/upstat"
+        case .uploaderAccRelation:
+            return "/x/space/wbi/acc/relation"
+        case .uploaderTopVideo:
+            return "/x/space/top/arc"
+        case .uploaderMasterpiece:
+            return "/x/space/masterpiece"
         case .uploaderVideos:
             return "/x/space/wbi/arc/search"
         case .uploaderVideosLegacy:
@@ -188,6 +224,12 @@ enum BiliEndpoint {
             return "/x/space/article"
         case .recommendFeed:
             return "/x/web-interface/wbi/index/top/feed/rcmd"
+        case .dynamicFeedAll:
+            return "/x/polymer/web-dynamic/v1/feed/all"
+        case .dynamicFeedSpace:
+            return "/x/polymer/web-dynamic/v1/feed/space"
+        case .dynamicDetail:
+            return "/x/polymer/web-dynamic/v1/detail"
         }
     }
 
@@ -253,31 +295,53 @@ enum BiliEndpoint {
             return ["bvid": bvid]
         case let .detail(bvid):
             return ["bvid": bvid]
-        case let .playURLWbi(bvid, cid, quality):
+        case let .playURLWbi(bvid, cid, quality, dash):
             return [
                 "bvid": bvid,
                 "cid": String(cid),
                 "qn": String(quality),
-                "fnval": "4048",
+                "fnval": dash ? "4048" : "0",
                 "fnver": "0",
-                "fourk": "1",
+                "fourk": dash ? "1" : "0",
                 "gaia_source": "pre-load",
                 "isGaiaAvoided": "true",
                 "from_client": "BROWSER",
                 "web_location": "1315873"
             ]
-        case let .playURL(bvid, cid, quality):
+        case let .playURL(bvid, cid, quality, dash):
             return [
                 "bvid": bvid,
                 "cid": String(cid),
                 "qn": String(quality),
-                "fnval": "4048",
+                "fnval": dash ? "4048" : "0",
                 "fnver": "0",
-                "fourk": "1",
+                "fourk": dash ? "1" : "0",
                 "gaia_source": "pre-load",
                 "isGaiaAvoided": "true",
                 "from_client": "BROWSER",
                 "web_location": "1315873"
+            ]
+        case let .playURLDownloadWbi(bvid, cid, quality):
+            return [
+                "bvid": bvid,
+                "cid": String(cid),
+                "qn": String(quality),
+                "fnval": "0",
+                "fnver": "0",
+                "fourk": "0",
+                "otype": "json",
+                "platform": "html5"
+            ]
+        case let .playURLDownload(bvid, cid, quality):
+            return [
+                "bvid": bvid,
+                "cid": String(cid),
+                "qn": String(quality),
+                "fnval": "0",
+                "fnver": "0",
+                "fourk": "0",
+                "otype": "json",
+                "platform": "html5"
             ]
         case let .comments(aid, page):
             return [
@@ -304,6 +368,16 @@ enum BiliEndpoint {
             return ["vmid": String(mid)]
         case let .uploaderUpStat(mid):
             return ["mid": String(mid)]
+        case let .uploaderAccRelation(mid):
+            return ["mid": String(mid)]
+        case let .uploaderTopVideo(mid):
+            return ["vmid": String(mid)]
+        case let .uploaderMasterpiece(mid, page):
+            return [
+                "vmid": String(mid),
+                "pn": String(max(1, page)),
+                "ps": "10"
+            ]
         case let .uploaderVideos(mid, page, order):
             return [
                 "mid": String(mid),
@@ -350,6 +424,41 @@ enum BiliEndpoint {
                 "fresh_idx": String(page),
                 "fresh_idx_1h": String(page)
             ]
+        case let .dynamicFeedAll(offset):
+            var query: [String: String] = [
+                "type": "all",
+                "timezone_offset": "-480",
+                "features": "itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,forwardListHidden,decorationCard,commentsNewVersion,onlyfansAssetsV2,ugcDelete,onlyfansQaCard",
+                "web_location": "333.1365",
+                "x-bili-device-req-json": "{\"platform\":\"web\",\"device\":\"pc\"}",
+                "x-bili-web-req-json": "{\"spm_id\":\"333.1365\"}"
+            ]
+            if let offset, !offset.isEmpty {
+                query["offset"] = offset
+            }
+            return query
+        case let .dynamicFeedSpace(hostMid, offset):
+            var query: [String: String] = [
+                "host_mid": String(hostMid),
+                "timezone_offset": "-480",
+                "features": "itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,forwardListHidden,decorationCard,commentsNewVersion,onlyfansAssetsV2,ugcDelete,onlyfansQaCard",
+                "web_location": "333.1387",
+                "x-bili-device-req-json": "{\"platform\":\"web\",\"device\":\"pc\"}",
+                "x-bili-web-req-json": "{\"spm_id\":\"333.1387\"}"
+            ]
+            if let offset, !offset.isEmpty {
+                query["offset"] = offset
+            }
+            return query
+        case let .dynamicDetail(dynamicID):
+            return [
+                "id": String(dynamicID),
+                "timezone_offset": "-480",
+                "features": "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
+                "web_location": "333.1368",
+                "x-bili-device-req-json": "{\"platform\":\"web\",\"device\":\"pc\"}",
+                "x-bili-web-req-json": "{\"spm_id\":\"333.1368\"}"
+            ]
         }
     }
 
@@ -365,7 +474,7 @@ enum BiliEndpoint {
 
     var supportsOfflineCache: Bool {
         switch self {
-        case .popular, .playURL, .playURLWbi, .recommendFeed:
+        case .popular, .playURL, .playURLWbi, .recommendFeed, .dynamicFeedAll, .dynamicFeedSpace, .dynamicDetail:
             return false
         default:
             return true

@@ -43,6 +43,7 @@ public final class PlayerViewModel: ObservableObject {
     @Published public var colorFixActive: Bool = false
     @Published public var videoFormatInfo: VideoFormatInfo?
     @Published public private(set) var playbackRequestHeaders: [String: String] = [:]
+    @Published public private(set) var currentVideoStreamURL: URL?
     @Published public var loopPlayback: Bool = false
     @Published public private(set) var didFinishPlaying: Bool = false
 
@@ -51,6 +52,7 @@ public final class PlayerViewModel: ObservableObject {
     public let localFileURL: URL?
     public var preferredQuality: Int = 32
     public var preferredCodec: PreferredCodec = .auto
+    public var preferredStreamFormat: PreferredStreamFormat = .auto
     private let service: BiliServiceProtocol
     public private(set) var player: AVPlayer?
     private var observer: Any?
@@ -76,23 +78,42 @@ public final class PlayerViewModel: ObservableObject {
         errorMessage = nil
 
         if let localFileURL, FileManager.default.fileExists(atPath: localFileURL.path) {
-            let asset = AVURLAsset(url: localFileURL)
-            let item = AVPlayerItem(asset: asset)
-            let player = AVPlayer(playerItem: item)
+            let player: AVPlayer
+            let inspectAsset: AVURLAsset
+            if let dash = Self.readLocalDASHManifest(from: localFileURL) {
+                let videoAsset = AVURLAsset(url: dash.videoURL)
+                inspectAsset = videoAsset
+                currentVideoStreamURL = dash.videoURL
+                if let audioURL = dash.audioURL {
+                    let audioAsset = AVURLAsset(url: audioURL)
+                    if let merged = Self.makeDASHCompositionItem(videoAsset: videoAsset, audioAsset: audioAsset) {
+                        player = AVPlayer(playerItem: merged)
+                    } else {
+                        player = AVPlayer(playerItem: AVPlayerItem(asset: videoAsset))
+                    }
+                } else {
+                    player = AVPlayer(playerItem: AVPlayerItem(asset: videoAsset))
+                }
+            } else {
+                let asset = AVURLAsset(url: localFileURL)
+                inspectAsset = asset
+                currentVideoStreamURL = localFileURL
+                player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
+            }
             player.isMuted = isMuted
             self.player = player
             observeProgress()
             isLoading = false
             player.playImmediately(atRate: playbackRate)
             Task {
-                let info = await inspectVideoFormat(asset: asset)
+                let info = await inspectVideoFormat(asset: inspectAsset)
                 videoFormatInfo = info
                 DebugLogStore.shared.log(category: "player", message: "format: \(info.summary)")
                 DebugLogStore.shared.log(category: "player.ext", message: "extensions: \(info.allExtensions)")
             }
             #if canImport(CoreImage)
             Task {
-                await applyColorFixIfNeeded(asset: asset, item: item)
+                await applyColorFixIfNeeded(asset: inspectAsset, item: player.currentItem ?? AVPlayerItem(asset: inspectAsset))
             }
             #endif
             return
@@ -207,6 +228,7 @@ public final class PlayerViewModel: ObservableObject {
         }
         player?.pause()
         player = nil
+        currentVideoStreamURL = nil
     }
 
     private func collectPlayableURLs() async throws -> [URL] {
@@ -218,7 +240,7 @@ public final class PlayerViewModel: ObservableObject {
             qualities.append(q)
         }
         for quality in qualities {
-            if let stream = try? await service.fetchPlayURL(bvid: video.bvid, cid: cid, quality: quality, preferredCodec: preferredCodec) {
+            if let stream = try? await service.fetchPlayURL(bvid: video.bvid, cid: cid, quality: quality, preferredCodec: preferredCodec, streamFormat: preferredStreamFormat) {
                 // Capture DASH audio from the first successful stream
                 if dashAudioURL == nil, let audioURL = stream.audioURL {
                     dashAudioURL = audioURL
@@ -249,6 +271,7 @@ public final class PlayerViewModel: ObservableObject {
             self.continuousObserver = nil
         }
         player?.pause()
+        currentVideoStreamURL = url
 
         let videoAsset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
 
@@ -295,15 +318,27 @@ public final class PlayerViewModel: ObservableObject {
         }
 
         do {
-            // Use a large time range; AVPlayer will clamp to actual duration
-            let timeRange = CMTimeRange(start: .zero, duration: CMTime(seconds: 86400, preferredTimescale: 600))
+            guard let sourceVideoTrack = videoAsset.tracks(withMediaType: .video).first,
+                  let sourceAudioTrack = audioAsset.tracks(withMediaType: .audio).first else {
+                return nil
+            }
 
-            if let sourceVideoTrack = videoAsset.tracks(withMediaType: .video).first {
-                try videoTrack.insertTimeRange(timeRange, of: sourceVideoTrack, at: .zero)
-            }
-            if let sourceAudioTrack = audioAsset.tracks(withMediaType: .audio).first {
-                try audioTrack.insertTimeRange(timeRange, of: sourceAudioTrack, at: .zero)
-            }
+            let videoDuration = sourceVideoTrack.timeRange.duration
+            let audioDuration = sourceAudioTrack.timeRange.duration
+
+            let resolvedDuration: CMTime = {
+                let videoValid = videoDuration.isNumeric && videoDuration.seconds > 0
+                let audioValid = audioDuration.isNumeric && audioDuration.seconds > 0
+                if videoValid && audioValid { return CMTimeMinimum(videoDuration, audioDuration) }
+                if videoValid { return videoDuration }
+                if audioValid { return audioDuration }
+                return videoAsset.duration
+            }()
+            guard resolvedDuration.isNumeric && resolvedDuration.seconds > 0 else { return nil }
+            let timeRange = CMTimeRange(start: .zero, duration: resolvedDuration)
+
+            try videoTrack.insertTimeRange(timeRange, of: sourceVideoTrack, at: .zero)
+            try audioTrack.insertTimeRange(timeRange, of: sourceAudioTrack, at: .zero)
             return AVPlayerItem(asset: composition)
         } catch {
             DebugLogStore.shared.log(category: "player", message: "DASH composition failed: \(error.localizedDescription)")
@@ -463,6 +498,29 @@ public final class PlayerViewModel: ObservableObject {
 }
 
 private extension PlayerViewModel {
+    struct LocalDASHManifest: Decodable {
+        let version: Int
+        let bvid: String
+        let videoFile: String
+        let audioFile: String
+    }
+
+    struct LocalDASHFiles {
+        let videoURL: URL
+        let audioURL: URL?
+    }
+
+    static func readLocalDASHManifest(from url: URL) -> LocalDASHFiles? {
+        guard url.pathExtension.lowercased() == "json" else { return nil }
+        guard let data = try? Data(contentsOf: url),
+              let manifest = try? JSONDecoder().decode(LocalDASHManifest.self, from: data) else { return nil }
+        let base = url.deletingLastPathComponent()
+        let videoURL = base.appendingPathComponent(manifest.videoFile)
+        let audioURL = base.appendingPathComponent(manifest.audioFile)
+        guard FileManager.default.fileExists(atPath: videoURL.path) else { return nil }
+        return LocalDASHFiles(videoURL: videoURL, audioURL: FileManager.default.fileExists(atPath: audioURL.path) ? audioURL : nil)
+    }
+
     static func cookieHeader(from session: BiliLoginSession) -> String? {
         guard session.isValid else { return nil }
         var items: [String] = ["SESSDATA=\(session.sessdata)"]

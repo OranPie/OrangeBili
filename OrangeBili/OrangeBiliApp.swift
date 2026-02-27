@@ -13,6 +13,7 @@ struct OrangeBiliApp: App {
     @StateObject private var apiBackend: BiliAPIBackend
     @StateObject private var historySyncer: HistorySyncer
     @StateObject private var companionConnectivityManager: CompanionConnectivityManager
+    @StateObject private var toastManager = ToastManager.shared
 
     init() {
         let historyStore = HistoryStore()
@@ -51,6 +52,7 @@ struct OrangeBiliApp: App {
                 .environmentObject(apiBackend)
                 .environmentObject(historySyncer)
                 .environmentObject(companionConnectivityManager)
+                .environmentObject(toastManager)
         }
     }
 }

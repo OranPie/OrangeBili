@@ -12,6 +12,7 @@ struct OrangeBiliTVApp: App {
     @StateObject private var debugLogStore = DebugLogStore.shared
     @StateObject private var apiBackend = BiliAPIBackend.shared
     @StateObject private var historySyncer = HistorySyncer()
+    @StateObject private var toastManager = ToastManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct OrangeBiliTVApp: App {
                 .environmentObject(debugLogStore)
                 .environmentObject(apiBackend)
                 .environmentObject(historySyncer)
+                .environmentObject(toastManager)
         }
     }
 }

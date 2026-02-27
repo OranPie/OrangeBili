@@ -25,7 +25,6 @@ struct VideoDetailView: View {
     @StateObject private var viewModel = VideoDetailViewModel()
     @State private var destination: Destination?
     @State private var liked = false
-    @State private var actionStatus: String?
     @State private var tags: [String] = []
 
     var body: some View {
@@ -241,13 +240,6 @@ struct VideoDetailView: View {
                         .font(.system(size: 8.5 * render.textScale * platformScale))
                         .foregroundStyle(.secondary)
                     }
-
-                    if let actionStatus {
-                        Text(actionStatus)
-                            .font(.system(size: 8.5 * render.textScale * platformScale))
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
-                    }
                 }
             } else if viewModel.isLoading {
                 SkeletonDetailView()
@@ -301,22 +293,44 @@ struct VideoDetailView: View {
 
     private func startOfflineDownload(detail: VideoDetail) async {
         do {
-            let stream = try await BiliAPIBackend.shared.fetchPlayURL(bvid: detail.bvid, cid: detail.cid, quality: 32, preferredCodec: .auto)
+            let stream = try await BiliAPIBackend.shared.fetchOfflineDownloadStream(bvid: detail.bvid, cid: detail.cid, quality: 32)
             let headers = [
                 "Referer": "https://www.bilibili.com",
                 "User-Agent": PlatformInfo.userAgent
             ]
-            downloadManager.startDownload(
-                bvid: detail.bvid,
-                title: detail.title,
-                url: stream.url,
-                headers: headers,
-                coverURL: detail.coverURL
-            )
+            var requestHeaders = headers
+            if let session = await BiliAuthStore.shared.currentSession(), session.isValid {
+                var cookies: [String] = ["SESSDATA=\(session.sessdata)"]
+                if let biliJct = session.biliJct, !biliJct.isEmpty { cookies.append("bili_jct=\(biliJct)") }
+                if let dedeUserID = session.dedeUserID, !dedeUserID.isEmpty { cookies.append("DedeUserID=\(dedeUserID)") }
+                if let buvid3 = session.buvid3, !buvid3.isEmpty { cookies.append("buvid3=\(buvid3)") }
+                if let buvid4 = session.buvid4, !buvid4.isEmpty { cookies.append("buvid4=\(buvid4)") }
+                requestHeaders["Cookie"] = cookies.joined(separator: "; ")
+            }
+            if let audioURL = stream.audioURL {
+                downloadManager.startDASHDownload(
+                    bvid: detail.bvid,
+                    title: detail.title,
+                    videoURL: stream.url,
+                    audioURL: audioURL,
+                    headers: requestHeaders,
+                    coverURL: detail.coverURL
+                )
+            } else {
+                downloadManager.startDownload(
+                    bvid: detail.bvid,
+                    title: detail.title,
+                    url: stream.url,
+                    headers: requestHeaders,
+                    coverURL: detail.coverURL
+                )
+            }
+            ToastManager.shared.show(L10n.t("action.download.started"), icon: "arrow.down.circle", style: .success)
             Task {
                 _ = try? await DanmakuService.shared.fetchDanmaku(cid: detail.cid)
             }
         } catch {
+            ToastManager.shared.show(L10n.f("action.download.fail", error.localizedDescription), icon: "xmark.circle", style: .error)
             DebugLogStore.shared.log(category: "download", message: "start fail \(detail.bvid): \(error.localizedDescription)")
         }
     }
@@ -369,30 +383,51 @@ struct VideoDetailView: View {
             let target = !liked
             try await apiBackend.likeVideo(aid: aid, bvid: bvid, liked: target)
             liked = target
-            actionStatus = target ? L10n.t("action.like.success") : L10n.t("action.like.cancel")
+            ToastManager.shared.show(
+                target ? L10n.t("action.like.success") : L10n.t("action.like.cancel"),
+                icon: target ? "hand.thumbsup.fill" : "hand.thumbsup",
+                style: .success
+            )
         } catch {
-            actionStatus = L10n.f("action.like.fail", error.localizedDescription)
+            ToastManager.shared.show(
+                L10n.f("action.like.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
         }
     }
 
     private func sendCoin(aid: Int64, bvid: String) async {
         do {
             try await apiBackend.coinVideo(aid: aid, bvid: bvid, count: 1, alsoLike: false)
-            actionStatus = L10n.t("action.coin.success")
+            ToastManager.shared.show(
+                L10n.t("action.coin.success"),
+                icon: "centsign.circle.fill",
+                style: .success
+            )
         } catch {
-            actionStatus = L10n.f("action.coin.fail", error.localizedDescription)
+            ToastManager.shared.show(
+                L10n.f("action.coin.fail", error.localizedDescription),
+                icon: "xmark.circle",
+                style: .error
+            )
         }
     }
 
     @ViewBuilder
     private func compactTagStack(_ keywords: [String]) -> some View {
+        #if os(watchOS)
+        let tagFontSize = 9.5 * render.textScale * UIStyle.platformScale
+        #else
+        let tagFontSize = 11.0 * render.textScale * UIStyle.platformScale * UIStyle.platformScale
+        #endif
         TagFlowLayout(spacing: 5) {
             ForEach(keywords, id: \.self) { keyword in
                 Button {
                     destination = .tag(keyword)
                 } label: {
                     Text("#\(keyword)")
-                        .font(.system(size: 11.5 * render.textScale * UIStyle.platformScale * UIStyle.platformScale, weight: .semibold))
+                        .font(.system(size: tagFontSize, weight: .semibold))
                         .lineLimit(1)
                         .padding(.horizontal, UIStyle.chipPadding.leading)
                         .padding(.vertical, UIStyle.chipPadding.top)

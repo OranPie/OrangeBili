@@ -25,6 +25,7 @@ public struct SettingsView: View {
                 Toggle(L10n.t("render.resume"), isOn: $render.resumeFromLast)
                 pickerRow(L10n.t("render.quality"), selection: $render.preferredQuality, options: RenderSettings.qualityOptions.map { ($0.id, $0.label) })
                 pickerRow(L10n.t("settings.codec"), selection: $render.preferredCodecRaw, options: PreferredCodec.allCases.map { ($0.rawValue, L10n.t("settings.codec.\($0.rawValue)")) })
+                pickerRow(L10n.t("settings.streamFormat"), selection: $render.preferredStreamFormatRaw, options: PreferredStreamFormat.allCases.map { ($0.rawValue, L10n.t("settings.streamFormat.\($0.rawValue)")) })
                 #if os(watchOS)
                 pickerRow(L10n.t("settings.vendor"), selection: $render.watchPlayerVendorRaw, options: [
                     (WatchPlayerVendor.videoPlayer.rawValue, L10n.t("settings.vendor.videoPlayer")),

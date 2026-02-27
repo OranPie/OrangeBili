@@ -1,12 +1,11 @@
 import Foundation
 
 public enum Formatting {
-    private static let absoluteDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateStyle = .medium
-        return formatter
-    }()
+    private static func languageOverrideLocale() -> Locale {
+        let override = UserDefaults.standard.string(forKey: "render.languageOverride") ?? "system"
+        guard override != "system" else { return Locale.current }
+        return Locale(identifier: override)
+    }
 
     public static func count(_ value: Int) -> String {
         let language = Locale.current.languageCode ?? "en"
@@ -27,12 +26,15 @@ public enum Formatting {
 
     public static func time(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale.current
+        formatter.locale = languageOverrideLocale()
         return formatter.localizedString(for: date, relativeTo: Date())
     }
 
     public static func absoluteDate(_ date: Date) -> String {
-        absoluteDateFormatter.string(from: date)
+        let formatter = DateFormatter()
+        formatter.locale = languageOverrideLocale()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 
     public static func compactDuration(_ raw: String) -> String {
