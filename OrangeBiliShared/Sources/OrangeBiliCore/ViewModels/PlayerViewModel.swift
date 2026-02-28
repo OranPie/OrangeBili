@@ -200,6 +200,19 @@ public final class PlayerViewModel: ObservableObject {
         seek(to: 0)
     }
 
+    public var isPlaying: Bool {
+        player?.timeControlStatus == .playing
+    }
+
+    public func pauseForLifecycle() {
+        player?.pause()
+    }
+
+    public func resumeForLifecycleIfNeeded() {
+        guard let player else { return }
+        player.playImmediately(atRate: playbackRate)
+    }
+
     public func switchSource() {
         guard streamURLs.count > 1 else { return }
         let currentTime = Double(progressSeconds)

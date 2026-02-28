@@ -6,21 +6,54 @@ struct DanmakuOverlayView: View {
     @ObservedObject var playerViewModel: PlayerViewModel
 
     @EnvironmentObject private var render: RenderSettings
+    @State private var lastUpdateTime: Double = -1
 
     var body: some View {
-        TimelineView(.animation) { timeline in
-            Canvas { context, size in
-                let time = playerViewModel.currentTime
-                let contentRect = videoContentRect(in: size)
-                viewModel.currentVideoTime = time
-                viewModel.update(time: time, size: contentRect.size, settings: render)
+        Group {
+#if os(watchOS)
+            TimelineView(.periodic(from: .now, by: 1.0 / 24.0)) { _ in
+                Canvas { context, size in
+                    let time = playerViewModel.currentTime
+                    let contentRect = videoContentRect(in: size)
+                    viewModel.currentVideoTime = time
+                    if shouldUpdateDanmaku(at: time) {
+                        viewModel.update(time: time, size: contentRect.size, settings: render)
+                        lastUpdateTime = time
+                    }
 
-                for item in viewModel.active {
-                    drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                    for item in viewModel.active {
+                        drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                    }
                 }
             }
+#else
+            TimelineView(.animation) { _ in
+                Canvas { context, size in
+                    let time = playerViewModel.currentTime
+                    let contentRect = videoContentRect(in: size)
+                    viewModel.currentVideoTime = time
+                    if shouldUpdateDanmaku(at: time) {
+                        viewModel.update(time: time, size: contentRect.size, settings: render)
+                        lastUpdateTime = time
+                    }
+
+                    for item in viewModel.active {
+                        drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                    }
+                }
+            }
+#endif
         }
         .allowsHitTesting(false)
+    }
+
+    private func shouldUpdateDanmaku(at time: Double) -> Bool {
+        guard lastUpdateTime >= 0 else { return true }
+#if os(watchOS)
+        return (time - lastUpdateTime) >= (1.0 / 24.0) || time < lastUpdateTime
+#else
+        return (time - lastUpdateTime) >= (1.0 / 30.0) || time < lastUpdateTime
+#endif
     }
 
     /// Compute the actual video content area within the view, excluding black bars.
@@ -109,11 +142,13 @@ struct DanmakuOverlayView: View {
                     .font(.system(size: item.fontSize, weight: .semibold))
                     .foregroundColor(.black)
             )
-            for dx in [-sw, 0, sw] {
-                for dy in [-sw, 0, sw] {
-                    if dx == 0 && dy == 0 { continue }
-                    textContext.draw(strokeText, at: CGPoint(x: point.x + dx, y: point.y + dy), anchor: anchor)
-                }
+#if os(watchOS)
+            let offsets: [(Double, Double)] = [(-sw, 0), (sw, 0), (0, -sw), (0, sw)]
+#else
+            let offsets: [(Double, Double)] = [(-sw, -sw), (-sw, 0), (-sw, sw), (0, -sw), (0, sw), (sw, -sw), (sw, 0), (sw, sw)]
+#endif
+            for (dx, dy) in offsets {
+                textContext.draw(strokeText, at: CGPoint(x: point.x + dx, y: point.y + dy), anchor: anchor)
             }
         }
 

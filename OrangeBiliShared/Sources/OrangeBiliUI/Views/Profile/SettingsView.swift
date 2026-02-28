@@ -31,6 +31,7 @@ public struct SettingsView: View {
                     (WatchPlayerVendor.videoPlayer.rawValue, L10n.t("settings.vendor.videoPlayer")),
                     (WatchPlayerVendor.ffmpegMinimal.rawValue, L10n.t("settings.vendor.ffmpegMinimal")),
                 ])
+                Toggle(L10n.t("settings.watch.preventSleep"), isOn: $render.watchPreventAutoSleep)
                 #endif
             }
 

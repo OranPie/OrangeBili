@@ -3,9 +3,13 @@ import OrangeBiliCore
 #if canImport(AVFoundation)
 import AVFoundation
 #endif
+#if os(watchOS)
+import WatchKit
+#endif
 
 struct VideoPlayerView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var historyStore: HistoryStore
     @EnvironmentObject private var historySyncer: HistorySyncer
     @EnvironmentObject private var render: RenderSettings
@@ -14,6 +18,7 @@ struct VideoPlayerView: View {
     @State private var resumeSeconds: Int?
     @State private var showResumePrompt = false
     @State private var lastDanmakuLoadDuration = 0
+    @State private var shouldResumeAfterForeground = false
 
     init(video: BiliVideo, cid: Int64, localFileURL: URL? = nil) {
         _viewModel = StateObject(wrappedValue: PlayerViewModel(video: video, cid: cid, localFileURL: localFileURL))
@@ -115,6 +120,33 @@ struct VideoPlayerView: View {
         .onChange(of: viewModel.didFinishPlaying) { finished in
             if finished { dismiss() }
         }
+        .onChange(of: scenePhase) { phase in
+            switch phase {
+            case .active:
+                if shouldResumeAfterForeground {
+                    viewModel.resumeForLifecycleIfNeeded()
+                    shouldResumeAfterForeground = false
+                }
+                #if os(watchOS)
+                WKExtension.shared().isFrontmostTimeoutExtended = render.watchPreventAutoSleep
+                #endif
+            case .inactive, .background:
+                shouldResumeAfterForeground = viewModel.isPlaying
+                viewModel.pauseForLifecycle()
+                #if os(watchOS)
+                WKExtension.shared().isFrontmostTimeoutExtended = false
+                #endif
+            @unknown default:
+                break
+            }
+        }
+        #if os(watchOS)
+        .onChange(of: render.watchPreventAutoSleep) { enabled in
+            if scenePhase == .active {
+                WKExtension.shared().isFrontmostTimeoutExtended = enabled
+            }
+        }
+        #endif
         .onDisappear {
             let progressToSave: Int = {
                 let duration = max(viewModel.totalDurationSeconds, 0)
@@ -127,6 +159,9 @@ struct VideoPlayerView: View {
             Task {
                 await historySyncer.syncHistory(records: historyStore.records)
             }
+            #if os(watchOS)
+            WKExtension.shared().isFrontmostTimeoutExtended = false
+            #endif
             viewModel.cleanup()
         }
     }

@@ -354,6 +354,7 @@
 "settings.vendor" = "Vendor";
 "settings.vendor.videoPlayer" = "VideoPlayer";
 "settings.vendor.ffmpegMinimal" = "FFmpegMinimal";
+"settings.watch.preventSleep" = "Prevent auto sleep while playing";
 
 "uploader.articles" = "Articles";
 "uploader.articles.title" = "%@ Articles";

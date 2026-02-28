@@ -9,6 +9,7 @@ import WatchDecodeCore
 /// Moved from Debug/WatchSoftDecodePoCView — now a first-class player backend.
 public struct SoftDecodePlayerView: View {
     #if os(watchOS)
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var render: RenderSettings
     private let sourceURL: URL?
     private let decodeURLOverride: URL?
@@ -35,6 +36,9 @@ public struct SoftDecodePlayerView: View {
     @State private var progress: Double = 0
     @State private var showControls = true
     @State private var isSeeking = false
+    @State private var shouldResumeAfterSeek = false
+    @State private var shouldResumeAfterForeground = false
+    @State private var lastObservedPlaybackTime: Double = 0
     @State private var crownValue: Double = 0
     @State private var lastCrownValue: Double = 0
     @State private var hideTask: Task<Void, Never>?
@@ -125,11 +129,12 @@ public struct SoftDecodePlayerView: View {
             // Crown delta can be very small on watch; keep threshold low.
             guard abs(delta) > 0.001 else { return }
             if showControls {
+                guard let player else { return }
                 let sensitivity: Float = 0.08
-                let current = player?.volume ?? 1
+                let current = player.volume
                 let value = min(max(current + Float(delta) * sensitivity, 0), 1)
-                player?.volume = value
-                if value > 0 { player?.isMuted = false }
+                player.volume = value
+                if value > 0 { player.isMuted = false }
             } else {
                 seekBy(seconds: delta * 1.2, revealControls: false)
             }
@@ -149,11 +154,27 @@ public struct SoftDecodePlayerView: View {
             openDecoderIfNeeded()
             renderOnePoCFrame()
         }
+        .onChange(of: scenePhase) { phase in
+            switch phase {
+            case .active:
+                if shouldResumeAfterForeground {
+                    play()
+                    shouldResumeAfterForeground = false
+                }
+            case .inactive, .background:
+                shouldResumeAfterForeground = isPlaying
+                player?.pause()
+                stopDecodeLoop()
+                hideTask?.cancel()
+            @unknown default:
+                break
+            }
+        }
         .onDisappear {
             hideTask?.cancel()
             stopDecodeLoop()
             detachTimeObserver()
-            if ownsPlayer { player?.pause() }
+            player?.pause()
             closeDecoder()
         }
         #else
@@ -213,6 +234,10 @@ public struct SoftDecodePlayerView: View {
                         .onEnded { _ in
                             isSeeking = false
                             showControls = true
+                            if shouldResumeAfterSeek {
+                                play()
+                            }
+                            shouldResumeAfterSeek = false
                         }
                 )
             }
@@ -305,12 +330,21 @@ public struct SoftDecodePlayerView: View {
         let interval = CMTime(seconds: 0.25, preferredTimescale: 600)
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
             guard !isSeeking else { return }
-            currentTime = time.seconds
+            let observed = time.seconds
+            let jumped = abs(observed - lastObservedPlaybackTime) > 1.1
+            currentTime = observed
             let d = player.currentItem?.duration.seconds ?? .nan
             duration = (d.isFinite && d > 0) ? d : 0
             if duration > 0 {
                 progress = min(max(currentTime / duration, 0), 1)
             }
+            if jumped, let decoder {
+                decodeQueue.async {
+                    _ = wdc_decoder_seek_seconds(decoder, observed)
+                }
+                renderOnePoCFrame(at: observed)
+            }
+            lastObservedPlaybackTime = observed
             updateVideoAspectIfNeeded()
         }
     }
@@ -369,6 +403,7 @@ public struct SoftDecodePlayerView: View {
 
     private func pauseForManualSeek() {
         guard let player else { return }
+        shouldResumeAfterSeek = player.timeControlStatus == .playing
         if player.timeControlStatus == .playing {
             player.pause()
         }
@@ -436,21 +471,12 @@ public struct SoftDecodePlayerView: View {
         let (pixelWidth, pixelHeight) = decodeTargetSize()
         isDecoding = true
         decodeQueue.async {
-            let raw: UnsafeMutablePointer<wdc_frame>?
-            if requestedTime == nil {
-                raw = wdc_decoder_decode_next(
-                    decoder,
-                    Int32(pixelWidth),
-                    Int32(pixelHeight)
-                )
-            } else {
-                raw = wdc_decoder_decode_until(
-                    decoder,
-                    t,
-                    Int32(pixelWidth),
-                    Int32(pixelHeight)
-                )
-            }
+            let raw = wdc_decoder_decode_until(
+                decoder,
+                t,
+                Int32(pixelWidth),
+                Int32(pixelHeight)
+            )
 
             guard let raw else {
                 DispatchQueue.main.async {

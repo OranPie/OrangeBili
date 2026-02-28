@@ -192,6 +192,10 @@ public final class RenderSettings: ObservableObject {
         didSet { defaults.set(watchPlayerVendorRaw, forKey: Keys.watchPlayerVendorRaw) }
     }
 
+    @Published public var watchPreventAutoSleep: Bool {
+        didSet { defaults.set(watchPreventAutoSleep, forKey: Keys.watchPreventAutoSleep) }
+    }
+
     @Published public var languageOverride: String {
         didSet { defaults.set(languageOverride, forKey: Keys.languageOverride) }
     }
@@ -246,6 +250,7 @@ public final class RenderSettings: ObservableObject {
         static let preferredStreamFormatRaw = "render.preferredStreamFormat"
         static let showVideoDebugInfo = "render.showVideoDebugInfo"
         static let watchPlayerVendorRaw = "render.watchPlayerVendor"
+        static let watchPreventAutoSleep = "render.watchPreventAutoSleep"
         static let languageOverride = "render.languageOverride"
         static let toastEnabled = "render.toastEnabled"
         static let toastDuration = "render.toastDuration"
@@ -284,6 +289,7 @@ public final class RenderSettings: ObservableObject {
         let savedPreferredStreamFormat = defaults.object(forKey: Keys.preferredStreamFormatRaw) as? String
         let savedShowVideoDebugInfo = defaults.object(forKey: Keys.showVideoDebugInfo) as? Bool
         let savedWatchPlayerVendor = defaults.object(forKey: Keys.watchPlayerVendorRaw) as? String
+        let savedWatchPreventAutoSleep = defaults.object(forKey: Keys.watchPreventAutoSleep) as? Bool
         let savedLanguageOverride = defaults.object(forKey: Keys.languageOverride) as? String
         let savedToastEnabled = defaults.object(forKey: Keys.toastEnabled) as? Bool
         let savedToastDuration = defaults.object(forKey: Keys.toastDuration) as? TimeInterval
@@ -347,6 +353,7 @@ public final class RenderSettings: ObservableObject {
         preferredStreamFormatRaw = savedPreferredStreamFormat ?? PreferredStreamFormat.auto.rawValue
         #endif
         showVideoDebugInfo = savedShowVideoDebugInfo ?? false
+        watchPreventAutoSleep = savedWatchPreventAutoSleep ?? false
         languageOverride = savedLanguageOverride ?? "system"
         toastEnabled = savedToastEnabled ?? true
         toastDuration = savedToastDuration ?? 2.0

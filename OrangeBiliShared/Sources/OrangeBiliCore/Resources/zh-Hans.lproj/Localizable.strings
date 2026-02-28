@@ -354,6 +354,7 @@
 "settings.vendor" = "播放器内核";
 "settings.vendor.videoPlayer" = "VideoPlayer";
 "settings.vendor.ffmpegMinimal" = "FFmpegMinimal";
+"settings.watch.preventSleep" = "阻止自动熄屏（播放时）";
 
 "uploader.articles" = "专栏列表";
 "uploader.articles.title" = "%@ 专栏";
