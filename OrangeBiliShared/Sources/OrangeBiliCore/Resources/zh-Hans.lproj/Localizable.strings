@@ -130,6 +130,7 @@
 "downloads.state.queued" = "排队中";
 "downloads.retry.unavailable" = "无法重试";
 "downloads.remux.unsupported.watch" = "watchOS 暂不支持将 .m4s 离线重封装";
+"downloads.resume.interrupted" = "下载因应用退出而中断";
 "downloads.tab.active" = "进行中";
 "downloads.tab.completed" = "已完成";
 "downloads.tab.issues" = "异常";

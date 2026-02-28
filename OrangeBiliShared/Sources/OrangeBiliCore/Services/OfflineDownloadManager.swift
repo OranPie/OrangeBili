@@ -29,6 +29,7 @@ public struct DownloadStatusItem: Identifiable, Hashable {
     public var errorMessage: String?
 
     public init(
+        id: UUID = UUID(),
         bvid: String,
         cid: Int64? = nil,
         title: String,
@@ -37,7 +38,7 @@ public struct DownloadStatusItem: Identifiable, Hashable {
         sourceAudioURL: URL? = nil,
         requestHeaders: [String: String] = [:]
     ) {
-        id = UUID()
+        self.id = id
         self.bvid = bvid
         self.cid = cid
         self.title = title
@@ -66,13 +67,36 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
     private var taskToItemID: [Int: UUID] = [:]
     private var lastSample: [Int: (time: Date, bytes: Int64)] = [:]
     private let folderURL: URL
+    private let indexURL: URL
 
     override private init() {
-        let baseURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        let baseURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
         folderURL = baseURL.appendingPathComponent("offline-downloads", isDirectory: true)
+        indexURL = folderURL.appendingPathComponent("index.json")
         try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         super.init()
+        migrateLegacyCacheIfNeeded()
+        loadPersistedItems()
+    }
+
+    private func migrateLegacyCacheIfNeeded() {
+        guard let legacyBase = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return }
+        let legacyFolder = legacyBase.appendingPathComponent("offline-downloads", isDirectory: true)
+        guard legacyFolder.path != folderURL.path else { return }
+        guard FileManager.default.fileExists(atPath: legacyFolder.path) else { return }
+
+        let destEmpty = ((try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil)) ?? []).isEmpty
+        guard destEmpty else { return }
+
+        if (try? FileManager.default.moveItem(at: legacyFolder, to: folderURL)) == nil {
+            let urls = (try? FileManager.default.contentsOfDirectory(at: legacyFolder, includingPropertiesForKeys: nil)) ?? []
+            for src in urls {
+                let dst = folderURL.appendingPathComponent(src.lastPathComponent)
+                if FileManager.default.fileExists(atPath: dst.path) { continue }
+                try? FileManager.default.copyItem(at: src, to: dst)
+            }
+        }
     }
 
     public func startDownload(bvid: String, cid: Int64? = nil, title: String, url: URL, headers: [String: String], coverURL: URL?) {
@@ -82,6 +106,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
 
         let item = DownloadStatusItem(bvid: bvid, cid: cid, title: title, coverURL: coverURL, sourceURL: url, requestHeaders: headers)
         items.insert(item, at: 0)
+        saveIndex()
 
         var request = URLRequest(url: url)
         for (key, value) in headers {
@@ -121,6 +146,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
             requestHeaders: headers
         )
         items.insert(item, at: 0)
+        saveIndex()
         update(itemID: item.id) { $0.state = .downloading }
 
         Task {
@@ -172,6 +198,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
             try? FileManager.default.removeItem(at: fileURL)
         }
         items.removeAll { $0.id == itemID }
+        saveIndex()
     }
 
     private func update(itemID: UUID, mutate: (inout DownloadStatusItem) -> Void) {
@@ -179,6 +206,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         var item = items[index]
         mutate(&item)
         items[index] = item
+        saveIndex()
     }
 
     private func outputURL(for bvid: String, response: URLResponse?) -> URL {
@@ -199,6 +227,88 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         let bvid: String
         let videoFile: String
         let audioFile: String
+    }
+
+    private struct PersistedItem: Codable {
+        let id: UUID
+        let bvid: String
+        let cid: Int64?
+        let title: String
+        let state: String
+        let progress: Double
+        let receivedBytes: Int64
+        let totalBytes: Int64
+        let speedBytesPerSec: Double
+        let localFileURL: String?
+        let coverURL: String?
+        let localCoverURL: String?
+        let localPackageFolderURL: String?
+        let sourceURL: String?
+        let sourceAudioURL: String?
+        let requestHeaders: [String: String]
+        let errorMessage: String?
+    }
+
+    private func loadPersistedItems() {
+        guard let data = try? Data(contentsOf: indexURL),
+              let persisted = try? JSONDecoder().decode([PersistedItem].self, from: data) else { return }
+
+        items = persisted.compactMap { p in
+            var item = DownloadStatusItem(
+                id: p.id,
+                bvid: p.bvid,
+                cid: p.cid,
+                title: p.title,
+                coverURL: p.coverURL.flatMap(URL.init(string:)),
+                sourceURL: p.sourceURL.flatMap(URL.init(string:)),
+                sourceAudioURL: p.sourceAudioURL.flatMap(URL.init(string:)),
+                requestHeaders: p.requestHeaders
+            )
+            item.state = DownloadStatusItem.State(rawValue: p.state) ?? .failed
+            if item.state == .queued || item.state == .downloading {
+                item.state = .failed
+                item.errorMessage = L10n.t("downloads.resume.interrupted")
+            } else {
+                item.errorMessage = p.errorMessage
+            }
+            item.progress = p.progress
+            item.receivedBytes = p.receivedBytes
+            item.totalBytes = p.totalBytes
+            item.speedBytesPerSec = 0
+            item.localFileURL = p.localFileURL.flatMap(URL.init(fileURLWithPath:))
+            item.localCoverURL = p.localCoverURL.flatMap(URL.init(fileURLWithPath:))
+            item.localPackageFolderURL = p.localPackageFolderURL.flatMap(URL.init(fileURLWithPath:))
+            if let local = item.localFileURL, !FileManager.default.fileExists(atPath: local.path) {
+                return nil
+            }
+            return item
+        }
+    }
+
+    private func saveIndex() {
+        let persisted = items.map { item in
+            PersistedItem(
+                id: item.id,
+                bvid: item.bvid,
+                cid: item.cid,
+                title: item.title,
+                state: item.state.rawValue,
+                progress: item.progress,
+                receivedBytes: item.receivedBytes,
+                totalBytes: item.totalBytes,
+                speedBytesPerSec: item.speedBytesPerSec,
+                localFileURL: item.localFileURL?.path,
+                coverURL: item.coverURL?.absoluteString,
+                localCoverURL: item.localCoverURL?.path,
+                localPackageFolderURL: item.localPackageFolderURL?.path,
+                sourceURL: item.sourceURL?.absoluteString,
+                sourceAudioURL: item.sourceAudioURL?.absoluteString,
+                requestHeaders: item.requestHeaders,
+                errorMessage: item.errorMessage
+            )
+        }
+        guard let data = try? JSONEncoder().encode(persisted) else { return }
+        try? data.write(to: indexURL, options: .atomic)
     }
 
     private func downloadDASHPackage(

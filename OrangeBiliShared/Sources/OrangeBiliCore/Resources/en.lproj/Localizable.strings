@@ -130,6 +130,7 @@
 "downloads.state.queued" = "Queued";
 "downloads.retry.unavailable" = "Retry unavailable";
 "downloads.remux.unsupported.watch" = "watchOS cannot remux fragmented .m4s offline yet";
+"downloads.resume.interrupted" = "Download was interrupted when the app exited";
 "downloads.tab.active" = "Active";
 "downloads.tab.completed" = "Completed";
 "downloads.tab.issues" = "Issues";
