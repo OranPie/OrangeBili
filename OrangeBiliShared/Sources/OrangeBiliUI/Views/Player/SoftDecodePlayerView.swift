@@ -1,5 +1,6 @@
 import SwiftUI
 #if os(watchOS)
+import Foundation
 import AVFoundation
 import OrangeBiliCore
 import WatchDecodeCore
@@ -42,6 +43,8 @@ public struct SoftDecodePlayerView: View {
     @State private var crownValue: Double = 0
     @State private var lastCrownValue: Double = 0
     @State private var hideTask: Task<Void, Never>?
+    @State private var lastRenderedVideoTime: Double = 0
+    @State private var lastDriftLogWallclock: Double = 0
     #endif
 
     #if os(watchOS)
@@ -140,6 +143,7 @@ public struct SoftDecodePlayerView: View {
             }
         }
         .onAppear {
+            print("[SoftDecodePlayer] onAppear vendor=ffmpegMinimal sourceURL=\(sourceURL?.absoluteString ?? "nil") decodeOverride=\(decodeURLOverride?.absoluteString ?? "nil")")
             setupPlayerIfNeeded()
             updateVideoAspectIfNeeded()
             openDecoderIfNeeded()
@@ -158,6 +162,8 @@ public struct SoftDecodePlayerView: View {
             switch phase {
             case .active:
                 if shouldResumeAfterForeground {
+                    openDecoderIfNeeded()
+                    renderOnePoCFrame()
                     play()
                     shouldResumeAfterForeground = false
                 }
@@ -166,6 +172,8 @@ public struct SoftDecodePlayerView: View {
                 player?.pause()
                 stopDecodeLoop()
                 hideTask?.cancel()
+                frame = nil
+                closeDecoder()
             @unknown default:
                 break
             }
@@ -338,6 +346,12 @@ public struct SoftDecodePlayerView: View {
             if duration > 0 {
                 progress = min(max(currentTime / duration, 0), 1)
             }
+            let wall = Date().timeIntervalSince1970
+            if wall - lastDriftLogWallclock > 2.0 {
+                let drift = currentTime - lastRenderedVideoTime
+                print("[SoftDecodePlayer] tick t=\(String(format: "%.2f", currentTime)) frame=\(String(format: "%.2f", lastRenderedVideoTime)) drift=\(String(format: "%.2f", drift)) rate=\(String(format: "%.2f", player.rate)) status=\(player.timeControlStatus.rawValue)")
+                lastDriftLogWallclock = wall
+            }
             if jumped, let decoder {
                 decodeQueue.async {
                     _ = wdc_decoder_seek_seconds(decoder, observed)
@@ -408,7 +422,10 @@ public struct SoftDecodePlayerView: View {
             player.pause()
         }
         if let decoder {
-            _ = wdc_decoder_seek_seconds(decoder, player.currentTime().seconds)
+            let observed = player.currentTime().seconds
+            decodeQueue.async {
+                _ = wdc_decoder_seek_seconds(decoder, observed)
+            }
         }
         stopDecodeLoop()
         hideTask?.cancel()
@@ -471,76 +488,79 @@ public struct SoftDecodePlayerView: View {
         let (pixelWidth, pixelHeight) = decodeTargetSize()
         isDecoding = true
         decodeQueue.async {
-            let raw = wdc_decoder_decode_until(
-                decoder,
-                t,
-                Int32(pixelWidth),
-                Int32(pixelHeight)
-            )
+            autoreleasepool {
+                let raw = wdc_decoder_decode_until(
+                    decoder,
+                    t,
+                    Int32(pixelWidth),
+                    Int32(pixelHeight)
+                )
 
-            guard let raw else {
+                guard let raw else {
+                    DispatchQueue.main.async {
+                        decodeMissCount += 1
+                        if decodeMissCount == 1 || decodeMissCount % 10 == 0 {
+                            let errCode = wdc_decoder_get_last_error_code(decoder)
+                            let errMsg = String(cString: wdc_decoder_get_last_error_message(decoder))
+                            print("[SoftDecodePlayer] decode miss t=\(String(format: "%.2f", t)) miss=\(decodeMissCount) err=\(errCode) \(errMsg)")
+                        }
+                        if decodeMissCount >= 120 {
+                            print("[SoftDecodePlayer] decoder stalled, reopening...")
+                            closeDecoder()
+                            openDecoderIfNeeded()
+                            decodeMissCount = 0
+                        }
+                        isDecoding = false
+                    }
+                    return
+                }
+
+                guard let rgba = raw.pointee.rgba else {
+                    wdc_free_frame(raw)
+                    DispatchQueue.main.async { isDecoding = false }
+                    return
+                }
+
+                let count = Int(raw.pointee.bytes_per_row * raw.pointee.height)
+                guard let provider = CGDataProvider(
+                    dataInfo: UnsafeMutableRawPointer(raw),
+                    data: UnsafeRawPointer(rgba),
+                    size: count,
+                    releaseData: { info, _, _ in
+                        guard let info else { return }
+                        wdc_free_frame(info.assumingMemoryBound(to: wdc_frame.self))
+                    }
+                ) else {
+                    wdc_free_frame(raw)
+                    DispatchQueue.main.async { isDecoding = false }
+                    return
+                }
+
+                let colorSpace = CGColorSpaceCreateDeviceRGB()
+                let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue)
+                guard let cg = CGImage(
+                    width: Int(raw.pointee.width),
+                    height: Int(raw.pointee.height),
+                    bitsPerComponent: 8,
+                    bitsPerPixel: 32,
+                    bytesPerRow: Int(raw.pointee.bytes_per_row),
+                    space: colorSpace,
+                    bitmapInfo: bitmapInfo,
+                    provider: provider,
+                    decode: nil,
+                    shouldInterpolate: true,
+                    intent: .defaultIntent
+                ) else {
+                    DispatchQueue.main.async { isDecoding = false }
+                    return
+                }
+
                 DispatchQueue.main.async {
-                    decodeMissCount += 1
-                    if decodeMissCount == 1 || decodeMissCount % 30 == 0 {
-                        let errCode = wdc_decoder_get_last_error_code(decoder)
-                        let errMsg = String(cString: wdc_decoder_get_last_error_message(decoder))
-                        print("[SoftDecodePlayer] decode miss t=\(String(format: "%.2f", t)) miss=\(decodeMissCount) err=\(errCode) \(errMsg)")
-                    }
-                    if decodeMissCount >= 120 {
-                        print("[SoftDecodePlayer] decoder stalled, reopening...")
-                        closeDecoder()
-                        openDecoderIfNeeded()
-                        decodeMissCount = 0
-                    }
+                    decodeMissCount = 0
+                    frame = cg
+                    lastRenderedVideoTime = t
                     isDecoding = false
                 }
-                return
-            }
-
-            guard let rgba = raw.pointee.rgba else {
-                wdc_free_frame(raw)
-                DispatchQueue.main.async { isDecoding = false }
-                return
-            }
-
-            let count = Int(raw.pointee.bytes_per_row * raw.pointee.height)
-            guard let provider = CGDataProvider(
-                dataInfo: UnsafeMutableRawPointer(raw),
-                data: UnsafeRawPointer(rgba),
-                size: count,
-                releaseData: { info, _, _ in
-                    guard let info else { return }
-                    wdc_free_frame(info.assumingMemoryBound(to: wdc_frame.self))
-                }
-            ) else {
-                wdc_free_frame(raw)
-                DispatchQueue.main.async { isDecoding = false }
-                return
-            }
-
-            let colorSpace = CGColorSpaceCreateDeviceRGB()
-            let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue)
-            guard let cg = CGImage(
-                width: Int(raw.pointee.width),
-                height: Int(raw.pointee.height),
-                bitsPerComponent: 8,
-                bitsPerPixel: 32,
-                bytesPerRow: Int(raw.pointee.bytes_per_row),
-                space: colorSpace,
-                bitmapInfo: bitmapInfo,
-                provider: provider,
-                decode: nil,
-                shouldInterpolate: true,
-                intent: .defaultIntent
-            ) else {
-                DispatchQueue.main.async { isDecoding = false }
-                return
-            }
-
-            DispatchQueue.main.async {
-                decodeMissCount = 0
-                frame = cg
-                isDecoding = false
             }
         }
     }
@@ -579,17 +599,19 @@ public struct SoftDecodePlayerView: View {
             print("[SoftDecodePlayer] decoder open failed: \(input)")
         } else {
             decoderInputURL = input
-            print("[SoftDecodePlayer] decoder opened: \(url.absoluteString)")
+            print("[SoftDecodePlayer] decoder opened: \(url.absoluteString) kind=\(playerViewModel?.currentStreamKind.rawValue ?? "unknown") headers=\(requestHeaders.keys.sorted().joined(separator: ","))")
         }
     }
 
     private func closeDecoder() {
         guard let decoder else { return }
-        wdc_decoder_close(decoder)
         self.decoder = nil
         decoderInputURL = nil
         isDecoding = false
         lastDecodeRequestTime = -1
+        decodeQueue.sync {
+            wdc_decoder_close(decoder)
+        }
         print("[SoftDecodePlayer] decoder closed")
     }
 

@@ -55,7 +55,11 @@ public final class DanmakuViewModel: ObservableObject {
     private var bottomLanes: [LaneState] = []
 
     // Text measurement cache
-    private static let measureCache = NSCache<NSString, NSNumber>()
+    private static let measureCache: NSCache<NSString, NSNumber> = {
+        let cache = NSCache<NSString, NSNumber>()
+        cache.countLimit = 1200
+        return cache
+    }()
 
     private let service: DanmakuService
 
@@ -120,10 +124,16 @@ public final class DanmakuViewModel: ObservableObject {
             return
         }
 
-        // Seek backward detection
+        // Seek / jump detection
         if time + 0.1 < lastTime {
             normalNextIndex = 0
             advancedNextIndex = 0
+            active = []
+            resetLanes()
+        } else if time - lastTime > 2.5 {
+            let normalLookback = max(4.0, maxNormalDuration(settings: settings))
+            normalNextIndex = lowerBound(in: normalItems, targetTime: time - normalLookback)
+            advancedNextIndex = lowerBound(in: advancedItems, targetTime: time - 10.0)
             active = []
             resetLanes()
         }
@@ -172,6 +182,12 @@ public final class DanmakuViewModel: ObservableObject {
         active.removeAll {
             (time - $0.startTime > $0.duration) || !activeRenderStillAllowed(item: $0, settings: settings)
         }
+        #if os(watchOS)
+        let maxActive = 180
+        if active.count > maxActive {
+            active.removeFirst(active.count - maxActive)
+        }
+        #endif
         lastTime = time
     }
 
@@ -197,6 +213,27 @@ public final class DanmakuViewModel: ObservableObject {
         case .top, .bottom:     return max(2.8, 4.0 / settings.danmakuSpeed)
         case .advanced:         return 10.0
         }
+    }
+
+    private func maxNormalDuration(settings: RenderSettings) -> Double {
+        max(
+            normalDuration(mode: .scroll, settings: settings),
+            normalDuration(mode: .top, settings: settings)
+        )
+    }
+
+    private func lowerBound(in items: [DanmakuItem], targetTime: Double) -> Int {
+        var low = 0
+        var high = items.count
+        while low < high {
+            let mid = (low + high) / 2
+            if items[mid].time < targetTime {
+                low = mid + 1
+            } else {
+                high = mid
+            }
+        }
+        return low
     }
 
     // MARK: - Text Measurement

@@ -60,9 +60,9 @@ public final class PlayerViewModel: ObservableObject {
     private var continuousObserver: Any?
     private var streamURLs: [URL] = []
     private var streamKinds: [URL: PlayStream.StreamKind] = [:]
+    private var streamAudioURLs: [URL: URL] = [:]
     private var streamHeaders: [String: String] = [:]
     private var currentStreamIndex = 0
-    private var dashAudioURL: URL?
     private var endObserver: NSObjectProtocol?
     #if canImport(CoreImage)
     private let ciContext = CIContext()
@@ -105,6 +105,7 @@ public final class PlayerViewModel: ObservableObject {
                 player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
             }
             player.isMuted = isMuted
+            player.automaticallyWaitsToMinimizeStalling = true
             self.player = player
             observeProgress()
             isLoading = false
@@ -138,7 +139,6 @@ public final class PlayerViewModel: ObservableObject {
                 category: "player.request",
                 message: "headers ua=\(headers["User-Agent"] != nil) referer=\(headers["Referer"] != nil) cookie=\(headers["Cookie"] != nil)"
             )
-            dashAudioURL = nil
             streamURLs = try await collectPlayableURLs()
             currentStreamIndex = 0
             sourceLabel = streamURLs.count > 1
@@ -252,6 +252,7 @@ public final class PlayerViewModel: ObservableObject {
         var urls: [URL] = []
         var seen = Set<String>()
         streamKinds = [:]
+        streamAudioURLs = [:]
         // Try preferred quality first, then fallbacks
         var qualities = [preferredQuality]
         for q in [16, 32] where !qualities.contains(q) {
@@ -259,16 +260,15 @@ public final class PlayerViewModel: ObservableObject {
         }
         for quality in qualities {
             if let stream = try? await service.fetchPlayURL(bvid: video.bvid, cid: cid, quality: quality, preferredCodec: preferredCodec, streamFormat: preferredStreamFormat) {
-                // Capture DASH audio from the first successful stream
-                if dashAudioURL == nil, let audioURL = stream.audioURL {
-                    dashAudioURL = audioURL
-                }
                 let candidates = [stream.url] + stream.backupURLs
                 for url in candidates where (url.scheme ?? "").lowercased() == "https" {
                     let key = url.absoluteString
                     if !seen.contains(key) {
                         urls.append(url)
                         streamKinds[url] = stream.streamKind
+                        if let audioURL = stream.audioURL {
+                            streamAudioURLs[url] = audioURL
+                        }
                         seen.insert(key)
                     }
                 }
@@ -293,12 +293,13 @@ public final class PlayerViewModel: ObservableObject {
         currentVideoStreamURL = url
         currentStreamKind = streamKinds[url] ?? .progressiveMP4
 
-        let videoAsset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
+        let assetOptions = makeAVURLAssetOptions(headers: streamHeaders)
+        let videoAsset = AVURLAsset(url: url, options: assetOptions)
 
         let item: AVPlayerItem
-        if let audioURL = dashAudioURL {
+        if let audioURL = streamAudioURLs[url] {
             // DASH: merge separate video + audio tracks via AVMutableComposition
-            let audioAsset = AVURLAsset(url: audioURL, options: ["AVURLAssetHTTPHeaderFieldsKey": streamHeaders])
+            let audioAsset = AVURLAsset(url: audioURL, options: assetOptions)
             if let compositionItem = Self.makeDASHCompositionItem(videoAsset: videoAsset, audioAsset: audioAsset) {
                 item = compositionItem
             } else {
@@ -309,7 +310,11 @@ public final class PlayerViewModel: ObservableObject {
             item = AVPlayerItem(asset: videoAsset)
         }
 
-        item.preferredForwardBufferDuration = 2
+        item.preferredForwardBufferDuration = preferredForwardBufferDuration
+        item.canUseNetworkResourcesForLiveStreamingWhilePaused = false
+        if let cap = preferredPeakBitRate {
+            item.preferredPeakBitRate = cap
+        }
         let player = AVPlayer(playerItem: item)
         player.automaticallyWaitsToMinimizeStalling = true
         player.isMuted = isMuted
@@ -396,13 +401,51 @@ public final class PlayerViewModel: ObservableObject {
                 self.totalDurationSeconds = safeDuration
             }
         }
-        continuousObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 30), queue: .main) { [weak self] time in
+        #if os(watchOS)
+        let highFreqInterval = CMTime(value: 1, timescale: 60)
+        #else
+        let highFreqInterval = CMTime(value: 1, timescale: 30)
+        #endif
+        continuousObserver = player?.addPeriodicTimeObserver(forInterval: highFreqInterval, queue: .main) { [weak self] time in
             guard let self else { return }
             let seconds = time.seconds
             if seconds.isFinite {
                 self.currentTime = seconds
             }
         }
+    }
+
+    private func makeAVURLAssetOptions(headers: [String: String]) -> [String: Any] {
+        var options: [String: Any] = [
+            "AVURLAssetHTTPHeaderFieldsKey": headers,
+            AVURLAssetAllowsCellularAccessKey: true,
+            AVURLAssetAllowsExpensiveNetworkAccessKey: true,
+            AVURLAssetAllowsConstrainedNetworkAccessKey: true
+        ]
+        #if os(watchOS)
+        options[AVURLAssetPreferPreciseDurationAndTimingKey] = false
+        #endif
+        return options
+    }
+
+    private var preferredForwardBufferDuration: TimeInterval {
+        #if os(watchOS)
+        return 4
+        #else
+        return 2
+        #endif
+    }
+
+    private var preferredPeakBitRate: Double? {
+        #if os(watchOS)
+        // On real watch devices, capping peak bitrate reduces rebuffering spikes.
+        if preferredQuality >= 80 { return 2_000_000 }
+        if preferredQuality >= 64 { return 1_500_000 }
+        if preferredQuality >= 32 { return 1_200_000 }
+        return 900_000
+        #else
+        return nil
+        #endif
     }
 
     #if canImport(CoreImage)

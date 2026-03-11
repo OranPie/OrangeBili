@@ -8,9 +8,30 @@ let platformHint = [
     env["PLATFORM_NAME"],
     env["EFFECTIVE_PLATFORM_NAME"],
     env["SDK_NAME"],
-    env["LLVM_TARGET_TRIPLE_SUFFIX"]
+    env["LLVM_TARGET_TRIPLE_SUFFIX"],
+    env["SDKROOT"]
 ].compactMap { $0?.lowercased() }.joined(separator: " ")
-let useWatchSimulatorFFmpeg = platformHint.contains("simulator")
+let ffmpegPlatformOverride = env["ORANGEBILI_WATCH_FFMPEG_PLATFORM"]?.lowercased()
+let useWatchSimulatorFFmpeg: Bool = {
+    if let override = ffmpegPlatformOverride {
+        if override.contains("simulator") || override == "sim" {
+            return true
+        }
+        if override.contains("watchos") || override == "device" {
+            return false
+        }
+    }
+    if platformHint.contains("simulator") {
+        return true
+    }
+    if platformHint.contains("watchos") {
+        return false
+    }
+    // Xcode may evaluate manifests without a concrete watch destination.
+    // Prefer simulator libs by default so watchOS-simulator builds do not
+    // accidentally link device-only FFmpeg archives.
+    return true
+}()
 let ffmpegPlatformFolder = useWatchSimulatorFFmpeg ? "platform-watchsimulator" : "platform-watchos"
 let ffmpegIncludePath = "\(packageRoot)/Vendor/FFmpeg/\(ffmpegPlatformFolder)/include"
 let ffmpegLibPath = "\(packageRoot)/Vendor/FFmpeg/\(ffmpegPlatformFolder)/lib"

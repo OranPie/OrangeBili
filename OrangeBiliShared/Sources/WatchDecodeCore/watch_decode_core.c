@@ -45,6 +45,23 @@ wdc_frame *wdc_decoder_decode_until(
 
 static int g_network_inited = 0;
 
+static void wdc_apply_network_options(AVDictionary **opts) {
+    if (!opts) return;
+    // Real-device watch networks can be bursty; tune for reconnect resilience
+    // while keeping startup reasonably fast.
+    av_dict_set(opts, "reconnect", "1", 0);
+    av_dict_set(opts, "reconnect_streamed", "1", 0);
+    av_dict_set(opts, "reconnect_at_eof", "1", 0);
+    av_dict_set(opts, "reconnect_on_http_error", "4xx,5xx", 0);
+    av_dict_set(opts, "reconnect_delay_max", "3", 0);
+    av_dict_set(opts, "rw_timeout", "12000000", 0); // 12s in microseconds
+    av_dict_set(opts, "http_persistent", "1", 0);
+    av_dict_set(opts, "multiple_requests", "1", 0);
+    av_dict_set(opts, "tcp_nodelay", "1", 0);
+    av_dict_set(opts, "probesize", "1048576", 0);
+    av_dict_set(opts, "analyzeduration", "1000000", 0);
+}
+
 static void wdc_set_error(wdc_decoder *decoder, int code, const char *message) {
     if (!decoder) return;
     decoder->last_error_code = code;
@@ -247,13 +264,7 @@ wdc_decoder_ref wdc_decoder_open_with_options(
     if (cookie_utf8 && cookie_utf8[0]) {
         av_dict_set(&opts, "cookies", cookie_utf8, 0);
     }
-    // Improve long-play network resilience on CDN edge nodes.
-    av_dict_set(&opts, "reconnect", "1", 0);
-    av_dict_set(&opts, "reconnect_streamed", "1", 0);
-    av_dict_set(&opts, "reconnect_on_http_error", "4xx,5xx", 0);
-    av_dict_set(&opts, "reconnect_delay_max", "2", 0);
-    av_dict_set(&opts, "rw_timeout", "5000000", 0); // 5s in microseconds
-    av_dict_set(&opts, "http_persistent", "0", 0);
+    wdc_apply_network_options(&opts);
 
     if (avformat_open_input(&decoder->format, url_utf8, NULL, &opts) < 0) {
         av_dict_free(&opts);
@@ -352,12 +363,7 @@ wdc_decoder_ref wdc_decoder_open_with_headers(
     if (headers_blob_utf8 && headers_blob_utf8[0]) {
         av_dict_set(&opts, "headers", headers_blob_utf8, 0);
     }
-    av_dict_set(&opts, "reconnect", "1", 0);
-    av_dict_set(&opts, "reconnect_streamed", "1", 0);
-    av_dict_set(&opts, "reconnect_on_http_error", "4xx,5xx", 0);
-    av_dict_set(&opts, "reconnect_delay_max", "2", 0);
-    av_dict_set(&opts, "rw_timeout", "5000000", 0);
-    av_dict_set(&opts, "http_persistent", "0", 0);
+    wdc_apply_network_options(&opts);
 
     if (avformat_open_input(&decoder->format, url_utf8, NULL, &opts) < 0) {
         av_dict_free(&opts);

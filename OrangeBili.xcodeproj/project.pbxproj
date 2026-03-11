@@ -507,6 +507,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"OrangeBili Watch App/Preview Content\"";
 				DEVELOPMENT_TEAM = PXM595K4ZG;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=watchsimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = OrangeBili;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -537,6 +538,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"OrangeBili Watch App/Preview Content\"";
 				DEVELOPMENT_TEAM = PXM595K4ZG;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=watchsimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = OrangeBili;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";

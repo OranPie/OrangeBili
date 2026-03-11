@@ -25,10 +25,16 @@ struct NetworkClient: NetworkClientProtocol {
 
     private let retryPolicy: RetryPolicy
     private let authStore: BiliAuthStore
+    private let session: URLSession
 
-    init(retryPolicy: RetryPolicy = .default, authStore: BiliAuthStore = .shared) {
+    init(
+        retryPolicy: RetryPolicy = .default,
+        authStore: BiliAuthStore = .shared,
+        session: URLSession = NetworkClient.makeSession()
+    ) {
         self.retryPolicy = retryPolicy
         self.authStore = authStore
+        self.session = session
     }
 
     func request<T: Decodable>(_ endpoint: BiliEndpoint, as type: T.Type) async throws -> T {
@@ -130,7 +136,7 @@ struct NetworkClient: NetworkClientProtocol {
     }
 
     private func executeWithData<T: Decodable>(request: URLRequest, as type: T.Type, debugCategory: String) async throws -> (Data, T) {
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
             throw BiliError.badResponse
         }
@@ -246,6 +252,25 @@ struct NetworkClient: NetworkClientProtocol {
             }
         }
         return false
+    }
+
+    private static func makeSession() -> URLSession {
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 90
+        config.requestCachePolicy = .reloadRevalidatingCacheData
+        #if os(watchOS)
+        config.urlCache = URLCache(memoryCapacity: 8 * 1024 * 1024, diskCapacity: 32 * 1024 * 1024)
+        #else
+        config.urlCache = URLCache(memoryCapacity: 24 * 1024 * 1024, diskCapacity: 128 * 1024 * 1024)
+        #endif
+        config.httpMaximumConnectionsPerHost = 6
+        config.httpShouldUsePipelining = true
+        config.allowsExpensiveNetworkAccess = true
+        config.allowsConstrainedNetworkAccess = true
+        config.networkServiceType = .responsiveData
+        return URLSession(configuration: config)
     }
 }
 

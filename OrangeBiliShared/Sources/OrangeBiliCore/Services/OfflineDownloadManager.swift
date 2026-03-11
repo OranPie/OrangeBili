@@ -61,11 +61,21 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
 
     private lazy var session: URLSession = {
         let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 600
+        config.httpMaximumConnectionsPerHost = 4
+        config.httpShouldUsePipelining = true
+        config.allowsExpensiveNetworkAccess = true
+        config.allowsConstrainedNetworkAccess = true
+        config.networkServiceType = .responsiveData
         return URLSession(configuration: config, delegate: self, delegateQueue: .main)
     }()
 
     private var taskToItemID: [Int: UUID] = [:]
     private var lastSample: [Int: (time: Date, bytes: Int64)] = [:]
+    private var dashTasks: [UUID: Task<Void, Never>] = [:]
+    private let fileIOQueue = DispatchQueue(label: "com.orangebili.offline.fileio", qos: .utility)
     private let folderURL: URL
     private let indexURL: URL
 
@@ -100,7 +110,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
     }
 
     public func startDownload(bvid: String, cid: Int64? = nil, title: String, url: URL, headers: [String: String], coverURL: URL?) {
-        if items.contains(where: { $0.bvid == bvid && ($0.state == .queued || $0.state == .downloading) }) {
+        if hasActiveDownload(bvid: bvid, cid: cid) {
             return
         }
 
@@ -132,7 +142,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         headers: [String: String],
         coverURL: URL?
     ) {
-        if items.contains(where: { $0.bvid == bvid && ($0.state == .queued || $0.state == .downloading) }) {
+        if hasActiveDownload(bvid: bvid, cid: cid) {
             return
         }
 
@@ -149,9 +159,11 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         saveIndex()
         update(itemID: item.id) { $0.state = .downloading }
 
-        Task {
+        let task = Task { [weak self] in
+            guard let self else { return }
             await downloadDASHPackage(itemID: item.id, bvid: bvid, videoURL: videoURL, audioURL: audioURL, headers: headers, coverURL: coverURL)
         }
+        dashTasks[item.id] = task
     }
 
     public func retry(itemID: UUID) {
@@ -178,6 +190,8 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
     }
 
     public func cancel(itemID: UUID) {
+        dashTasks[itemID]?.cancel()
+        dashTasks[itemID] = nil
         guard let taskID = taskToItemID.first(where: { $0.value == itemID })?.key else {
             update(itemID: itemID) { $0.state = .canceled }
             return
@@ -188,6 +202,8 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
     }
 
     public func remove(itemID: UUID) {
+        dashTasks[itemID]?.cancel()
+        dashTasks[itemID] = nil
         if let fileURL = items.first(where: { $0.id == itemID })?.localFileURL {
             try? FileManager.default.removeItem(at: fileURL)
         }
@@ -201,24 +217,46 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         saveIndex()
     }
 
-    private func update(itemID: UUID, mutate: (inout DownloadStatusItem) -> Void) {
+    private func update(itemID: UUID, persist: Bool = true, mutate: (inout DownloadStatusItem) -> Void) {
         guard let index = items.firstIndex(where: { $0.id == itemID }) else { return }
         var item = items[index]
         mutate(&item)
         items[index] = item
-        saveIndex()
+        if persist {
+            saveIndex()
+        }
+    }
+
+    private func hasActiveDownload(bvid: String, cid: Int64?) -> Bool {
+        items.contains {
+            $0.bvid == bvid &&
+            $0.cid == cid &&
+            ($0.state == .queued || $0.state == .downloading)
+        }
+    }
+
+    private func sanitizedPersistedHeaders(_ headers: [String: String]) -> [String: String] {
+        let denied = Set(["cookie", "authorization", "proxy-authorization", "x-access-token", "x-refresh-token"])
+        return headers.filter { key, _ in
+            !denied.contains(key.lowercased())
+        }
+    }
+
+    private func clearTaskTracking(taskIdentifier: Int) {
+        taskToItemID.removeValue(forKey: taskIdentifier)
+        lastSample.removeValue(forKey: taskIdentifier)
     }
 
     private func outputURL(for bvid: String, response: URLResponse?) -> URL {
         let suggested = (response?.suggestedFilename as NSString?)?.pathExtension
-        let ext = (suggested?.isEmpty == false ? suggested! : "mp4")
+        let ext = (suggested?.isEmpty == false ? (suggested as String?) : nil) ?? "mp4"
         return folderURL.appendingPathComponent("\(bvid).\(ext)")
     }
 
     private func coverOutputURL(for bvid: String, url: URL, response: URLResponse?) -> URL {
         let extFromURL = url.pathExtension
         let extFromMime = response?.mimeType?.split(separator: "/").last.map(String.init)
-        let ext = !extFromURL.isEmpty ? extFromURL : (extFromMime?.isEmpty == false ? extFromMime! : "jpg")
+        let ext = !extFromURL.isEmpty ? extFromURL : ((extFromMime?.isEmpty == false ? extFromMime : nil) ?? "jpg")
         return folderURL.appendingPathComponent("\(bvid)_cover.\(ext)")
     }
 
@@ -262,7 +300,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
                 coverURL: p.coverURL.flatMap(URL.init(string:)),
                 sourceURL: p.sourceURL.flatMap(URL.init(string:)),
                 sourceAudioURL: p.sourceAudioURL.flatMap(URL.init(string:)),
-                requestHeaders: p.requestHeaders
+                requestHeaders: sanitizedPersistedHeaders(p.requestHeaders)
             )
             item.state = DownloadStatusItem.State(rawValue: p.state) ?? .failed
             if item.state == .queued || item.state == .downloading {
@@ -303,7 +341,7 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
                 localPackageFolderURL: item.localPackageFolderURL?.path,
                 sourceURL: item.sourceURL?.absoluteString,
                 sourceAudioURL: item.sourceAudioURL?.absoluteString,
-                requestHeaders: item.requestHeaders,
+                requestHeaders: sanitizedPersistedHeaders(item.requestHeaders),
                 errorMessage: item.errorMessage
             )
         }
@@ -319,10 +357,16 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         headers: [String: String],
         coverURL: URL?
     ) async {
+        defer {
+            Task { @MainActor [weak self] in
+                self?.dashTasks[itemID] = nil
+            }
+        }
         func makeRequest(_ url: URL) -> URLRequest {
             var req = URLRequest(url: url)
             req.httpMethod = "GET"
             req.timeoutInterval = 30
+            req.networkServiceType = .responsiveData
             for (k, v) in headers {
                 req.setValue(v, forHTTPHeaderField: k)
             }
@@ -335,10 +379,12 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
         let manifestOut = packageFolder.appendingPathComponent("manifest.json")
 
         do {
+            if Task.isCancelled { return }
             try? FileManager.default.removeItem(at: packageFolder)
             try FileManager.default.createDirectory(at: packageFolder, withIntermediateDirectories: true)
 
-            let (videoTemp, videoResp) = try await URLSession.shared.download(for: makeRequest(videoURL))
+            let (videoTemp, videoResp) = try await session.download(for: makeRequest(videoURL))
+            if Task.isCancelled { return }
             if let http = videoResp as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
                 throw URLError(.badServerResponse)
             }
@@ -352,7 +398,8 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
                 }
             }
 
-            let (audioTemp, audioResp) = try await URLSession.shared.download(for: makeRequest(audioURL))
+            let (audioTemp, audioResp) = try await session.download(for: makeRequest(audioURL))
+            if Task.isCancelled { return }
             if let http = audioResp as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
                 throw URLError(.badServerResponse)
             }
@@ -433,9 +480,11 @@ public final class OfflineDownloadManager: NSObject, ObservableObject {
 
 extension OfflineDownloadManager: URLSessionDownloadDelegate {
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let itemID = taskToItemID[downloadTask.taskIdentifier],
-              let item = items.first(where: { $0.id == itemID })
-        else { return }
+        guard let itemID = taskToItemID[downloadTask.taskIdentifier] else { return }
+        guard let item = items.first(where: { $0.id == itemID }) else {
+            clearTaskTracking(taskIdentifier: downloadTask.taskIdentifier)
+            return
+        }
 
         if let http = downloadTask.response as? HTTPURLResponse,
            !(200...299).contains(http.statusCode) {
@@ -444,45 +493,80 @@ extension OfflineDownloadManager: URLSessionDownloadDelegate {
                 $0.errorMessage = "HTTP \(http.statusCode)"
                 $0.speedBytesPerSec = 0
             }
-            taskToItemID.removeValue(forKey: downloadTask.taskIdentifier)
-            lastSample.removeValue(forKey: downloadTask.taskIdentifier)
+            clearTaskTracking(taskIdentifier: downloadTask.taskIdentifier)
             return
         }
 
-        let output = outputURL(for: item.bvid, response: downloadTask.response)
-        try? FileManager.default.removeItem(at: output)
+        let taskIdentifier = downloadTask.taskIdentifier
+        let response = downloadTask.response
+        clearTaskTracking(taskIdentifier: taskIdentifier)
 
-        do {
-            try FileManager.default.moveItem(at: location, to: output)
-            if output.pathExtension.lowercased() == "m4s" {
+        fileIOQueue.async { [weak self] in
+            guard let self else { return }
+            let output = self.outputURL(for: item.bvid, response: response)
+            try? FileManager.default.removeItem(at: output)
+
+            do {
+                try FileManager.default.moveItem(at: location, to: output)
+                if output.pathExtension.lowercased() == "m4s" {
 #if os(watchOS)
-                // AVAssetExportSession is unavailable on watchOS.
-                // Keep behavior explicit instead of producing a broken "completed" item.
-                try? FileManager.default.removeItem(at: output)
-                update(itemID: itemID) {
-                    $0.state = .failed
-                    $0.errorMessage = L10n.t("downloads.remux.unsupported.watch")
-                    $0.speedBytesPerSec = 0
-                }
+                    // AVAssetExportSession is unavailable on watchOS.
+                    // Keep behavior explicit instead of producing a broken "completed" item.
+                    try? FileManager.default.removeItem(at: output)
+                    DispatchQueue.main.async {
+                        self.update(itemID: itemID) {
+                            $0.state = .failed
+                            $0.errorMessage = L10n.t("downloads.remux.unsupported.watch")
+                            $0.speedBytesPerSec = 0
+                        }
+                    }
 #else
-                // Some CDN variants return fragmented MP4 (.m4s). Remux to MP4 for stable local playback.
-                update(itemID: itemID) {
-                    $0.state = .downloading
-                    $0.progress = 0.99
-                    $0.localFileURL = output
-                    $0.speedBytesPerSec = 0
-                }
-                remuxToMP4(inputURL: output, bvid: item.bvid) { [weak self] result in
-                    guard let self else { return }
-                    switch result {
-                    case .success(let mergedURL):
-                        try? FileManager.default.removeItem(at: output)
+                    // Some CDN variants return fragmented MP4 (.m4s). Remux to MP4 for stable local playback.
+                    DispatchQueue.main.async {
+                        self.update(itemID: itemID) {
+                            $0.state = .downloading
+                            $0.progress = 0.99
+                            $0.localFileURL = output
+                            $0.speedBytesPerSec = 0
+                        }
+                    }
+                    self.remuxToMP4(inputURL: output, bvid: item.bvid) { [weak self] result in
+                        guard let self else { return }
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let mergedURL):
+                                try? FileManager.default.removeItem(at: output)
+                                self.update(itemID: itemID) {
+                                    $0.state = .completed
+                                    $0.progress = 1
+                                    $0.localFileURL = mergedURL
+                                    $0.speedBytesPerSec = 0
+                                    $0.errorMessage = nil
+                                }
+                                if item.localCoverURL == nil, let coverURL = item.coverURL {
+                                    let headers = [
+                                        "Referer": "https://www.bilibili.com",
+                                        "User-Agent": PlatformInfo.userAgent
+                                    ]
+                                    self.downloadCover(itemID: itemID, bvid: item.bvid, url: coverURL, headers: headers)
+                                }
+                            case .failure(let error):
+                                self.update(itemID: itemID) {
+                                    $0.state = .failed
+                                    $0.errorMessage = L10n.f("action.download.fail", error.localizedDescription)
+                                    $0.speedBytesPerSec = 0
+                                }
+                            }
+                        }
+                    }
+#endif
+                } else {
+                    DispatchQueue.main.async {
                         self.update(itemID: itemID) {
                             $0.state = .completed
                             $0.progress = 1
-                            $0.localFileURL = mergedURL
+                            $0.localFileURL = output
                             $0.speedBytesPerSec = 0
-                            $0.errorMessage = nil
                         }
                         if item.localCoverURL == nil, let coverURL = item.coverURL {
                             let headers = [
@@ -491,44 +575,26 @@ extension OfflineDownloadManager: URLSessionDownloadDelegate {
                             ]
                             self.downloadCover(itemID: itemID, bvid: item.bvid, url: coverURL, headers: headers)
                         }
-                    case .failure(let error):
-                        self.update(itemID: itemID) {
-                            $0.state = .failed
-                            $0.errorMessage = L10n.f("action.download.fail", error.localizedDescription)
-                            $0.speedBytesPerSec = 0
-                        }
                     }
                 }
-#endif
-            } else {
-                update(itemID: itemID) {
-                    $0.state = .completed
-                    $0.progress = 1
-                    $0.localFileURL = output
-                    $0.speedBytesPerSec = 0
+            } catch {
+                DispatchQueue.main.async {
+                    self.update(itemID: itemID) {
+                        $0.state = .failed
+                        $0.errorMessage = error.localizedDescription
+                        $0.speedBytesPerSec = 0
+                    }
                 }
-                if item.localCoverURL == nil, let coverURL = item.coverURL {
-                    let headers = [
-                        "Referer": "https://www.bilibili.com",
-                        "User-Agent": PlatformInfo.userAgent
-                    ]
-                    downloadCover(itemID: itemID, bvid: item.bvid, url: coverURL, headers: headers)
-                }
-            }
-        } catch {
-            update(itemID: itemID) {
-                $0.state = .failed
-                $0.errorMessage = error.localizedDescription
-                $0.speedBytesPerSec = 0
             }
         }
-
-        taskToItemID.removeValue(forKey: downloadTask.taskIdentifier)
-        lastSample.removeValue(forKey: downloadTask.taskIdentifier)
     }
 
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let itemID = taskToItemID[downloadTask.taskIdentifier] else { return }
+        guard items.contains(where: { $0.id == itemID }) else {
+            clearTaskTracking(taskIdentifier: downloadTask.taskIdentifier)
+            return
+        }
 
         var speed = 0.0
         if let last = lastSample[downloadTask.taskIdentifier] {
@@ -539,7 +605,7 @@ extension OfflineDownloadManager: URLSessionDownloadDelegate {
             }
         }
 
-        update(itemID: itemID) {
+        update(itemID: itemID, persist: false) {
             $0.state = .downloading
             $0.receivedBytes = totalBytesWritten
             $0.totalBytes = totalBytesExpectedToWrite
@@ -553,7 +619,11 @@ extension OfflineDownloadManager: URLSessionDownloadDelegate {
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error, let itemID = taskToItemID[task.taskIdentifier] else { return }
+        guard let itemID = taskToItemID[task.taskIdentifier] else { return }
+        guard let error else {
+            clearTaskTracking(taskIdentifier: task.taskIdentifier)
+            return
+        }
 
         update(itemID: itemID) {
             let nsError = error as NSError
@@ -566,8 +636,7 @@ extension OfflineDownloadManager: URLSessionDownloadDelegate {
             $0.speedBytesPerSec = 0
         }
 
-        taskToItemID.removeValue(forKey: task.taskIdentifier)
-        lastSample.removeValue(forKey: task.taskIdentifier)
+        clearTaskTracking(taskIdentifier: task.taskIdentifier)
     }
 
 #if !os(watchOS)

@@ -59,6 +59,10 @@ struct PlayerControlsPanel<MiddleContent: View>: View {
             #if os(watchOS)
             Button(action: onTogglePlayback) {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .frame(width: 34, height: 34)
+                    .background(.white.opacity(0.16), in: Circle())
+                    .contentShape(Circle())
             }
             #else
             Menu {

@@ -7,42 +7,45 @@ struct DanmakuOverlayView: View {
 
     @EnvironmentObject private var render: RenderSettings
     @State private var lastUpdateTime: Double = -1
+    @State private var canvasSize: CGSize = .zero
+#if os(watchOS)
+    private let ticker = Timer.publish(every: 1.0 / 24.0, on: .main, in: .common).autoconnect()
+#else
+    private let ticker = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
+#endif
 
     var body: some View {
-        Group {
+        GeometryReader { geo in
+            Group {
 #if os(watchOS)
-            TimelineView(.periodic(from: .now, by: 1.0 / 24.0)) { _ in
-                Canvas { context, size in
-                    let time = playerViewModel.currentTime
-                    let contentRect = videoContentRect(in: size)
-                    viewModel.currentVideoTime = time
-                    if shouldUpdateDanmaku(at: time) {
-                        viewModel.update(time: time, size: contentRect.size, settings: render)
-                        lastUpdateTime = time
-                    }
-
-                    for item in viewModel.active {
-                        drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                TimelineView(.periodic(from: .now, by: 1.0 / 24.0)) { _ in
+                    Canvas { context, size in
+                        let time = currentPlaybackTime()
+                        let contentRect = videoContentRect(in: size)
+                        for item in viewModel.active {
+                            drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                        }
                     }
                 }
-            }
 #else
-            TimelineView(.animation) { _ in
-                Canvas { context, size in
-                    let time = playerViewModel.currentTime
-                    let contentRect = videoContentRect(in: size)
-                    viewModel.currentVideoTime = time
-                    if shouldUpdateDanmaku(at: time) {
-                        viewModel.update(time: time, size: contentRect.size, settings: render)
-                        lastUpdateTime = time
-                    }
-
-                    for item in viewModel.active {
-                        drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                TimelineView(.animation) { _ in
+                    Canvas { context, size in
+                        let time = currentPlaybackTime()
+                        let contentRect = videoContentRect(in: size)
+                        for item in viewModel.active {
+                            drawDanmaku(item, in: &context, contentRect: contentRect, time: time)
+                        }
                     }
                 }
-            }
 #endif
+            }
+            .onAppear { canvasSize = geo.size }
+            .onChange(of: geo.size) { newValue in
+                canvasSize = newValue
+            }
+        }
+        .onReceive(ticker) { _ in
+            tickDanmaku()
         }
         .allowsHitTesting(false)
     }
@@ -50,10 +53,28 @@ struct DanmakuOverlayView: View {
     private func shouldUpdateDanmaku(at time: Double) -> Bool {
         guard lastUpdateTime >= 0 else { return true }
 #if os(watchOS)
-        return (time - lastUpdateTime) >= (1.0 / 24.0) || time < lastUpdateTime
+        return abs(time - lastUpdateTime) >= (1.0 / 48.0)
 #else
         return (time - lastUpdateTime) >= (1.0 / 30.0) || time < lastUpdateTime
 #endif
+    }
+
+    private func currentPlaybackTime() -> Double {
+        if let playerTime = playerViewModel.player?.currentTime().seconds, playerTime.isFinite, playerTime >= 0 {
+            return playerTime
+        }
+        let fallback = playerViewModel.currentTime
+        return (fallback.isFinite && fallback >= 0) ? fallback : 0
+    }
+
+    private func tickDanmaku() {
+        let time = currentPlaybackTime()
+        viewModel.currentVideoTime = time
+        guard shouldUpdateDanmaku(at: time) else { return }
+        guard canvasSize.width > 1, canvasSize.height > 1 else { return }
+        let contentRect = videoContentRect(in: canvasSize)
+        viewModel.update(time: time, size: contentRect.size, settings: render)
+        lastUpdateTime = time
     }
 
     /// Compute the actual video content area within the view, excluding black bars.
